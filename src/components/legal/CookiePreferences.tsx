@@ -83,6 +83,7 @@ export function CookiePreferences({
     const consent = buildConsent({ ...input, doNotSellOrShare });
     persistConsent(consent);
     setSaved(false);
+    onSaved?.();
     start(async () => {
       try {
         await saveCookieConsent(consent);
@@ -90,7 +91,6 @@ export function CookiePreferences({
         console.error("Failed to persist cookie preferences", error);
       }
       setSaved(true);
-      onSaved?.();
       setTimeout(() => setSaved(false), 2500);
     });
   }

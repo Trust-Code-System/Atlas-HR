@@ -25,13 +25,12 @@ export function CookieConsentBanner() {
     } else {
       denyAnalytics();
     }
+    setVisible(false);
     start(async () => {
       try {
         await saveCookieConsent(consent);
       } catch (error) {
         console.error("Failed to persist cookie consent", error);
-      } finally {
-        setVisible(false);
       }
     });
   }
@@ -40,8 +39,8 @@ export function CookieConsentBanner() {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
-      <section className="fixed bottom-4 left-1/2 z-50 w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-[--border-strong] bg-[--bg-app] p-6 shadow-2xl">
+      <div className="fixed inset-0 z-[900] bg-black/40 backdrop-blur-sm" aria-hidden="true" />
+      <section className="fixed bottom-4 left-1/2 z-[1000] w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-[--border-strong] bg-[--bg-app] p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-sm font-semibold text-[--text-primary]">Cookie preferences</h2>
