@@ -8,18 +8,28 @@ import {
   Bookmark,
   BookOpen,
   CalendarDays,
-  CheckCircle2,
   Clock,
+  FileCheck2,
   FileText,
+  Filter,
   Globe,
-  LineChart,
+  PartyPopper,
+  Search,
+  Settings,
   Sparkles,
   TrendingUp,
-  UserCheck,
+  UserPlus,
   Users,
   Wrench,
 } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useCopilot } from "@/stores/copilot-store";
+
+const smoothTransition =
+  "transition-[background-color,border-color,box-shadow,color,transform] duration-[280ms] ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 const BRIEFS = [
   {
@@ -43,6 +53,13 @@ const BRIEFS = [
 ];
 
 const QUICK_ACTIONS = [
+  { label: "Add Hire", icon: UserPlus, href: "/workspace/people" },
+  { label: "Run Payroll", icon: FileCheck2, href: "/workspace/reports/compensation" },
+  { label: "Leave Req", icon: CalendarDays, href: "/workspace/leave" },
+  { label: "Knowledge", icon: BookOpen, href: "/knowledge" },
+];
+
+const PERSONAL_ACTIONS = [
   { label: "Generate a document", icon: FileText, href: "/tools" },
   { label: "Browse templates", icon: BookOpen, href: "/templates" },
   { label: "Explore knowledge", icon: TrendingUp, href: "/knowledge" },
@@ -122,13 +139,26 @@ function timeGreeting(): string {
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
+  const mins = Math.max(0, Math.floor(diff / 60000));
   if (mins < 60) return `${mins}m ago`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days === 1) return "Yesterday";
   return `${days}d ago`;
+}
+
+function firstName(profile: Profile | null) {
+  return profile?.full_name?.split(" ")[0] ?? "there";
+}
+
+function initials(label: string) {
+  return label
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function savedItemLabel(item: SavedItem): string {
@@ -145,53 +175,73 @@ function savedItemHref(item: SavedItem): string {
   return `/tools/${item.item_slug}`;
 }
 
-function MetricCard({
-  title,
+function barWidthClass(value: number, max: number) {
+  const pct = max > 0 ? value / max : 0;
+  if (pct >= 0.9) return "w-full";
+  if (pct >= 0.75) return "w-4/5";
+  if (pct >= 0.6) return "w-2/3";
+  if (pct >= 0.45) return "w-1/2";
+  if (pct >= 0.3) return "w-1/3";
+  if (pct > 0) return "w-1/4";
+  return "w-0";
+}
+
+function MobileMetricCard({
+  label,
   value,
+  helper,
   href,
-  sub,
   icon: Icon,
+  tone = "accent",
 }: {
-  title: string;
+  label: string;
   value: number | string;
+  helper: string;
   href: string;
-  sub: string;
   icon: typeof Users;
+  tone?: "accent" | "warning";
 }) {
   return (
     <Link
       href={href}
-      className="rounded-xl border border-[--border] bg-[--bg-card] p-4 transition-colors hover:border-[--accent]"
+      className={cn(
+        "flex items-center justify-between rounded-xl border border-[--border] bg-[--bg-card] p-5 shadow-sm hover:-translate-y-0.5 hover:border-[--accent] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30",
+        smoothTransition
+      )}
     >
-      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[--accent-soft] text-[--accent]">
-        <Icon size={16} />
+      <div>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[--text-tertiary]">{label}</p>
+        <h3 className="text-3xl font-semibold leading-tight tracking-normal text-[--text-primary]">{value}</h3>
+        <div className="mt-2 flex items-center gap-1.5">
+          <TrendingUp aria-hidden="true" size={15} className={tone === "warning" ? "text-amber-600 dark:text-amber-300" : "text-[--accent]"} />
+          <span className={cn("text-xs font-semibold", tone === "warning" ? "text-amber-600 dark:text-amber-300" : "text-[--accent]")}>{helper}</span>
+        </div>
       </div>
-      <p className="text-2xl font-bold text-[--text-primary]">{value}</p>
-      <p className="mt-1 text-sm font-medium text-[--text-primary]">{title}</p>
-      <p className="mt-1 text-xs leading-5 text-[--text-tertiary]">{sub}</p>
+      <div className={cn("flex size-12 shrink-0 items-center justify-center rounded-full", tone === "warning" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" : "bg-[--accent-soft] text-[--accent]")}>
+        <Icon aria-hidden="true" size={22} />
+      </div>
     </Link>
   );
 }
 
 function Sparkline({ data }: { data: { label: string; count: number }[] }) {
   const max = Math.max(1, ...data.map((item) => item.count));
+  const points = data
+    .map((item, index) => {
+      const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 100;
+      const y = 36 - (item.count / max) * 30;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
   return (
-    <div className="flex h-20 items-end gap-1" aria-label="12 month headcount trend">
-      {data.map((item) => (
-        <div key={item.label} className="flex flex-1 flex-col items-center gap-1">
-          <div
-            className="w-full rounded-t bg-[--accent]"
-            style={{ height: `${Math.max(8, (item.count / max) * 64)}px` }}
-            title={`${item.label}: ${item.count}`}
-          />
-          <span className="text-[10px] text-[--text-tertiary]">{item.label}</span>
-        </div>
-      ))}
-    </div>
+    <svg className="h-10 w-20 text-[--accent]" viewBox="0 0 100 40" aria-label="12 month headcount trend">
+      <polyline points={points} className="fill-none stroke-current stroke-[3]" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
-function WorkspaceTab({ workspace }: { workspace: WorkspaceDashboard }) {
+function WorkspaceTab({ workspace, profile }: { workspace: WorkspaceDashboard; profile: Profile | null }) {
   const roleLabel = useMemo(() => {
     if (workspace.roles.includes("finance")) return "Finance view";
     if (workspace.roles.includes("people_manager") && !workspace.roles.includes("hr_admin")) return "Team view";
@@ -200,124 +250,188 @@ function WorkspaceTab({ workspace }: { workspace: WorkspaceDashboard }) {
   }, [workspace.roles]);
 
   const maxDepartment = Math.max(1, ...workspace.departmentCounts.map((item) => item.count));
+  const priorityCount = workspace.pendingLeaveApprovals + workspace.probationDueCount;
+  const activityPreview = workspace.activity.slice(0, 2);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="space-y-6">
+    <div className="mx-auto max-w-md space-y-6 pb-24 lg:max-w-none lg:pb-0">
+      <section className="lg:hidden">
+        <h1 className="text-2xl font-semibold tracking-normal text-[--text-primary]">Hello, {firstName(profile)}</h1>
+        <p className="mt-1 text-sm text-[--text-tertiary]">Workspace: {workspace.orgName}</p>
+      </section>
+
+      <section className="hidden rounded-2xl border border-[--border] bg-[--bg-card] p-6 shadow-sm lg:flex lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-medium text-[--accent]">{roleLabel}</p>
-          <h1 className="mt-1 text-3xl font-bold text-[--text-primary]">{workspace.orgName}</h1>
-          <p className="mt-1 text-sm text-[--text-secondary]">Operational HR work, workforce movement, and reports in one place.</p>
+          <Badge variant="ghost" className="mb-3 rounded-full bg-[--accent-soft] px-3 text-[--accent]">
+            {roleLabel}
+          </Badge>
+          <h1 className="text-4xl font-semibold tracking-normal text-[--text-primary]">{workspace.orgName}</h1>
+          <p className="mt-2 max-w-2xl text-sm text-[--text-secondary]">Operational HR work, workforce movement, and reports in one place.</p>
         </div>
-
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[--text-primary]">Pending your action</h2>
-            <Link href="/workspace/leave" className="text-sm font-medium text-[--accent] hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            <MetricCard
-              title="Leave approvals"
-              value={workspace.pendingLeaveApprovals}
-              href="/workspace/leave"
-              sub="Pending requests routed through the current workspace."
-              icon={CheckCircle2}
-            />
-            <MetricCard
-              title="Missing reviews"
-              value={workspace.probationDueCount}
-              href="/workspace/reports/headcount"
-              sub="Probation checkpoints due in the next 7 days."
-              icon={UserCheck}
-            />
-            <MetricCard
-              title="Document follow-ups"
-              value={workspace.contractsExpiringCount}
-              href="/workspace/reports/compliance"
-              sub="Contracts or fixed-term records expiring in 60 days."
-              icon={FileText}
-            />
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-3 text-lg font-semibold text-[--text-primary]">What&apos;s happening this week</h2>
-          <div className="grid gap-3 md:grid-cols-3">
-            <MetricCard title="New starters" value={workspace.newHiresNext7} href="/workspace/people" sub="Employees with start dates in the next 7 days." icon={Users} />
-            <MetricCard title="On leave today" value={workspace.leaveTodayCount} href="/workspace/leave" sub="Approved leave covering today." icon={CalendarDays} />
-            <MetricCard title="On leave this week" value={workspace.leaveThisWeekCount} href="/workspace/leave" sub="Approved leave overlapping the next 7 days." icon={Clock} />
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-3 text-lg font-semibold text-[--text-primary]">Workforce at a glance</h2>
-          <div className="grid gap-4 xl:grid-cols-2">
-            <Link href="/workspace/reports/headcount" className="rounded-xl border border-[--border] bg-[--bg-card] p-5 transition-colors hover:border-[--accent]">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[--text-secondary]">Total headcount</p>
-                  <p className="mt-1 text-3xl font-bold text-[--text-primary]">{workspace.employeeCount}</p>
-                </div>
-                <LineChart className="text-[--accent]" size={22} />
-              </div>
-              <Sparkline data={workspace.headcountTrend} />
-            </Link>
-
-            <div className="rounded-xl border border-[--border] bg-[--bg-card] p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-[--text-primary]">Headcount by department</h3>
-                <BarChart3 className="text-[--accent]" size={20} />
-              </div>
-              <div className="space-y-3">
-                {workspace.departmentCounts.length === 0 ? (
-                  <p className="text-sm text-[--text-tertiary]">No departments assigned yet.</p>
-                ) : (
-                  workspace.departmentCounts.slice(0, 6).map((item) => (
-                    <Link key={item.department} href="/workspace/reports/headcount" className="block">
-                      <div className="mb-1 flex justify-between text-xs">
-                        <span className="text-[--text-secondary]">{item.department}</span>
-                        <span className="font-medium text-[--text-primary]">{item.count}</span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-[--bg-hover]">
-                        <div className="h-full rounded-full bg-[--accent]" style={{ width: `${(item.count / maxDepartment) * 100}%` }} />
-                      </div>
-                    </Link>
-                  ))
-                )}
-              </div>
+        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-[--bg-hover] p-2 text-center">
+          {[
+            ["People", workspace.employeeCount, "text-[--text-primary]"],
+            ["Active", workspace.activeCount, "text-emerald-600 dark:text-emerald-300"],
+            ["On Leave", workspace.onLeaveCount, "text-amber-600 dark:text-amber-300"],
+          ].map(([label, value, className]) => (
+            <div key={label} className="rounded-xl bg-[--bg-card] px-3 py-2">
+              <p className={cn("text-lg font-semibold", className)}>{value}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[--text-tertiary]">{label}</p>
             </div>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-3">
-            <MetricCard title="Active" value={workspace.activeCount} href="/workspace/reports/headcount" sub="Employees currently marked active." icon={Users} />
-            <MetricCard title="On leave" value={workspace.onLeaveCount} href="/workspace/reports/leave" sub="Employees currently marked on leave." icon={CalendarDays} />
-            <MetricCard title="Terminated this month" value={workspace.terminatedThisMonth} href="/workspace/reports/turnover" sub="Exit records dated this calendar month." icon={TrendingUp} />
-          </div>
-        </section>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <MobileMetricCard
+          label="Active employees"
+          value={workspace.activeCount}
+          helper={`${workspace.employeeCount} total people`}
+          href="/workspace/people"
+          icon={Users}
+        />
+        <MobileMetricCard
+          label="Pending approvals"
+          value={workspace.pendingLeaveApprovals}
+          helper={`${priorityCount} priority item${priorityCount === 1 ? "" : "s"}`}
+          href="/workspace/approvals"
+          icon={FileCheck2}
+          tone="warning"
+        />
+        <MobileMetricCard
+          label="Leave today"
+          value={workspace.leaveTodayCount}
+          helper={`${workspace.leaveThisWeekCount} this week`}
+          href="/workspace/leave"
+          icon={CalendarDays}
+        />
+        <MobileMetricCard
+          label="Contracts"
+          value={workspace.contractsExpiringCount}
+          helper="Expiring in 60 days"
+          href="/workspace/reports/compliance"
+          icon={FileText}
+          tone="warning"
+        />
       </div>
 
-      <aside className="space-y-4">
-        <div className="rounded-xl border border-[--border] bg-[--bg-card] p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold text-[--text-primary]">Activity feed</h2>
-            <span className="rounded-full bg-[--accent-soft] px-2 py-0.5 text-xs text-[--accent]">Live-ready</span>
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-[--text-primary]">Quick Actions</h2>
+          <Link href="/workspace" className="text-sm font-semibold text-[--accent] hover:underline">
+            View all
+          </Link>
+        </div>
+        <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+          {QUICK_ACTIONS.map((action) => (
+            <Link
+              key={action.label}
+              href={action.href}
+              className={cn(
+                "flex w-32 shrink-0 flex-col items-center gap-3 rounded-xl border border-[--border] bg-[--bg-card] p-4 text-center hover:-translate-y-0.5 hover:border-[--accent] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30",
+                smoothTransition
+              )}
+            >
+              <span className="flex size-10 items-center justify-center rounded-lg bg-[--accent-soft] text-[--accent]">
+                <action.icon aria-hidden="true" size={20} />
+              </span>
+              <span className="text-xs font-semibold text-[--text-primary]">{action.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
+        <section className="rounded-xl border border-[--border] bg-[--bg-card] p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-[--text-primary]">Workforce at a glance</h2>
+            <Sparkline data={workspace.headcountTrend} />
           </div>
-          <div className="space-y-3">
-            {workspace.activity.length === 0 ? (
-              <p className="text-sm text-[--text-tertiary]">No workspace activity yet.</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              ["New hires", `${workspace.newHiresNext7}`, "Next 7 days"],
+              ["Probation", `${workspace.probationDueCount}`, "Due this week"],
+              ["Turnover", `${workspace.terminatedThisMonth}`, "This month"],
+              ["On leave", `${workspace.onLeaveCount}`, "Current"],
+            ].map(([label, value, helper]) => (
+              <div key={label} className="rounded-xl bg-[--bg-input] p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[--text-tertiary]">{label}</p>
+                <p className="mt-2 text-2xl font-semibold text-[--text-primary]">{value}</p>
+                <p className="mt-1 text-xs text-[--text-secondary]">{helper}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-[--text-primary]">Headcount by department</h3>
+              <BarChart3 aria-hidden="true" size={18} className="text-[--accent]" />
+            </div>
+            {workspace.departmentCounts.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-[--border] p-4 text-sm text-[--text-tertiary]">No departments assigned yet.</p>
             ) : (
-              workspace.activity.map((item) => (
-                <div key={`${item.type}-${item.id}`} className="rounded-lg border border-[--border] bg-[--bg-app] p-3">
-                  <p className="text-sm text-[--text-primary]">{item.label}</p>
-                  <p className="mt-1 text-xs text-[--text-tertiary]">{timeAgo(item.at)}</p>
-                </div>
+              workspace.departmentCounts.slice(0, 5).map((item) => (
+                <Link key={item.department} href="/workspace/reports/headcount" className="block">
+                  <div className="mb-1 flex justify-between text-xs">
+                    <span className="text-[--text-secondary]">{item.department}</span>
+                    <span className="font-semibold text-[--text-primary]">{item.count}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-[--bg-hover]">
+                    <div className={`h-full rounded-full bg-[--accent] ${barWidthClass(item.count, maxDepartment)}`} />
+                  </div>
+                </Link>
               ))
             )}
           </div>
-        </div>
-      </aside>
+        </section>
+
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-[--text-primary]">Recent activity</h2>
+            <Button variant="ghost" size="icon-sm" className="text-[--text-tertiary]" aria-label="Filter activity">
+              <Filter aria-hidden="true" size={16} />
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {activityPreview.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-[--border] bg-[--bg-card] p-5 text-sm text-[--text-tertiary]">No workspace activity yet.</p>
+            ) : (
+              activityPreview.map((item) => {
+                const Icon = item.type === "leave" ? CalendarDays : PartyPopper;
+                return (
+                  <Link
+                    key={`${item.type}-${item.id}`}
+                    href={item.type === "leave" ? "/workspace/leave" : "/workspace/people"}
+                    className={cn(
+                      "flex items-center justify-between rounded-xl border border-[--border] bg-[--bg-card] p-4 hover:border-[--accent] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30",
+                      smoothTransition
+                    )}
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar size="lg">
+                        <AvatarFallback className="bg-[--accent-soft] text-[--accent]">
+                          {item.type === "leave" ? <Icon aria-hidden="true" size={18} /> : initials(item.label)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-[--text-primary]">{item.label}</p>
+                        <p className="text-xs text-[--text-tertiary]">{timeAgo(item.at)}</p>
+                      </div>
+                    </div>
+                    <Icon aria-hidden="true" size={20} className="shrink-0 text-[--accent]" />
+                  </Link>
+                );
+              })
+            )}
+          </div>
+          <div className="mt-4 rounded-xl bg-[--accent-soft] p-4">
+            <div className="mb-2 flex items-center gap-2 text-[--accent]">
+              <PartyPopper aria-hidden="true" size={17} />
+              <p className="text-sm font-bold">Pro Tip</p>
+            </div>
+            <p className="text-xs leading-5 text-[--text-secondary]">Automate probation and contract reminders from workspace settings to reduce manual follow-ups.</p>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
@@ -326,7 +440,7 @@ function ReportsTab({ workspace }: { workspace: WorkspaceDashboard | null }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-[--text-primary]">Reports</h1>
+        <h1 className="text-3xl font-semibold tracking-normal text-[--text-primary]">Reports</h1>
         <p className="mt-1 text-sm text-[--text-secondary]">Pre-built workforce reports with filters, exports, scheduling, and Atlas insights.</p>
       </div>
       {!workspace ? (
@@ -336,14 +450,14 @@ function ReportsTab({ workspace }: { workspace: WorkspaceDashboard | null }) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {REPORTS.map((report) => (
-            <Link key={report.slug} href={`/workspace/reports/${report.slug}`} className="rounded-xl border border-[--border] bg-[--bg-card] p-5 transition-colors hover:border-[--accent]">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-[--accent-soft] text-[--accent]">
-                <BarChart3 size={18} />
+            <Link key={report.slug} href={`/workspace/reports/${report.slug}`} className={cn("rounded-xl border border-[--border] bg-[--bg-card] p-5 hover:border-[--accent] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30", smoothTransition)}>
+              <div className="mb-4 flex size-10 items-center justify-center rounded-lg bg-[--accent-soft] text-[--accent]">
+                <BarChart3 aria-hidden="true" size={18} />
               </div>
               <h2 className="font-semibold text-[--text-primary]">{report.label}</h2>
               <p className="mt-1 text-sm leading-6 text-[--text-secondary]">{report.description}</p>
               <span className="mt-4 flex items-center gap-1 text-sm font-medium text-[--accent]">
-                Open report <ArrowRight size={13} />
+                Open report <ArrowRight aria-hidden="true" size={13} />
               </span>
             </Link>
           ))}
@@ -355,33 +469,32 @@ function ReportsTab({ workspace }: { workspace: WorkspaceDashboard | null }) {
 
 function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | "recentDocs" | "savedItems">) {
   const { open: openCopilot } = useCopilot();
-  const firstName = profile?.full_name?.split(" ")[0] ?? null;
-  const greeting = `${timeGreeting()}${firstName ? `, ${firstName}` : ""}`;
+  const greeting = `${timeGreeting()}${profile?.full_name ? `, ${firstName(profile)}` : ""}`;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-start justify-between gap-4">
+    <div className="mx-auto max-w-4xl space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[--text-primary]">{greeting}</h1>
+          <h1 className="text-3xl font-semibold tracking-normal text-[--text-primary]">{greeting}</h1>
           <p className="mt-1 text-[--text-secondary]">Here&apos;s your HR brief for today.</p>
         </div>
-        <button type="button" onClick={openCopilot} className="flex shrink-0 items-center gap-2 rounded-xl bg-[--accent] px-4 py-2.5 text-sm font-semibold text-[--primary-foreground] hover:bg-[--accent-hover] transition-colors">
-          <Sparkles size={15} />
+        <Button type="button" onClick={openCopilot} className="w-fit shrink-0 rounded-xl">
+          <Sparkles aria-hidden="true" size={15} />
           Ask Atlas
-        </button>
+        </Button>
       </div>
 
       {profile?.country && (
         <div className="flex items-center gap-4 rounded-xl border border-[--border] bg-[--bg-card] p-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[--accent-soft]">
-            <Globe size={18} className="text-[--accent]" />
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[--accent-soft]">
+            <Globe aria-hidden="true" size={18} className="text-[--accent]" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-[--text-primary]">Latest in HR for {profile.country}</p>
             <p className="mt-0.5 text-xs text-[--text-tertiary]">Country-specific articles, laws and updates tailored to your region.</p>
           </div>
           <Link href={`/knowledge?country=${encodeURIComponent(profile.country)}`} className="flex shrink-0 items-center gap-1 text-xs font-medium text-[--accent] hover:underline">
-            Explore <ArrowRight size={11} />
+            Explore <ArrowRight aria-hidden="true" size={11} />
           </Link>
         </div>
       )}
@@ -390,10 +503,10 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
         <h2 className="mb-4 text-lg font-semibold text-[--text-primary]">Today&apos;s HR brief</h2>
         <div className="grid gap-3 sm:grid-cols-3">
           {BRIEFS.map((brief) => (
-            <div key={brief.title} className={`rounded-xl border p-4 ${brief.type === "warning" ? "border-[--warning]/30 bg-orange-50 dark:bg-orange-950/20" : "border-[--border] bg-[--bg-card]"}`}>
+            <div key={brief.title} className={cn("rounded-xl border p-4", brief.type === "warning" ? "border-amber-300 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-900/20" : "border-[--border] bg-[--bg-card]")}>
               <p className="text-sm font-medium leading-snug text-[--text-primary]">{brief.title}</p>
               <Link href={brief.href} className="mt-3 flex items-center gap-1 text-xs font-medium text-[--accent] hover:underline">
-                {brief.action} <ArrowRight size={11} />
+                {brief.action} <ArrowRight aria-hidden="true" size={11} />
               </Link>
             </div>
           ))}
@@ -403,10 +516,10 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
       <div>
         <h2 className="mb-4 text-lg font-semibold text-[--text-primary]">Quick actions</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
-            <Link key={action.label} href={action.href} className="group flex flex-col items-center gap-2 rounded-xl border border-[--border] bg-[--bg-card] p-4 text-center transition-all hover:border-[--accent] hover:shadow-md">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[--accent-soft] transition-colors group-hover:bg-[--accent]">
-                <action.icon size={18} className="text-[--accent] transition-colors group-hover:text-[--primary-foreground]" />
+          {PERSONAL_ACTIONS.map((action) => (
+            <Link key={action.label} href={action.href} className={cn("group flex flex-col items-center gap-2 rounded-xl border border-[--border] bg-[--bg-card] p-4 text-center hover:border-[--accent] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30", smoothTransition)}>
+              <div className="flex size-10 items-center justify-center rounded-xl bg-[--accent-soft] group-hover:bg-[--accent]">
+                <action.icon aria-hidden="true" size={18} className="text-[--accent] group-hover:text-[--primary-foreground]" />
               </div>
               <span className="text-xs font-medium text-[--text-secondary] group-hover:text-[--text-primary]">{action.label}</span>
             </Link>
@@ -428,16 +541,16 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
             </div>
           ) : (
             recentDocs.map((doc) => (
-              <Link key={doc.id} href={`/dashboard/documents/${doc.id}`} className="flex items-center gap-4 rounded-xl border border-[--border] bg-[--bg-card] p-4 transition-colors hover:border-[--accent]">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[--accent-soft]">
-                  <FileText size={16} className="text-[--accent]" />
+              <Link key={doc.id} href={`/dashboard/documents/${doc.id}`} className={cn("flex items-center gap-4 rounded-xl border border-[--border] bg-[--bg-card] p-4 hover:border-[--accent]", smoothTransition)}>
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[--accent-soft]">
+                  <FileText aria-hidden="true" size={16} className="text-[--accent]" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[--text-primary]">{doc.title ?? "Untitled Document"}</p>
                   <p className="text-xs text-[--text-tertiary]">{doc.tool_name}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1 text-xs text-[--text-tertiary]">
-                  <Clock size={11} />
+                  <Clock aria-hidden="true" size={11} />
                   {timeAgo(doc.created_at)}
                 </div>
               </Link>
@@ -456,16 +569,16 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
             {savedItems.map((item) => {
               const Icon = ITEM_TYPE_ICONS[item.item_type] ?? Bookmark;
               return (
-                <Link key={item.id} href={savedItemHref(item)} className="flex items-center gap-4 rounded-xl border border-[--border] bg-[--bg-card] p-4 transition-colors hover:border-[--accent]">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[--accent-soft]">
-                    <Icon size={16} className="text-[--accent]" />
+                <Link key={item.id} href={savedItemHref(item)} className={cn("flex items-center gap-4 rounded-xl border border-[--border] bg-[--bg-card] p-4 hover:border-[--accent]", smoothTransition)}>
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[--accent-soft]">
+                    <Icon aria-hidden="true" size={16} className="text-[--accent]" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium capitalize text-[--text-primary]">{savedItemLabel(item)}</p>
                     <p className="text-xs capitalize text-[--text-tertiary]">{item.item_type}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1 text-xs text-[--text-tertiary]">
-                    <Clock size={11} />
+                    <Clock aria-hidden="true" size={11} />
                     {timeAgo(item.saved_at)}
                   </div>
                 </Link>
@@ -480,31 +593,48 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
 
 export function DashboardClient({ profile, recentDocs, savedItems, workspace }: Props) {
   const [activeTab, setActiveTab] = useState<DashboardTab>(workspace?.defaultTab ?? "for-you");
-  const tabs: { key: DashboardTab; label: string; disabled?: boolean }[] = [
-    { key: "workspace", label: "Workspace", disabled: !workspace },
-    { key: "for-you", label: "For you" },
-    { key: "reports", label: "Reports", disabled: !workspace },
+  const tabs: { key: DashboardTab; label: string; disabled?: boolean; icon: typeof Users }[] = [
+    { key: "workspace", label: "Workspace", disabled: !workspace, icon: Users },
+    { key: "for-you", label: "For you", icon: Sparkles },
+    { key: "reports", label: "Reports", disabled: !workspace, icon: BarChart3 },
   ];
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between gap-3 lg:hidden">
+        <div className="flex items-center gap-2">
+          <div className="flex size-8 items-center justify-center rounded-xl bg-[--accent] text-[--primary-foreground]">
+            <Users aria-hidden="true" size={17} />
+          </div>
+          <span className="text-lg font-bold text-[--accent]">Atlas HR</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon-lg" aria-label="Search dashboard">
+            <Search aria-hidden="true" size={18} />
+          </Button>
+          <Button variant="ghost" size="icon-lg" aria-label="Dashboard settings">
+            <Settings aria-hidden="true" size={18} />
+          </Button>
+        </div>
+      </div>
+
       <div className="flex w-fit gap-1 rounded-xl border border-[--border] bg-[--bg-card] p-1">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.key}
             type="button"
             disabled={tab.disabled}
             onClick={() => setActiveTab(tab.key)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-              activeTab === tab.key ? "bg-[--accent] text-[--primary-foreground]" : "text-[--text-secondary] hover:bg-[--bg-hover]"
-            }`}
+            variant={activeTab === tab.key ? "default" : "ghost"}
+            className={cn("rounded-xl px-3", activeTab !== tab.key && "text-[--text-secondary] hover:bg-[--bg-hover]")}
           >
+            <tab.icon aria-hidden="true" size={14} />
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 
-      {activeTab === "workspace" && workspace ? <WorkspaceTab workspace={workspace} /> : null}
+      {activeTab === "workspace" && workspace ? <WorkspaceTab workspace={workspace} profile={profile} /> : null}
       {activeTab === "for-you" ? <ForYouTab profile={profile} recentDocs={recentDocs} savedItems={savedItems} /> : null}
       {activeTab === "reports" ? <ReportsTab workspace={workspace} /> : null}
     </div>
