@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Check, Loader2, Mail, Minus, Plus, X } from "lucide-react";
+import { CalendarClock, Check, Loader2, Mail, Minus, Plus, X } from "lucide-react";
 import {
   createCheckoutSession,
   createOrgAndCheckout,
 } from "@/app/(app)/billing/actions";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { PLANS, type BillingInterval } from "@/lib/stripe/products";
 
 export type CurrentPricingPlan = "free" | "pro" | "team" | "business" | "enterprise";
@@ -227,12 +229,16 @@ export function PricingClient({
   const [size, setSize] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loadingPlan, setLoadingPlan] = useState<"pro" | "team" | "business" | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [quiz, setQuiz] = useState({
     companySize: "11-50",
     needsCompliance: false,
     needsCustom: false,
     needsSSO: false,
   });
+
+  const smoothTransition =
+    "transition-[background-color,border-color,box-shadow,color,transform] duration-[280ms] ease-[cubic-bezier(0.32,0.72,0,1)]";
 
   useEffect(() => {
     if (!cancelled) return;
@@ -430,37 +436,63 @@ export function PricingClient({
           animate={{ opacity: 1, y: 0 }}
           className="mb-12 text-center"
         >
-          <h1 className="text-4xl font-bold text-[--text-primary]">
-            Simple, transparent pricing
+          <Badge
+            variant="outline"
+            className="mb-4 border-transparent bg-[--accent-soft] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[--accent]"
+          >
+            Pricing plans
+          </Badge>
+          <h1 className="text-3xl font-semibold tracking-tight text-[--text-primary] sm:text-4xl lg:text-5xl">
+            Plans that grow with you
           </h1>
-          <p className="mt-3 text-lg text-[--text-secondary]">
-            Start free. Upgrade when you&apos;re ready.
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[--text-secondary] sm:text-lg">
+            Flexible workspace solutions for global teams. Choose the scale that fits your current
+            workforce and evolve seamlessly as you expand.
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-1 rounded-lg border border-[--border] bg-[--bg-card] p-1">
+          <div
+            role="radiogroup"
+            aria-label="Billing interval"
+            className="mt-7 inline-flex items-center gap-1 rounded-full border border-[--border] bg-[--bg-card] p-1 shadow-sm"
+          >
             <button
               type="button"
+              role="radio"
+              aria-checked={interval === "month" ? "true" : "false"}
               onClick={() => setInterval("month")}
-              className={`h-9 rounded-md px-4 text-sm font-medium transition-colors ${
+              className={cn(
+                "h-9 rounded-full px-5 text-sm font-semibold",
+                smoothTransition,
                 interval === "month"
-                  ? "bg-[--accent] text-[--primary-foreground]"
+                  ? "bg-[--accent] text-[--primary-foreground] shadow-sm"
                   : "text-[--text-secondary] hover:text-[--text-primary]"
-              }`}
+              )}
             >
               Monthly
             </button>
             <button
               type="button"
+              role="radio"
+              aria-checked={interval === "year" ? "true" : "false"}
               onClick={() => setInterval("year")}
-              className={`h-9 rounded-md px-4 text-sm font-medium transition-colors ${
+              className={cn(
+                "inline-flex h-9 items-center gap-1.5 rounded-full px-5 text-sm font-semibold",
+                smoothTransition,
                 interval === "year"
-                  ? "bg-[--accent] text-[--primary-foreground]"
+                  ? "bg-[--accent] text-[--primary-foreground] shadow-sm"
                   : "text-[--text-secondary] hover:text-[--text-primary]"
-              }`}
+              )}
             >
-              Yearly
-              <span className="ml-1.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
-                -20%
+              Annual
+              <span
+                className={cn(
+                  "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
+                  interval === "year"
+                    ? "bg-primary-foreground/20 text-[--primary-foreground]"
+                    : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+                )}
+              >
+                Save 20%
               </span>
             </button>
           </div>
@@ -472,7 +504,7 @@ export function PricingClient({
           </div>
         )}
 
-        <div className="mb-16 grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mb-16 grid gap-5 sm:grid-cols-2 xl:grid-cols-5 xl:items-stretch xl:pt-4">
           {TIERS.map((tier, i) => (
             <motion.div
               key={tier.name}
@@ -480,39 +512,54 @@ export function PricingClient({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className={`relative flex flex-col rounded-xl border p-6 ${
+              className={cn(
+                "relative flex flex-col rounded-2xl border bg-[--bg-card] p-6",
+                smoothTransition,
                 tier.highlighted
-                  ? "border-[--accent] bg-[--accent-soft] shadow-xl"
-                  : "border-[--border] bg-[--bg-card]"
-              }`}
+                  ? "z-10 border-2 border-[--accent] shadow-xl xl:scale-[1.04]"
+                  : "border-[--border] hover:-translate-y-0.5 hover:shadow-md"
+              )}
             >
               {tier.highlighted && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[--accent] px-3 py-0.5 text-xs font-semibold text-[--primary-foreground]">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[--accent] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[--primary-foreground] shadow-sm">
                   Most popular
                 </div>
               )}
 
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[--text-tertiary]">
-                  {tier.name}
+                <h3 className="text-lg font-semibold text-[--text-primary]">{tier.name}</h3>
+                <p className="mt-1 text-sm leading-5 text-[--text-tertiary]">
+                  {tier.description}
                 </p>
-                <p className="mt-1 text-3xl font-bold text-[--text-primary]">
-                  {priceFor(tier.name, interval)}
-                  <span className="text-sm font-normal text-[--text-tertiary]">
+                <div className="mt-5 flex items-baseline gap-1">
+                  <span
+                    className={cn(
+                      "text-3xl font-extrabold tracking-tight sm:text-4xl",
+                      tier.highlighted ? "text-[--accent]" : "text-[--text-primary]"
+                    )}
+                  >
+                    {priceFor(tier.name, interval)}
+                  </span>
+                  <span className="text-sm font-medium text-[--text-tertiary]">
                     {intervalSuffix(tier.name, interval)}
                   </span>
-                </p>
+                </div>
                 {(tier.name === "Team" || tier.name === "Business") && (
-                  <p className="text-xs text-[--text-tertiary]">
-                    + ${tier.name === "Business" ? (interval === "year" ? PLANS.business.seatPriceYearly : PLANS.business.seatPriceMonthly) : (interval === "year" ? PLANS.team.seatPriceYearly : PLANS.team.seatPriceMonthly)}/employee/{interval === "year" ? "yr" : "mo"}
+                  <p className="mt-1 text-xs text-[--text-tertiary]">
+                    + $
+                    {tier.name === "Business"
+                      ? interval === "year"
+                        ? PLANS.business.seatPriceYearly
+                        : PLANS.business.seatPriceMonthly
+                      : interval === "year"
+                        ? PLANS.team.seatPriceYearly
+                        : PLANS.team.seatPriceMonthly}
+                    /employee/{interval === "year" ? "yr" : "mo"}
                   </p>
                 )}
                 {tier.badge && (
-                  <p className="text-xs text-[--text-tertiary]">{tier.badge}</p>
+                  <p className="mt-1 text-xs font-medium text-[--text-tertiary]">{tier.badge}</p>
                 )}
-                <p className="mt-1 text-sm text-[--text-secondary]">
-                  {tier.description}
-                </p>
               </div>
 
               <ul className="my-6 flex-1 space-y-2">
@@ -545,12 +592,102 @@ export function PricingClient({
           ))}
         </div>
 
-        <div className="mb-16 flex flex-wrap justify-center gap-8 text-sm text-[--text-tertiary]">
-          <span>30-day money-back guarantee</span>
-          <span>No credit card for free tier</span>
-          <span>Cancel anytime</span>
-          <span>Stripe Tax supported</span>
+        <div className="mb-16 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[--text-tertiary]">
+          <span className="inline-flex items-center gap-1.5">
+            <Check size={14} className="text-[--success]" /> 30-day money-back guarantee
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Check size={14} className="text-[--success]" /> No credit card for free tier
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Check size={14} className="text-[--success]" /> Cancel anytime
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Check size={14} className="text-[--success]" /> Stripe Tax supported
+          </span>
         </div>
+
+        <section
+          aria-labelledby="compare-features-heading"
+          className="mb-16 border-t border-[--border] pt-10"
+        >
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[--text-tertiary]">
+                Side-by-side
+              </p>
+              <h2
+                id="compare-features-heading"
+                className="mt-1 text-2xl font-semibold tracking-tight text-[--text-primary] sm:text-3xl"
+              >
+                Compare features
+              </h2>
+            </div>
+            <p className="text-sm text-[--text-tertiary]">
+              All plans include the Knowledge Hub, free templates, and the public community.
+            </p>
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-[--border] bg-[--bg-card] shadow-sm">
+            <table className="w-full min-w-[640px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-[--border] bg-[--bg-input]">
+                  <th className="w-1/3 px-5 py-4 text-xs font-semibold uppercase tracking-wider text-[--text-tertiary]">
+                    Feature
+                  </th>
+                  {TIERS.map((tier) => (
+                    <th
+                      key={tier.name}
+                      className={cn(
+                        "px-3 py-4 text-center text-xs font-bold uppercase tracking-wider",
+                        tier.highlighted ? "text-[--accent]" : "text-[--text-secondary]"
+                      )}
+                    >
+                      {tier.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[--border]">
+                {FEATURE_KEYS.map((featureKey) => (
+                  <tr key={featureKey} className={cn("hover:bg-[--bg-input]/50", smoothTransition)}>
+                    <td className="px-5 py-3.5 text-sm font-medium text-[--text-primary]">
+                      {featureKey}
+                    </td>
+                    {TIERS.map((tier) => {
+                      const value = tier.features[featureKey];
+                      return (
+                        <td
+                          key={tier.name}
+                          className={cn(
+                            "px-3 py-3.5 text-center text-sm",
+                            tier.highlighted ? "font-semibold text-[--accent]" : "text-[--text-secondary]"
+                          )}
+                        >
+                          {value === false ? (
+                            <span className="text-[--text-tertiary]" aria-label="Not included">
+                              —
+                            </span>
+                          ) : value === true ? (
+                            <Check
+                              size={16}
+                              className={cn(
+                                "mx-auto",
+                                tier.highlighted ? "text-[--accent]" : "text-[--success]"
+                              )}
+                              aria-label="Included"
+                            />
+                          ) : (
+                            <span>{value}</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <section className="mx-auto mb-16 max-w-4xl rounded-xl border border-[--border] bg-[--bg-card] p-6">
           <div className="mb-5">
@@ -602,26 +739,111 @@ export function PricingClient({
           </div>
         </section>
 
-        <div className="mx-auto max-w-2xl">
-          <h2 className="mb-8 text-center text-2xl font-bold text-[--text-primary]">
+        <div className="mx-auto mb-16 max-w-3xl">
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight text-[--text-primary] sm:text-3xl">
             Frequently asked questions
           </h2>
-          <div className="space-y-4">
-            {FAQS.map((faq, i) => (
-              <motion.div
-                key={faq.q}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="rounded-xl border border-[--border] bg-[--bg-card] p-5"
-              >
-                <p className="mb-2 font-semibold text-[--text-primary]">{faq.q}</p>
-                <p className="text-sm leading-relaxed text-[--text-secondary]">{faq.a}</p>
-              </motion.div>
-            ))}
+          <div className="space-y-3">
+            {FAQS.map((faq, i) => {
+              const isOpen = openFaq === i;
+              const panelId = `faq-panel-${i}`;
+              const buttonId = `faq-trigger-${i}`;
+              return (
+                <motion.div
+                  key={faq.q}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  className={cn(
+                    "overflow-hidden rounded-xl border bg-[--bg-card]",
+                    isOpen ? "border-[--accent]/40 shadow-sm" : "border-[--border]"
+                  )}
+                >
+                  <button
+                    type="button"
+                    id={buttonId}
+                    aria-expanded={isOpen ? "true" : "false"}
+                    aria-controls={panelId}
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    className={cn(
+                      "flex w-full items-center justify-between gap-4 px-5 py-4 text-left",
+                      smoothTransition,
+                      "hover:bg-[--bg-input]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]/30"
+                    )}
+                  >
+                    <span className="text-base font-semibold text-[--text-primary]">{faq.q}</span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "flex size-7 shrink-0 items-center justify-center rounded-full",
+                        isOpen
+                          ? "bg-[--accent]/10 text-[--accent]"
+                          : "bg-[--bg-input] text-[--text-tertiary]"
+                      )}
+                    >
+                      {isOpen ? <Minus size={14} /> : <Plus size={14} />}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      className="border-t border-[--border]/60 px-5 py-4"
+                    >
+                      <p className="text-sm leading-relaxed text-[--text-secondary]">{faq.a}</p>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
+
+        <section
+          aria-labelledby="pricing-cta-heading"
+          className="relative mb-8 overflow-hidden rounded-3xl bg-foreground p-8 text-center text-background sm:p-12"
+        >
+          <div className="pointer-events-none absolute inset-0 opacity-30">
+            <div className="absolute -left-20 top-0 size-80 rounded-full bg-[--accent] blur-3xl" />
+            <div className="absolute -right-20 bottom-0 size-80 rounded-full bg-[--accent]/60 blur-3xl" />
+          </div>
+          <div className="relative">
+            <h2
+              id="pricing-cta-heading"
+              className="text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl"
+            >
+              Still have questions?
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-background/70 sm:text-base">
+              Our HR specialists are ready to help you find the right fit for your team&apos;s
+              unique requirements.
+            </p>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button
+                className={cn("h-11 rounded-xl px-6 text-sm font-semibold", smoothTransition)}
+                nativeButton={false}
+                render={<Link href="/demo" />}
+              >
+                <Mail aria-hidden="true" />
+                Talk to sales
+              </Button>
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-11 rounded-xl border-background/20 bg-transparent px-6 text-sm font-semibold text-background hover:bg-background/10 hover:text-background",
+                  smoothTransition
+                )}
+                nativeButton={false}
+                render={<Link href="/demo" />}
+              >
+                <CalendarClock aria-hidden="true" />
+                Schedule a demo
+              </Button>
+            </div>
+          </div>
+        </section>
       </div>
 
       <Dialog open={workspaceDialogOpen} onOpenChange={setWorkspaceDialogOpen}>
@@ -845,7 +1067,7 @@ function ToggleQuestion({
     >
       <span>{label}</span>
       <span className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 ${value ? "bg-[--accent]" : "bg-[--bg-hover]"}`}>
-        <span className={`h-4 w-4 rounded-full bg-white transition-transform ${value ? "translate-x-4" : ""}`} />
+        <span className={`h-4 w-4 rounded-full bg-primary-foreground transition-transform ${value ? "translate-x-4" : ""}`} />
       </span>
     </button>
   );

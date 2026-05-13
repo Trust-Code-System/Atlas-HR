@@ -125,7 +125,7 @@ export function CookiePreferences({
                 } disabled:cursor-not-allowed disabled:opacity-70`}
               >
                 <span
-                  className={`mt-1 h-4 w-4 rounded-full bg-white shadow transition ${
+                  className={`mt-1 h-4 w-4 rounded-full bg-primary-foreground shadow transition ${
                     on ? "translate-x-6" : "translate-x-1"
                   }`}
                 />

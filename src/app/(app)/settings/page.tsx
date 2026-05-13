@@ -501,7 +501,7 @@ function AppearanceTab() {
       frame: "bg-slate-950 border-slate-800",
       preview: "bg-slate-900",
       wash: "from-slate-900 to-black",
-      tile: "bg-blue-300",
+      tile: "bg-chart-1",
     },
     {
       value: "light-purple" as const,
@@ -515,9 +515,9 @@ function AppearanceTab() {
       value: "dark-purple" as const,
       label: "Royal Purple",
       frame: "bg-slate-950 border-slate-800",
-      preview: "bg-purple-950",
-      wash: "from-purple-950 to-black",
-      tile: "bg-purple-300",
+      preview: "bg-secondary",
+      wash: "from-chart-4/50 to-background",
+      tile: "bg-chart-4",
     },
   ];
 
@@ -566,7 +566,7 @@ function AppearanceTab() {
                   <div className={`relative aspect-video overflow-hidden rounded-lg ${option.preview}`}>
                     <div className={`absolute inset-0 bg-linear-to-br ${option.wash} opacity-70`} />
                     <div className={`absolute left-1/2 top-1/2 flex h-8 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded shadow-sm ${option.tile}`}>
-                      <div className="h-1 w-8 rounded-full bg-white/25" />
+                      <div className="h-1 w-8 rounded-full bg-primary-foreground/25" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between px-1 pt-2">
@@ -656,7 +656,7 @@ function AppearanceTab() {
                   onClick={item.toggle}
                   className={`relative inline-flex h-6 w-11 shrink-0 rounded-full p-1 outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${item.on ? "bg-accent" : "bg-border"} ${smooth}`}
                 >
-                  <span className={`size-4 rounded-full bg-white shadow ${item.on ? "translate-x-5" : "translate-x-0"} ${smooth}`} />
+                  <span className={`size-4 rounded-full bg-primary-foreground shadow ${item.on ? "translate-x-5" : "translate-x-0"} ${smooth}`} />
                   <span className="sr-only">{item.on ? "Enabled" : "Disabled"}</span>
                 </button>
               </div>
@@ -855,7 +855,7 @@ function NotificationsTab() {
                   }`}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-4 w-4 translate-x-0 rounded-full bg-white shadow ring-0 transition-transform [duration:280ms] ${
+                    className={`pointer-events-none inline-block h-4 w-4 translate-x-0 rounded-full bg-primary-foreground shadow ring-0 transition-transform [duration:280ms] ${
                       on ? "translate-x-4" : "translate-x-0"
                     }`}
                   />
