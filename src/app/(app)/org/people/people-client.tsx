@@ -31,6 +31,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createEmployee, deleteEmployee } from "./actions";
 import type { Employee } from "@/types/database";
@@ -88,6 +98,8 @@ export function PeopleClient({ employees, isAdmin }: Props) {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filtered = employees.filter((e) =>
     e.full_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -104,11 +116,15 @@ export function PeopleClient({ employees, isAdmin }: Props) {
   }, {});
   const topHub = Object.entries(countries).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "No hub yet";
 
-  function handleDelete(id: string, name: string) {
-    if (!confirm(`Remove ${name} from this workspace? This cannot be undone.`)) return;
+  function confirmDelete() {
+    if (!deleteTarget || isDeleting) return;
+    const { id } = deleteTarget;
+    setIsDeleting(true);
     startTransition(async () => {
       const res = await deleteEmployee(id);
       if (!res.ok) alert(res.error);
+      setIsDeleting(false);
+      setDeleteTarget(null);
     });
   }
 
@@ -273,9 +289,9 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            onClick={() => handleDelete(emp.id, emp.full_name)}
+                            onClick={() => setDeleteTarget({ id: emp.id, name: emp.full_name })}
                             className="text-text-tertiary hover:bg-danger/10 hover:text-danger"
-                            title="Remove employee"
+                            aria-label="Remove employee"
                           >
                             <Trash2 size={15} />
                           </Button>
@@ -420,6 +436,41 @@ export function PeopleClient({ employees, isAdmin }: Props) {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove {deleteTarget?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will remove {deleteTarget?.name} from this workspace. Their account and historical data will be
+              preserved, but they will lose access to this workspace immediately. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={isDeleting}
+              className="inline-flex items-center gap-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => confirmDelete()}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  Removing…
+                </>
+              ) : (
+                "Remove employee"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
