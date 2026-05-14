@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogClose,
@@ -341,19 +342,19 @@ export function PeopleClient({ employees, isAdmin }: Props) {
           <form onSubmit={handleAdd} className="space-y-5 p-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label htmlFor="employee-full-name" className="mb-1.5 block text-sm font-medium text-foreground">Full name *</label>
+                <Label htmlFor="employee-full-name">Full name *</Label>
                 <Input id="employee-full-name" name="full_name" required placeholder="Jane Smith" className="h-11 rounded-xl bg-bg-input px-3 text-sm" />
               </div>
               <div>
-                <label htmlFor="employee-email" className="mb-1.5 block text-sm font-medium text-foreground">Email</label>
+                <Label htmlFor="employee-email">Email</Label>
                 <Input id="employee-email" name="email" type="email" placeholder="jane@company.com" className="h-11 rounded-xl bg-bg-input px-3 text-sm" />
               </div>
               <div>
-                <label htmlFor="employee-job-title" className="mb-1.5 block text-sm font-medium text-foreground">Job title</label>
+                <Label htmlFor="employee-job-title">Job title</Label>
                 <Input id="employee-job-title" name="job_title" placeholder="Software Engineer" className="h-11 rounded-xl bg-bg-input px-3 text-sm" />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">Department</label>
+                <Label htmlFor="employee-department">Department</Label>
                 <Select
                   name="department"
                   defaultValue="none"
@@ -362,7 +363,7 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                     ...DEPARTMENTS.map((department) => ({ value: department, label: department })),
                   ]}
                 >
-                  <SelectTrigger className="h-11 rounded-xl">
+                  <SelectTrigger id="employee-department" className="h-11 rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -372,7 +373,7 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                 </Select>
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">Employment type</label>
+                <Label htmlFor="employee-employment-type">Employment type</Label>
                 <Select
                   name="employment_type"
                   defaultValue="none"
@@ -381,7 +382,7 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                     ...EMPLOYMENT_TYPES,
                   ]}
                 >
-                  <SelectTrigger className="h-11 rounded-xl">
+                  <SelectTrigger id="employee-employment-type" className="h-11 rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -391,14 +392,14 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                 </Select>
               </div>
               <div>
-                <label htmlFor="employee-start-date" className="mb-1.5 block text-sm font-medium text-foreground">Start date</label>
+                <Label htmlFor="employee-start-date">Start date</Label>
                 <div className="relative">
                   <CalendarDays size={16} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-text-tertiary" />
                   <Input id="employee-start-date" name="start_date" type="date" title="Start date" className="h-11 rounded-xl bg-bg-input pl-9 pr-3 text-sm" />
                 </div>
               </div>
               <div>
-                <label htmlFor="employee-country" className="mb-1.5 block text-sm font-medium text-foreground">Country</label>
+                <Label htmlFor="employee-country">Country</Label>
                 <Input id="employee-country" name="country" placeholder="United States" className="h-11 rounded-xl bg-bg-input px-3 text-sm" />
               </div>
             </div>
