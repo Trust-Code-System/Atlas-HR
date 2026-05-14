@@ -29,7 +29,7 @@ type Inputs = Record<string, unknown>;
 type Row = Record<string, string | number>;
 type PieDatum = Record<string, string | number>;
 
-const chartColors = ["var(--accent)", "var(--success)", "var(--warning)", "var(--danger)", "#64748b", "#14b8a6"];
+const chartColors = ["var(--accent)", "var(--success)", "var(--warning)", "var(--danger)", "var(--text-tertiary)", "var(--chart-4)"];
 const chartTooltipStyle = {
   backgroundColor: "var(--bg-card)",
   border: "1px solid var(--border)",
