@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowRight, CheckCircle2, Users } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { joinMentorshipWaitlist } from "./actions";
 
 export const metadata: Metadata = {
@@ -102,10 +103,23 @@ export default async function MentorshipPage({
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5 text-sm">
                 <span className="font-medium text-[--text-primary]">I want to</span>
-                <select required name="role" defaultValue="mentee" className="h-10 rounded-lg border border-[--border] bg-[--bg-input] px-3 text-[--text-primary] outline-none focus:border-[--accent]">
-                  <option value="mentee">Find a mentor</option>
-                  <option value="mentor">Become a mentor</option>
-                </select>
+                <Select
+                  required
+                  name="role"
+                  defaultValue="mentee"
+                  items={[
+                    { value: "mentee", label: "Find a mentor" },
+                    { value: "mentor", label: "Become a mentor" },
+                  ]}
+                >
+                  <SelectTrigger id="mentorship-role">
+                    <SelectValue placeholder="Choose role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mentee">Find a mentor</SelectItem>
+                    <SelectItem value="mentor">Become a mentor</SelectItem>
+                  </SelectContent>
+                </Select>
               </label>
               <label className="grid gap-1.5 text-sm">
                 <span className="font-medium text-[--text-primary]">Company</span>
