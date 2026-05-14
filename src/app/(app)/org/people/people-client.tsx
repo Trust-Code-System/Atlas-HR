@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   BriefcaseBusiness,
   CalendarDays,
+  Check,
   ChevronDown,
   Grid3X3,
   List,
@@ -17,10 +18,11 @@ import {
   Trash2,
   UserPlus,
   Users,
+  X,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -41,7 +43,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { createEmployee, deleteEmployee } from "./actions";
 import type { Employee } from "@/types/database";
 
@@ -51,6 +55,12 @@ const EMPLOYMENT_TYPES = [
   { value: "part_time", label: "Part Time" },
   { value: "contract", label: "Contract" },
   { value: "intern", label: "Intern" },
+];
+
+const STATUS_FILTER_OPTIONS: { value: Employee["status"]; label: string }[] = [
+  { value: "active", label: "Active" },
+  { value: "on_leave", label: "On Leave" },
+  { value: "terminated", label: "Terminated" },
 ];
 
 function initials(name: string) {
@@ -111,11 +121,52 @@ export function PeopleClient({ employees, isAdmin }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const filtered = employees.filter((e) =>
-    e.full_name.toLowerCase().includes(search.toLowerCase()) ||
-    (e.job_title ?? "").toLowerCase().includes(search.toLowerCase()) ||
-    (e.department ?? "").toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter state — local for now. Cluster 10 will lift these to URL
+  // searchParams alongside pagination so filters persist across page
+  // navigation and can be shared via URL.
+  const [departmentFilter, setDepartmentFilter] = useState<string | null>(null);
+  const [locationFilter, setLocationFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<Employee["status"] | null>(null);
+
+  const uniqueDepartments = useMemo(() => {
+    const set = new Set<string>();
+    for (const emp of employees) {
+      if (emp.department) set.add(emp.department);
+    }
+    return Array.from(set).sort();
+  }, [employees]);
+
+  const uniqueLocations = useMemo(() => {
+    const set = new Set<string>();
+    for (const emp of employees) {
+      if (emp.country) set.add(emp.country);
+    }
+    return Array.from(set).sort();
+  }, [employees]);
+
+  const hasActiveFilters =
+    departmentFilter !== null || locationFilter !== null || statusFilter !== null;
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return employees.filter((e) => {
+      const matchesSearch =
+        e.full_name.toLowerCase().includes(q) ||
+        (e.job_title ?? "").toLowerCase().includes(q) ||
+        (e.department ?? "").toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+      if (departmentFilter !== null && e.department !== departmentFilter) return false;
+      if (locationFilter !== null && e.country !== locationFilter) return false;
+      if (statusFilter !== null && e.status !== statusFilter) return false;
+      return true;
+    });
+  }, [employees, search, departmentFilter, locationFilter, statusFilter]);
+
+  const showNoSearchMatchCard =
+    employees.length > 0 && filtered.length === 0 && !hasActiveFilters;
+
+  const filterOptionClass =
+    "flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
   const activeCount = employees.filter((employee) => employee.status === "active").length;
   const onLeaveCount = employees.filter((employee) => employee.status === "on_leave").length;
   const departmentCount = new Set(employees.map((employee) => employee.department).filter(Boolean)).size;
@@ -195,20 +246,144 @@ export function PeopleClient({ employees, isAdmin }: Props) {
               />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {[
-                ["Department", "All"],
-                ["Location", topHub],
-                ["Status", "All"],
-              ].map(([label, value]) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-hover px-3 py-2 text-xs text-text-secondary"
+              <Popover>
+                <PopoverTrigger
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-label="Filter by department"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "h-8 gap-1.5 rounded-full border-border font-normal shadow-none",
+                  )}
                 >
-                  <span className="font-semibold">{label}:</span>
-                  <span className="text-accent">{value}</span>
-                  <ChevronDown size={14} className="text-text-tertiary" />
-                </span>
-              ))}
+                  <span className={departmentFilter ? "font-medium text-foreground" : "text-text-secondary"}>
+                    {departmentFilter ?? "Department"}
+                  </span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                </PopoverTrigger>
+                <PopoverContent className="w-56 gap-0 p-1" align="start">
+                  <div className="space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setDepartmentFilter(null)}
+                      className={filterOptionClass}
+                    >
+                      <span>All departments</span>
+                      {departmentFilter === null && <Check className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                    {uniqueDepartments.map((dept) => (
+                      <button
+                        key={dept}
+                        type="button"
+                        onClick={() => setDepartmentFilter(dept)}
+                        className={filterOptionClass}
+                      >
+                        <span>{dept}</span>
+                        {departmentFilter === dept && <Check className="h-3.5 w-3.5 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <Popover>
+                <PopoverTrigger
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-label="Filter by location"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "h-8 gap-1.5 rounded-full border-border font-normal shadow-none",
+                  )}
+                >
+                  <span className={locationFilter ? "font-medium text-foreground" : "text-text-secondary"}>
+                    {locationFilter ?? "Location"}
+                  </span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                </PopoverTrigger>
+                <PopoverContent className="w-56 gap-0 p-1" align="start">
+                  <div className="space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setLocationFilter(null)}
+                      className={filterOptionClass}
+                    >
+                      <span>All locations</span>
+                      {locationFilter === null && <Check className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                    {uniqueLocations.map((loc) => (
+                      <button
+                        key={loc}
+                        type="button"
+                        onClick={() => setLocationFilter(loc)}
+                        className={filterOptionClass}
+                      >
+                        <span>{loc}</span>
+                        {locationFilter === loc && <Check className="h-3.5 w-3.5 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <Popover>
+                <PopoverTrigger
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-label="Filter by status"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "h-8 gap-1.5 rounded-full border-border font-normal shadow-none",
+                  )}
+                >
+                  <span className={statusFilter ? "font-medium text-foreground" : "text-text-secondary"}>
+                    {statusFilter
+                      ? STATUS_FILTER_OPTIONS.find((o) => o.value === statusFilter)?.label
+                      : "Status"}
+                  </span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                </PopoverTrigger>
+                <PopoverContent className="w-48 gap-0 p-1" align="start">
+                  <div className="space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter(null)}
+                      className={filterOptionClass}
+                    >
+                      <span>All statuses</span>
+                      {statusFilter === null && <Check className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                    {STATUS_FILTER_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setStatusFilter(option.value)}
+                        className={filterOptionClass}
+                      >
+                        <span>{option.label}</span>
+                        {statusFilter === option.value && <Check className="h-3.5 w-3.5 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    setDepartmentFilter(null);
+                    setLocationFilter(null);
+                    setStatusFilter(null);
+                  }}
+                  className="h-8 gap-1.5 text-text-secondary hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Clear filters
+                </Button>
+              )}
               {search && (
                 <Button variant="link" size="sm" onClick={() => setSearch("")} className="h-8 px-1 text-accent">
                   Clear search
@@ -217,8 +392,9 @@ export function PeopleClient({ employees, isAdmin }: Props) {
             </div>
           </div>
           <div className="flex items-center justify-between gap-4 sm:justify-end">
-            <p className="text-xs font-medium text-text-tertiary">
-              Showing {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+            <p className="text-sm text-text-secondary">
+              Showing {filtered.length} of {employees.length} employee{employees.length !== 1 ? "s" : ""}
+              {hasActiveFilters && <span className="ml-1 text-text-tertiary">(filtered)</span>}
             </p>
             <div className="flex rounded-xl bg-bg-hover p-1">
               <Button size="icon-sm" className="rounded-lg shadow-sm" aria-label="List view">
@@ -232,25 +408,31 @@ export function PeopleClient({ employees, isAdmin }: Props) {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {employees.length === 0 ? (
         <div className="flex min-h-80 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card p-8 text-center">
           <div className="flex size-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
             <UserPlus size={24} />
           </div>
           <div>
-            <p className="font-semibold text-foreground">
-              {employees.length === 0 ? "No employees yet" : "No results found"}
-            </p>
-            <p className="mt-1 text-sm text-text-secondary">
-              {employees.length === 0 ? "Start your directory by adding the first employee." : "Try a different name, role, or department."}
-            </p>
+            <p className="font-semibold text-foreground">No employees yet</p>
+            <p className="mt-1 text-sm text-text-secondary">Start your directory by adding the first employee.</p>
           </div>
-          {employees.length === 0 && isAdmin && (
+          {isAdmin && (
             <Button onClick={() => setShowModal(true)} className="mt-2 rounded-xl">
               <UserPlus size={16} />
               Add your first employee
             </Button>
           )}
+        </div>
+      ) : showNoSearchMatchCard ? (
+        <div className="flex min-h-80 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card p-8 text-center">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
+            <UserPlus size={24} />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">No results found</p>
+            <p className="mt-1 text-sm text-text-secondary">Try a different name, role, or department.</p>
+          </div>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -258,7 +440,7 @@ export function PeopleClient({ employees, isAdmin }: Props) {
             <table className="w-full min-w-[860px] text-left">
               <thead className="bg-bg-hover">
                 <tr className="border-b border-border">
-                  {["Name", "Role", "Department", "Location", "Status", "Joined Date", "Actions"].map((col) => (
+                  {["Name", "Role", "Department", "Manager", "Status", "Joined Date", "Actions"].map((col) => (
                     <th
                       key={col}
                       className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-text-secondary lg:px-6"
@@ -272,53 +454,94 @@ export function PeopleClient({ employees, isAdmin }: Props) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map((emp) => (
-                  <tr key={emp.id} data-private className="group hover:bg-bg-hover">
-                    <td className="px-4 py-4 lg:px-6">
-                      <Link href={`/workspace/people/${emp.id}`} className="flex items-center gap-3 transition-colors hover:text-accent">
-                        <Avatar size="lg">
-                          {emp.photo_url && <AvatarImage src={emp.photo_url} alt="" />}
-                          <AvatarFallback className="bg-accent text-xs font-semibold text-primary-foreground">
-                            {initials(emp.full_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-foreground">{emp.full_name}</p>
-                          <p className="truncate text-xs text-text-tertiary">{emp.email ?? "No email on file"}</p>
-                        </div>
-                      </Link>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">{emp.job_title ?? "—"}</td>
-                    <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">{emp.department ?? "—"}</td>
-                    <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">{emp.country ?? "—"}</td>
-                    <td className="px-4 py-4 lg:px-6">{statusBadge(emp.status)}</td>
-                    <td className="px-4 py-4 text-sm text-text-tertiary lg:px-6">{formatDate(emp.start_date)}</td>
-                    <td className="px-4 py-4 text-right lg:px-6">
-                      <div className="flex justify-end gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
-                        {isAdmin && (
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => setDeleteTarget({ id: emp.id, name: emp.full_name })}
-                            className="text-text-tertiary hover:bg-danger/10 hover:text-danger"
-                            aria-label="Remove employee"
-                          >
-                            <Trash2 size={15} />
-                          </Button>
-                        )}
-                        <Button variant="ghost" size="icon-sm" className="text-text-tertiary" aria-label="More actions">
-                          <MoreVertical size={16} />
+                {filtered.length === 0 && hasActiveFilters ? (
+                  <tr>
+                    <td colSpan={7} className="h-32 px-4 text-center align-middle lg:px-6">
+                      <div className="flex flex-col items-center gap-2 py-4">
+                        <p className="text-sm text-text-secondary">No employees match these filters</p>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          type="button"
+                          onClick={() => {
+                            setDepartmentFilter(null);
+                            setLocationFilter(null);
+                            setStatusFilter(null);
+                          }}
+                        >
+                          Clear filters
                         </Button>
                       </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filtered.map((emp) => (
+                    <tr key={emp.id} data-private className="group hover:bg-bg-hover">
+                      <td className="px-4 py-4 lg:px-6">
+                        <Link href={`/workspace/people/${emp.id}`} className="flex items-center gap-3 transition-colors hover:text-accent">
+                          <Avatar size="lg">
+                            {emp.photo_url && <AvatarImage src={emp.photo_url} alt="" />}
+                            <AvatarFallback className="bg-accent text-xs font-semibold text-primary-foreground">
+                              {initials(emp.full_name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-foreground">{emp.full_name}</p>
+                            <p className="truncate text-xs text-text-tertiary">{emp.email ?? "No email on file"}</p>
+                          </div>
+                        </Link>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">{emp.job_title ?? "—"}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">{emp.department ?? "—"}</td>
+                      {/* Location moved to filter chip - see Cluster 9 */}
+                      <td className="px-4 py-4 text-sm text-text-secondary lg:px-6">
+                        {emp.manager ? (
+                          <div className="flex items-center gap-2">
+                            <Avatar size="sm">
+                              {emp.manager.avatar_url && (
+                                <AvatarImage src={emp.manager.avatar_url} alt={`${emp.manager.full_name} profile photo`} />
+                              )}
+                              <AvatarFallback className="bg-accent-soft text-[10px] font-semibold text-accent">
+                                {initials(emp.manager.full_name || "Manager")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="truncate text-sm text-foreground">{emp.manager.full_name || "Manager"}</span>
+                          </div>
+                        ) : (
+                          <span className="text-text-tertiary">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 lg:px-6">{statusBadge(emp.status)}</td>
+                      <td className="px-4 py-4 text-sm text-text-tertiary lg:px-6">{formatDate(emp.start_date)}</td>
+                      <td className="px-4 py-4 text-right lg:px-6">
+                        <div className="flex justify-end gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+                          {isAdmin && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() => setDeleteTarget({ id: emp.id, name: emp.full_name })}
+                              className="text-text-tertiary hover:bg-danger/10 hover:text-danger"
+                              aria-label="Remove employee"
+                            >
+                              <Trash2 size={15} />
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="icon-sm" className="text-text-tertiary" aria-label="More actions">
+                            <MoreVertical size={16} />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
           <div className="flex flex-col gap-3 border-t border-border bg-card px-4 py-3 text-xs text-text-tertiary sm:flex-row sm:items-center sm:justify-between lg:px-6">
             <span>Page 1 of 1</span>
-            <span>{filtered.length} visible employees</span>
+            <span>
+              Showing {filtered.length} of {employees.length} employee{employees.length !== 1 ? "s" : ""}
+            </span>
           </div>
         </div>
       )}
