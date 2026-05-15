@@ -3,20 +3,28 @@ import Image from "next/image";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
+  AlertTriangle,
   ArrowRight,
   Banknote,
   BookOpen,
   Brain,
+  CalendarDays,
+  DollarSign,
   Factory,
   FileText,
   Gavel,
   Globe,
   Library,
+  Rocket,
   ShoppingBag,
   Stethoscope,
   Terminal,
+  TrendingUp,
+  UserSearch,
+  Users,
   UsersRound,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { HR_CATEGORIES } from "@/lib/constants";
 import { getAllArticles, getCountryGuides, getIndustryGuides } from "@/lib/mdx";
 import { TOOLS_CONFIG } from "@/lib/tools-config";
@@ -86,6 +94,23 @@ function categoryLabel(category: string): string {
     "employee-relations": "RELATIONS",
   };
   return m[category] ?? category.split("-")[0]!.toUpperCase().slice(0, 14);
+}
+
+const CATEGORY_STYLES: Record<string, { bg: string; fg: string; Icon: LucideIcon }> = {
+  "compliance-and-labour-law":        { bg: "bg-[--danger]/20",   fg: "text-[--danger]",   Icon: Gavel },
+  "discipline-and-grievance":         { bg: "bg-[--danger]/20",   fg: "text-[--danger]",   Icon: AlertTriangle },
+  "performance-management":           { bg: "bg-[--warning]/20",  fg: "text-[--warning]",  Icon: TrendingUp },
+  "leave-and-attendance":             { bg: "bg-[--warning]/20",  fg: "text-[--warning]",  Icon: CalendarDays },
+  "compensation-reward-and-benefits": { bg: "bg-[--success]/20",  fg: "text-[--success]",  Icon: Banknote },
+  "payroll-administration":           { bg: "bg-[--success]/20",  fg: "text-[--success]",  Icon: DollarSign },
+  "onboarding-and-induction":         { bg: "bg-[--success]/20",  fg: "text-[--success]",  Icon: Rocket },
+  "recruitment-and-talent-acquisition": { bg: "bg-[--accent]/20", fg: "text-[--accent]",   Icon: UserSearch },
+  "hr-policies-and-employee-handbook":  { bg: "bg-[--accent]/20", fg: "text-[--accent]",   Icon: FileText },
+  "employee-relations":               { bg: "bg-[--warning]/20",  fg: "text-[--warning]",  Icon: Users },
+};
+
+function articleStyle(category: string) {
+  return CATEGORY_STYLES[category] ?? { bg: "bg-[--accent]/20", fg: "text-[--accent]", Icon: BookOpen };
 }
 
 export default function KnowledgeHubPage() {
@@ -184,14 +209,16 @@ export default function KnowledgeHubPage() {
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {featured.map((article, i) => (
+                {featured.map((article, i) => {
+                  const { bg, fg, Icon: CatIcon } = articleStyle(article!.category);
+                  return (
                   <Link
                     key={article!.slug}
                     href={`/knowledge/${article!.category}/${article!.slug}`}
                     className="group overflow-hidden rounded-xl border border-[--border] bg-[--bg-card] transition-[border-color,box-shadow,transform] duration-[280ms] hover:-translate-y-0.5 hover:border-[--accent] hover:shadow-lg"
                   >
-                    <div className="relative aspect-video overflow-hidden bg-[--bg-hover]">
-                      {article!.heroImage ? (
+                    {article!.heroImage ? (
+                      <div className="relative aspect-video overflow-hidden">
                         <Image
                           src={article!.heroImage}
                           alt={article!.title}
@@ -200,18 +227,14 @@ export default function KnowledgeHubPage() {
                           sizes="(max-width:768px) 100vw, 33vw"
                           priority={i === 0}
                         />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-[--accent-soft]">
-                          <FileText
-                            size={40}
-                            className="text-[--accent] opacity-50"
-                            aria-hidden="true"
-                          />
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className={cn("flex h-32 w-full items-center justify-center", bg)}>
+                        <CatIcon size={48} className={fg} aria-hidden="true" />
+                      </div>
+                    )}
                     <div className="p-4">
-                      <span className="inline-block rounded-full bg-[--accent-soft] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[--accent]">
+                      <span className={cn("inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide", bg, fg)}>
                         {categoryLabel(article!.category)}
                       </span>
                       <h3 className="mt-2 text-base font-semibold leading-snug text-[--text-primary] transition-colors group-hover:text-[--accent] sm:text-lg">
@@ -219,7 +242,8 @@ export default function KnowledgeHubPage() {
                       </h3>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -379,33 +403,33 @@ export default function KnowledgeHubPage() {
             Recently Added
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {recentArticles.slice(0, 3).map((article) => (
+            {recentArticles.slice(0, 3).map((article) => {
+              const { bg, fg, Icon: CatIcon } = articleStyle(article.category);
+              return (
               <Link
                 key={article.slug}
                 href={`/knowledge/${article.category}/${article.slug}`}
                 className="group space-y-4"
               >
-                <div className="relative h-48 overflow-hidden rounded-xl bg-[--bg-hover]">
+                <div className="overflow-hidden rounded-xl">
                   {article.heroImage ? (
-                    <Image
-                      src={article.heroImage}
-                      alt={article.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width:768px) 100vw, 33vw"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-[--accent-soft] transition-transform duration-300 group-hover:scale-105">
-                      <BookOpen
-                        size={40}
-                        className="text-[--accent] opacity-40"
-                        aria-hidden="true"
+                    <div className="relative h-48">
+                      <Image
+                        src={article.heroImage}
+                        alt={article.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width:768px) 100vw, 33vw"
                       />
+                    </div>
+                  ) : (
+                    <div className={cn("flex h-44 items-center justify-center", bg)}>
+                      <CatIcon size={52} className={fg} aria-hidden="true" />
                     </div>
                   )}
                 </div>
                 <div className="space-y-1">
-                  <span className="inline-block rounded-full bg-[--accent-soft] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[--accent]">
+                  <span className={cn("inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide", bg, fg)}>
                     {categoryLabel(article.category)}
                   </span>
                   <h3 className="text-lg font-semibold leading-snug text-[--text-primary] transition-colors group-hover:text-[--accent]">
@@ -414,7 +438,8 @@ export default function KnowledgeHubPage() {
                   <p className="line-clamp-2 text-sm text-[--text-secondary]">{article.excerpt}</p>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
