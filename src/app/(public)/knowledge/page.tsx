@@ -29,7 +29,15 @@ import { HR_CATEGORIES } from "@/lib/constants";
 import { getAllArticles, getCountryGuides, getIndustryGuides } from "@/lib/mdx";
 import { TOOLS_CONFIG } from "@/lib/tools-config";
 import { TEMPLATES } from "@/lib/templates-data";
+import { KnowledgeHeroVisual } from "@/components/knowledge/knowledge-hero-visual";
 import { KnowledgeSearch, type KnowledgeSearchItem } from "./knowledge-search";
+
+const HUB_STATS = [
+  { value: "200+", label: "Articles & guides" },
+  { value: "30+", label: "HR templates" },
+  { value: "15+", label: "Free calculators" },
+  { value: "6", label: "Country modules" },
+];
 
 export const metadata: Metadata = {
   title: "HR Knowledge Hub",
@@ -167,22 +175,75 @@ export default function KnowledgeHubPage() {
   return (
     <main>
       {/* ── Section 1: Hero ─────────────────────────────────────────── */}
-      <section className="bg-[--bg-app] py-16 md:py-24">
+      <section className="bg-[--accent] py-20 md:py-28">
         <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[--border] bg-[--bg-card]/90 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[--accent] shadow-sm backdrop-blur">
-              <BookOpen size={14} aria-hidden="true" />
-              Atlas HR reference library
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="text-left">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[--primary-foreground]/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-[--primary-foreground]">
+                <BookOpen size={14} aria-hidden="true" />
+                Atlas HR reference library
+              </div>
+              <h1 className="text-4xl font-bold leading-tight tracking-tight text-[--primary-foreground] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
+                HR answers, tools, and country guidance — all searchable
+              </h1>
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-[--primary-foreground]/80">
+                Articles, country guides, calculators, and templates for HR professionals in every
+                country.
+              </p>
+              <div className="mt-8">
+                <KnowledgeSearch items={searchItems} />
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {countryGuides.slice(0, 4).map((guide) => (
+                  <Link
+                    key={guide.slug}
+                    href={`/knowledge/country/${guide.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[--primary-foreground]/25 bg-[--primary-foreground]/10 px-3 py-1.5 text-xs font-medium text-[--primary-foreground] transition-colors hover:bg-[--primary-foreground]/20"
+                  >
+                    <span aria-hidden="true">{FLAG[guide.slug] ?? "🌍"}</span>
+                    {guide.title.replace(/\s+HR Guide$/i, "")}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/knowledge/compliance-and-labour-law"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[--primary-foreground] px-5 text-sm font-semibold text-[--accent] shadow-lg transition-colors hover:bg-[--bg-input]"
+                >
+                  Browse articles
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/tools"
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-[--primary-foreground]/30 bg-[--primary-foreground]/10 px-5 text-sm font-semibold text-[--primary-foreground] transition-colors hover:bg-[--primary-foreground]/20"
+                >
+                  Explore tools
+                </Link>
+              </div>
             </div>
-            <h1 className="text-4xl font-bold leading-tight tracking-tight text-[--text-primary] sm:text-5xl">
-              HR answers, tools, and country guidance — all searchable
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-[--text-secondary]">
-              Articles, country guides, calculators, and templates for HR professionals in every country.
-            </p>
-            <div className="mt-8">
-              <KnowledgeSearch items={searchItems} />
-            </div>
+
+            <KnowledgeHeroVisual
+              articles={featured.map((a) => ({
+                slug: a!.slug,
+                title: a!.title,
+                category: a!.category,
+                excerpt: a!.excerpt,
+                heroImage: a!.heroImage,
+              }))}
+              categoryLabel={categoryLabel}
+              articleStyle={articleStyle}
+            />
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 gap-6 rounded-2xl border border-[--primary-foreground]/20 bg-[--primary-foreground]/10 p-6 sm:grid-cols-4 sm:gap-8 sm:p-8">
+            {HUB_STATS.map((stat) => (
+              <div key={stat.label}>
+                <p className="text-2xl font-bold text-[--primary-foreground] sm:text-3xl">{stat.value}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[--primary-foreground]/60">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
