@@ -213,11 +213,11 @@ function MobileMetricCard({
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[--text-tertiary]">{label}</p>
         <h3 className="text-3xl font-semibold leading-tight tracking-normal text-[--text-primary]">{value}</h3>
         <div className="mt-2 flex items-center gap-1.5">
-          <TrendingUp aria-hidden="true" size={15} className={tone === "warning" ? "text-amber-600 dark:text-amber-300" : "text-[--accent]"} />
-          <span className={cn("text-xs font-semibold", tone === "warning" ? "text-amber-600 dark:text-amber-300" : "text-[--accent]")}>{helper}</span>
+          <TrendingUp aria-hidden="true" size={15} className={tone === "warning" ? "text-[--warning]" : "text-[--accent]"} />
+          <span className={cn("text-xs font-semibold", tone === "warning" ? "text-[--warning]" : "text-[--accent]")}>{helper}</span>
         </div>
       </div>
-      <div className={cn("flex size-12 shrink-0 items-center justify-center rounded-full", tone === "warning" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" : "bg-[--accent-soft] text-[--accent]")}>
+      <div className={cn("flex size-12 shrink-0 items-center justify-center rounded-full", tone === "warning" ? "bg-[--warning]/15 text-[--warning]" : "bg-[--accent-soft] text-[--accent]")}>
         <Icon aria-hidden="true" size={22} />
       </div>
     </Link>
@@ -271,8 +271,8 @@ function WorkspaceTab({ workspace, profile }: { workspace: WorkspaceDashboard; p
         <div className="grid grid-cols-3 gap-2 rounded-2xl bg-[--bg-hover] p-2 text-center">
           {[
             ["People", workspace.employeeCount, "text-[--text-primary]"],
-            ["Active", workspace.activeCount, "text-emerald-600 dark:text-emerald-300"],
-            ["On Leave", workspace.onLeaveCount, "text-amber-600 dark:text-amber-300"],
+            ["Active", workspace.activeCount, "text-[--success]"],
+            ["On Leave", workspace.onLeaveCount, "text-[--warning]"],
           ].map(([label, value, className]) => (
             <div key={label} className="rounded-xl bg-[--bg-card] px-3 py-2">
               <p className={cn("text-lg font-semibold", className)}>{value}</p>
@@ -503,7 +503,7 @@ function ForYouTab({ profile, recentDocs, savedItems }: Pick<Props, "profile" | 
         <h2 className="mb-4 text-lg font-semibold text-[--text-primary]">Today&apos;s HR brief</h2>
         <div className="grid gap-3 sm:grid-cols-3">
           {BRIEFS.map((brief) => (
-            <div key={brief.title} className={cn("rounded-xl border p-4", brief.type === "warning" ? "border-amber-300 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-900/20" : "border-[--border] bg-[--bg-card]")}>
+            <div key={brief.title} className={cn("rounded-xl border p-4", brief.type === "warning" ? "border-[--warning]/30 bg-[--warning]/8" : "border-[--border] bg-[--bg-card]")}>
               <p className="text-sm font-medium leading-snug text-[--text-primary]">{brief.title}</p>
               <Link href={brief.href} className="mt-3 flex items-center gap-1 text-xs font-medium text-[--accent] hover:underline">
                 {brief.action} <ArrowRight aria-hidden="true" size={11} />
