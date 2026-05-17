@@ -39,7 +39,7 @@ export async function signUpWithPassword(formData: FormData) {
     return { error: error.message };
   }
 
-  redirect("/verify-email");
+  redirect("/dashboard");
 }
 
 export async function signInWithOAuth(
