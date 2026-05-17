@@ -60,11 +60,11 @@ const STATUS_VISUAL = {
 };
 
 const CHECKLIST_CATEGORIES = [
-  { key: "equipment",     label: "Equipment",     icon: "💻", color: "bg-blue-100 text-blue-700",    pill: "bg-blue-50 text-blue-700",    hdr: "bg-blue-50/60 text-blue-700" },
-  { key: "access",        label: "Access",        icon: "🔑", color: "bg-purple-100 text-purple-700", pill: "bg-purple-50 text-purple-700", hdr: "bg-purple-50/60 text-purple-700" },
-  { key: "documentation", label: "Documentation", icon: "📄", color: "bg-amber-100 text-amber-700",  pill: "bg-amber-50 text-amber-700",   hdr: "bg-amber-50/60 text-amber-700" },
-  { key: "finance",       label: "Finance",       icon: "💰", color: "bg-emerald-100 text-emerald-700", pill: "bg-emerald-50 text-emerald-700", hdr: "bg-emerald-50/60 text-emerald-700" },
-  { key: "other",         label: "Other",         icon: "📋", color: "bg-navy-100 text-navy-600",    pill: "bg-slate-50 text-slate-600",   hdr: "bg-slate-50/60 text-slate-600" },
+  { key: "equipment",     label: "Equipment",     icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z", color: "bg-blue-100 text-blue-700",    pill: "bg-blue-50 text-blue-700",    hdr: "bg-blue-50/60 text-blue-700" },
+  { key: "access",        label: "Access",        icon: "M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z", color: "bg-purple-100 text-purple-700", pill: "bg-purple-50 text-purple-700", hdr: "bg-purple-50/60 text-purple-700" },
+  { key: "documentation", label: "Documentation", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", color: "bg-amber-100 text-amber-700",  pill: "bg-amber-50 text-amber-700",   hdr: "bg-amber-50/60 text-amber-700" },
+  { key: "finance",       label: "Finance",       icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", color: "bg-emerald-100 text-emerald-700", pill: "bg-emerald-50 text-emerald-700", hdr: "bg-emerald-50/60 text-emerald-700" },
+  { key: "other",         label: "Other",         icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2", color: "bg-navy-100 text-navy-600",    pill: "bg-slate-50 text-slate-600",   hdr: "bg-slate-50/60 text-slate-600" },
 ] as const;
 
 const ITEM_STATUSES = {
@@ -363,7 +363,7 @@ function AddItemModal({ exitId, onClose }: { exitId: string; onClose: () => void
 
           <div>
             <label htmlFor="item-category" className={labelCls}>Category</label>
-            <Select id="item-category" name="category" options={CHECKLIST_CATEGORIES.map((c) => ({ value: c.key, label: `${c.icon} ${c.label}` }))} />
+            <Select id="item-category" name="category" options={CHECKLIST_CATEGORIES.map((c) => ({ value: c.key, label: c.label }))} />
           </div>
 
           <div>
@@ -429,7 +429,9 @@ function ChecklistItemRow({ item, isAdmin }: { item: ExitChecklistItem; isAdmin:
         )}
       </button>
 
-      <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-md shrink-0 ${cat.pill}`}>{cat.icon}</span>
+      <span className={`flex items-center justify-center h-6 w-6 rounded-md shrink-0 ${cat.pill}`}>
+        <Ico path={cat.icon} cls="h-3.5 w-3.5" />
+      </span>
 
       <div className="flex-1 min-w-0">
         <span className={`text-sm ${isDone ? "line-through text-navy-400" : "text-navy-800 font-medium"}`}>
@@ -542,14 +544,16 @@ function ExitDetailPanel({ exit, items, emp, isAdmin, onClose }: {
         <div className="divide-y divide-navy-100">
           {byCategory.length === 0 && (
             <div className="py-12 text-center">
-              <p className="text-3xl mb-2">📋</p>
+              <div className="mx-auto mb-3 h-12 w-12 rounded-xl bg-navy-100 flex items-center justify-center text-navy-400">
+                <Ico path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" cls="h-6 w-6" />
+              </div>
               <p className="text-sm text-navy-400">No checklist items yet.</p>
             </div>
           )}
           {byCategory.map((group) => (
             <div key={group.key}>
               <div className={`flex items-center gap-2 px-4 py-2.5 ${group.hdr}`}>
-                <span className="text-base">{group.icon}</span>
+                <Ico path={group.icon} cls="h-3.5 w-3.5 shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wide">{group.label}</span>
                 <span className="ml-auto text-[10px] font-semibold opacity-70">
                   {group.items.filter((i) => i.status === "completed").length}/{group.items.length}
@@ -677,8 +681,8 @@ export function ExitClient({ exits, items, employees, isAdmin }: Props) {
 
       {exits.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-navy-200 shadow-sm">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-linear-to-br from-navy-100 to-navy-200 flex items-center justify-center text-3xl shadow-sm">
-            🚪
+          <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-linear-to-br from-navy-100 to-navy-200 flex items-center justify-center text-navy-400 shadow-sm">
+            <Ico path="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" cls="h-8 w-8" />
           </div>
           <h3 className="text-base font-bold text-navy-900 mb-1">No exit records</h3>
           <p className="text-sm text-navy-500 mb-6 max-w-xs mx-auto">
