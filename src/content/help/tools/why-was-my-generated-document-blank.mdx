@@ -1,0 +1,77 @@
+---
+title: "Why Was My Generated Document Blank?"
+slug: "why-was-my-generated-document-blank"
+category: "tools"
+excerpt: "The most common reasons an Atlas HR document generation produces a blank or incomplete result — network interruptions, browser extension conflicts, SSE blocking — and exactly how to fix each one."
+publishedAt: "2026-05-11"
+updatedAt: "2026-05-11"
+relatedArticles: ["how-to-use-the-job-description-generator", "understanding-generation-limits", "customising-and-downloading-templates"]
+---
+
+You clicked Generate, waited a few seconds, and ended up with a blank page or a document that cut off halfway through. Frustrating — here's why it happens and how to fix it.
+
+## How document generation works
+
+Atlas HR uses **server-sent events (SSE)** to stream document text to your browser in real time. Think of it like a live feed: the server sends words as they're produced, and your browser renders them one by one.
+
+If that connection breaks at any point — for any reason — the stream stops and you may end up with a partial or blank document.
+
+The good news: a blank result almost never means something is wrong with your inputs. It's almost always a connection issue.
+
+## Common cause 1: Network interruption mid-stream
+
+If your internet connection drops or fluctuates while the document is generating, the stream breaks.
+
+**Fix:** Check your connection and click **Regenerate**. The generation restarts from the beginning. If you're on a flaky Wi-Fi connection, try switching to a wired connection or mobile hotspot.
+
+<Callout type="tip">
+A partially generated document (one that cuts off mid-sentence) is the most common sign of a network interruption. The document started generating but the connection dropped before it finished.
+</Callout>
+
+## Common cause 2: Browser extension blocking SSE
+
+Certain browser extensions — particularly ad blockers, privacy tools, and some VPN extensions — can block or interfere with server-sent events.
+
+Common culprits:
+- uBlock Origin (with aggressive settings)
+- Privacy Badger
+- Ghostery
+- Some VPN browser extensions
+
+**Fix:** Try generating in an incognito/private window (which disables most extensions by default). If it works in incognito, an extension is the cause. Identify it by disabling extensions one at a time.
+
+You can also try a different browser — Chrome, Firefox, and Safari all handle SSE well.
+
+## Common cause 3: Corporate network or firewall
+
+Some corporate networks block persistent connections like SSE. If you're on a company VPN or office network and generation consistently fails, this is likely the cause.
+
+**Fix:** Try generating on your personal mobile hotspot or home network. If that works, your IT team may need to whitelist `atlashr.app` for long-lived HTTP connections.
+
+## Common cause 4: Browser tab going to sleep
+
+Some browsers (particularly mobile browsers and power-saving modes) put background or inactive tabs to sleep, which kills the SSE connection.
+
+**Fix:** Keep the Atlas HR tab active and in the foreground while a document is generating. Don't switch to another app or lock your screen.
+
+## Common cause 5: Slow AI response
+
+On rare occasions, the AI model takes longer than usual to produce the first token (the first word of the document). This can look like nothing is happening. Wait up to 30 seconds before concluding something is wrong.
+
+<Callout type="info">
+If you see the cursor/spinner but no text appears after 30 seconds, the generation probably failed silently. Click **Regenerate** — it won't cost you another generation if the previous attempt produced nothing.
+</Callout>
+
+## Still getting blank documents?
+
+If none of the above fixes help:
+
+1. Note your browser, OS, and network type.
+2. Take a screenshot if possible.
+3. [Contact support →](/help/contact) with these details.
+
+We can check our server logs to identify whether the issue is on our end. Blank generation bugs — where the AI itself produced nothing — are rare but do happen, and we want to know about them.
+
+## Did this count against my generation limit?
+
+If the document was completely blank (no text at all appeared), contact us and we'll restore the generation credit. If you got a partial result, that does count as a generation — you can regenerate without spending another credit if you do so immediately on the same session.

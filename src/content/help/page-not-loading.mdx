@@ -1,0 +1,45 @@
+---
+title: "The page isn't loading correctly"
+slug: "page-not-loading"
+category: "troubleshooting"
+description: "Fixing blank screens, broken layouts, and loading errors in the Atlas HR web app."
+updatedAt: "2026-05-12"
+---
+
+## Quick fixes to try first
+
+**Hard refresh** — Press `Ctrl + Shift + R` (Windows/Linux) or `Cmd + Shift + R` (Mac) to reload the page and bypass the browser cache.
+
+**Clear cache and cookies** — Go to your browser settings and clear cached files and cookies for atlashr.app, then reload.
+
+**Try incognito / private mode** — If the page loads correctly in private mode, a browser extension is likely causing the issue. Try disabling extensions one by one to identify the culprit. Common offenders: ad blockers, VPN extensions, security tools.
+
+**Try a different browser** — If the above doesn't help, try Chrome, Firefox, or Edge to rule out a browser-specific bug.
+
+## Common issues
+
+**Blank white page after signing in**
+This usually means your session token is corrupted. Sign out, clear cookies for atlashr.app, and sign back in.
+
+**Dashboard loads but specific sections show an error**
+Some sections depend on data fetching. If your internet was briefly interrupted, refresh the page. If a specific section consistently fails to load, report it to support.
+
+**Layout looks broken / unstyled**
+This can happen if a stylesheet failed to load. Hard refresh (`Ctrl + Shift + R`) almost always fixes this.
+
+**Infinite loading spinner**
+Usually a network timeout. Check your connection. If the problem persists, check the [status page](/status) for incidents.
+
+## Checking system status
+
+If you're seeing widespread issues, check [atlashr.app/status](/status) to see if there's an ongoing incident.
+
+## Reporting a page issue
+
+If none of the above helps, [contact support](/help/contact) with:
+
+- The page URL where the problem occurs
+- What you expected to see vs what you're seeing
+- A screenshot if possible
+- Your browser name and version (find this at `chrome://version` or similar)
+- Your operating system

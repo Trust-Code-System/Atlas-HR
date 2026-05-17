@@ -1,0 +1,73 @@
+---
+title: "Understanding Our Security Practices"
+slug: "understanding-our-security-practices"
+category: "privacy"
+excerpt: "How Atlas HR protects your data — Supabase and PostgreSQL with row-level security, encryption at rest and in transit, our SOC 2 Type II roadmap, and the EU data hosting option."
+publishedAt: "2026-05-11"
+updatedAt: "2026-05-11"
+relatedArticles: ["how-to-export-my-data", "how-to-delete-my-account"]
+---
+
+Security is foundational to what we do. You're trusting us with sensitive HR data — employee records, documents, contracts. Here's how we protect it.
+
+## Our infrastructure
+
+Atlas HR runs on **Supabase**, which uses **PostgreSQL** as its database. Here's what that means for your data:
+
+**Row-level security (RLS):** Every database query is filtered by user identity at the database level. This means even if there were a bug in the application code, it's architecturally impossible for one user to access another user's data. Your data is isolated from other organisations' data at the database row level.
+
+**Encryption at rest:** All data stored in Atlas HR's database is encrypted at rest using AES-256 — industry standard encryption. This includes employee records, documents, Copilot conversations, and all other stored data.
+
+**Encryption in transit:** All data transmitted between your browser and Atlas HR's servers uses TLS 1.2 or higher. We do not support unencrypted HTTP connections.
+
+<Callout type="info">
+If you see "https://" and a padlock icon in your browser's address bar when using Atlas HR, your connection is encrypted. We enforce HTTPS-only access — there's no fallback to HTTP.
+</Callout>
+
+## Authentication and access
+
+- **Password hashing:** We never store your password in plain text. Passwords are hashed using bcrypt before storage.
+- **Session tokens:** Authentication tokens expire and are rotated automatically.
+- **Google Sign-In:** If you use Google authentication, your password is never held by Atlas HR — authentication is managed entirely by Google's systems.
+- **Workspace access controls:** Role-based access (Admin vs Member) is enforced at both the application and database levels.
+
+## AI and your data
+
+When you use Atlas Copilot or any AI document generator:
+
+- The content of your messages and documents is sent to Anthropic's Claude API for processing.
+- Anthropic processes this data under their API terms, which include data protection commitments.
+- Your data is **not used to train AI models** under the API tier we use.
+- Copilot conversations are stored in your account and only visible to you.
+
+<Callout type="warning">
+Do not share sensitive personal data (such as national insurance numbers, full bank details, or medical records) with Copilot. Use it for HR guidance and document drafting, not as a database for personal records.
+</Callout>
+
+## Data hosting and residency
+
+By default, Atlas HR stores data on servers located in the **EU (Ireland)**. This means your data is subject to EU data protection standards by default.
+
+For Business plan customers who require data to remain in a specific geography, contact us to discuss dedicated hosting options.
+
+## SOC 2 Type II
+
+We are actively working toward SOC 2 Type II certification. This is an independent security audit that verifies our controls around security, availability, and confidentiality. We expect to complete the certification process in the coming months.
+
+In the meantime, we're happy to answer specific security questions from enterprise customers or share our security documentation on request.
+
+## Incident response
+
+If we ever become aware of a security incident affecting your data:
+
+- We will notify affected users within 72 hours of becoming aware (as required by GDPR)
+- We will publish a full incident report once the investigation is complete
+- We will take immediate steps to contain and remediate the issue
+
+## Reporting a security issue
+
+If you discover a potential security vulnerability in Atlas HR, please contact us at security@atlashr.app. We take all reports seriously and respond within one business day. We don't have a formal bug bounty programme yet, but we acknowledge and credit responsible disclosures.
+
+## Still need help?
+
+[Contact support →](/help/contact) for general security questions, or email security@atlashr.app for security-specific concerns.

@@ -1,0 +1,2217 @@
+[
+  {
+    "term": "1:1",
+    "fullName": "One-on-one meeting",
+    "definition": "A recurring meeting between a manager and direct report focused on priorities, feedback, support, and development.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [
+      "how-to-give-feedback-that-lands"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "13th month salary",
+    "fullName": "13th month salary",
+    "definition": "An extra salary payment expected or required in some countries, often paid near year end.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "bonus-structures-types-pros-cons-pitfalls"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "30-60-90 plan",
+    "fullName": "30-60-90 day plan",
+    "definition": "A phased onboarding plan that defines learning, contribution, and independence goals for a new hire.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "the-30-60-90-day-onboarding-plan-that-works"
+    ],
+    "alsoSeeTools": [
+      "30-60-90-plan"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "360 feedback",
+    "fullName": "360-degree feedback",
+    "definition": "Feedback collected from multiple sources such as manager, peers, direct reports, and stakeholders.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "the-360-degree-feedback-process"
+    ],
+    "alsoSeeTools": [
+      "performance-review"
+    ],
+    "synonyms": [
+      "multi-rater feedback"
+    ]
+  },
+  {
+    "term": "9-box grid",
+    "fullName": "9-box grid",
+    "definition": "A talent review tool that maps performance against potential to guide development and succession decisions.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Absenteeism",
+    "fullName": "Absenteeism",
+    "definition": "Regular or repeated absence from work, usually tracked as a percentage of scheduled working time.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "sick-leave-abuse-handling-without-being-a-jerk"
+    ],
+    "alsoSeeTools": [
+      "absenteeism-rate"
+    ],
+    "synonyms": [
+      "absence rate"
+    ]
+  },
+  {
+    "term": "Acceptable use policy",
+    "fullName": "Acceptable use policy",
+    "definition": "A policy defining permitted and prohibited use of company systems, devices, networks, and data.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Accommodation",
+    "fullName": "Reasonable accommodation",
+    "definition": "A change to work, tools, schedules, or process that enables a qualified employee to perform their role.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "how-to-handle-a-high-performer-burning-out"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Accrued leave",
+    "fullName": "Accrued leave",
+    "definition": "Leave earned over time based on service, hours worked, or policy rules.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "designing-a-leave-policy-that-works-for-everyone"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "earned leave"
+    ]
+  },
+  {
+    "term": "Acknowledgment form",
+    "fullName": "Acknowledgment form",
+    "definition": "A signed or electronic confirmation that an employee received, read, or agreed to a policy or document.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "building-your-first-employee-handbook"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ADA",
+    "fullName": "Americans with Disabilities Act",
+    "definition": "A United States law prohibiting disability discrimination and requiring reasonable accommodation for qualified individuals.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ADDIE",
+    "fullName": "ADDIE model",
+    "definition": "A learning design model covering analysis, design, development, implementation, and evaluation.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ADEA",
+    "fullName": "Age Discrimination in Employment Act",
+    "definition": "A United States law prohibiting age discrimination against workers aged 40 and older.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ADR",
+    "fullName": "Alternative Dispute Resolution",
+    "definition": "Methods such as mediation or arbitration used to resolve disputes outside formal litigation.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Adverse impact",
+    "fullName": "Adverse impact",
+    "definition": "A selection or employment practice that disproportionately harms a protected group, even without intent.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Affinity bias",
+    "fullName": "Affinity bias",
+    "definition": "A bias where people favour candidates or colleagues who feel similar to themselves.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Annual leave",
+    "fullName": "Annual leave",
+    "definition": "Paid time off for rest or vacation, often subject to statutory minimums and company policy.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "designing-a-leave-policy-that-works-for-everyone"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "vacation leave"
+    ]
+  },
+  {
+    "term": "Anti-harassment policy",
+    "fullName": "Anti-harassment policy",
+    "definition": "A policy defining harassment, reporting routes, investigation commitment, manager duties, and no-retaliation protections.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "anti-harassment-policy-what-every-company-needs"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Asynchronous work",
+    "fullName": "Asynchronous work",
+    "definition": "Work that does not require people to be online or respond at the same time.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "onboarding-remote-employees-whats-different"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "async work"
+    ]
+  },
+  {
+    "term": "ATS",
+    "fullName": "Applicant Tracking System",
+    "definition": "Software used to post roles, receive applications, track candidates, and manage hiring workflows.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "how-to-screen-cvs-efficiently"
+    ],
+    "alsoSeeTools": [
+      "job-description-generator"
+    ],
+    "synonyms": [
+      "recruiting software"
+    ]
+  },
+  {
+    "term": "Attrition rate",
+    "fullName": "Attrition rate",
+    "definition": "The percentage of employees who leave during a period, often used interchangeably with turnover rate.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [
+      "the-exit-interview-getting-truth-and-using-it"
+    ],
+    "alsoSeeTools": [
+      "turnover-rate"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "BARS",
+    "fullName": "Behaviorally Anchored Rating Scale",
+    "definition": "A rating scale that defines each score with observable behaviours instead of vague labels.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "calibration-sessions-fair-ratings-across-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Belonging",
+    "fullName": "Belonging",
+    "definition": "The experience of feeling accepted, respected, included, and able to contribute at work.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Bereavement leave",
+    "fullName": "Bereavement leave",
+    "definition": "Time off after the death of a family member or close relation, paid or unpaid depending on law and policy.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "designing-a-leave-policy-that-works-for-everyone"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "compassionate leave"
+    ]
+  },
+  {
+    "term": "Bonus pool",
+    "fullName": "Bonus pool",
+    "definition": "The total amount set aside for bonuses before allocation across employees or teams.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "linking-performance-to-pay-without-demotivating"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Bradford Factor",
+    "fullName": "Bradford Factor",
+    "definition": "An absence formula that weights frequent short absences more heavily than fewer long absences.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "sick-leave-abuse-handling-without-being-a-jerk"
+    ],
+    "alsoSeeTools": [
+      "absenteeism-rate"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Buddy system",
+    "fullName": "Buddy system",
+    "definition": "A peer support arrangement that helps a new hire learn informal norms, tools, contacts, and day-to-day practices.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "buddy-systems-and-mentorship-in-onboarding"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Bullying",
+    "fullName": "Workplace bullying",
+    "definition": "Repeated unreasonable behaviour that undermines, humiliates, intimidates, or harms a worker.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "handling-harassment-complaints-step-by-step"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Burnout",
+    "fullName": "Burnout",
+    "definition": "A work-related state of exhaustion, cynicism, and reduced efficacy caused by chronic unmanaged workplace stress.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "how-to-handle-a-high-performer-burning-out",
+      "mental-health-days-the-case-for-them"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Calibration",
+    "fullName": "Calibration",
+    "definition": "A process where managers compare evidence and ratings to improve consistency across teams.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "calibration-sessions-fair-ratings-across-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Candidate experience",
+    "fullName": "Candidate experience",
+    "definition": "The full experience a candidate has with an employer, from first contact to offer, rejection, or onboarding.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "the-candidate-experience-why-it-matters"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Career pathing",
+    "fullName": "Career pathing",
+    "definition": "The process of defining possible career moves, skills, and milestones for employees.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Carryover",
+    "fullName": "Leave carryover",
+    "definition": "A rule that allows unused leave to move into the next leave year, often with caps or expiry dates.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "designing-a-leave-policy-that-works-for-everyone"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "rollover"
+    ]
+  },
+  {
+    "term": "CCPA",
+    "fullName": "California Consumer Privacy Act",
+    "definition": "A California privacy law that can affect employee and applicant data obligations.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "data-privacy-and-hr-gdpr-ccpa-and-beyond"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Code of conduct",
+    "fullName": "Code of conduct",
+    "definition": "A policy that turns values into expected behaviours, prohibited conduct, escalation routes, and consequences.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "code-of-conduct-making-values-actionable"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Compa-ratio",
+    "fullName": "Compa-ratio",
+    "definition": "An employee's salary divided by the midpoint of the pay range for their role or grade.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "how-to-design-a-salary-structure-from-scratch"
+    ],
+    "alsoSeeTools": [
+      "salary-benchmark"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Competency framework",
+    "fullName": "Competency framework",
+    "definition": "A structured set of skills, behaviours, and expectations used for hiring, development, and performance.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Competency interview",
+    "fullName": "Competency interview",
+    "definition": "An interview that tests specific skills or behaviours using consistent questions and evidence-based scoring.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "the-complete-guide-to-structured-interviews"
+    ],
+    "alsoSeeTools": [
+      "interview-questions"
+    ],
+    "synonyms": [
+      "behavioral interview"
+    ]
+  },
+  {
+    "term": "Conflict resolution",
+    "fullName": "Conflict resolution",
+    "definition": "A structured process for resolving workplace disagreements before they damage performance or trust.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Core hours",
+    "fullName": "Core hours",
+    "definition": "Agreed hours when employees should normally be available for meetings and collaboration.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Cost per hire",
+    "fullName": "Cost per hire",
+    "definition": "Total recruiting cost divided by number of hires in a period.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "cost-per-hire"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Critical role",
+    "fullName": "Critical role",
+    "definition": "A role whose vacancy or poor performance creates outsized operational, financial, customer, or compliance risk.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Culture add",
+    "fullName": "Culture add",
+    "definition": "A hiring and culture concept focused on what difference a person adds, instead of whether they match existing norms.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Dashboard",
+    "fullName": "HR dashboard",
+    "definition": "A visual report that shows key HR metrics such as headcount, attrition, hiring, absence, and demographics.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "hr-dashboard"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Deductions",
+    "fullName": "Payroll deductions",
+    "definition": "Amounts withheld from pay for tax, social security, pensions, benefits, loans, or lawful recoveries.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "withholdings"
+    ]
+  },
+  {
+    "term": "DEI",
+    "fullName": "Diversity, Equity and Inclusion",
+    "definition": "Work focused on representation, fairness, access, inclusion, and belonging across employee groups.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "DE&I",
+      "D&I"
+    ]
+  },
+  {
+    "term": "Delegation",
+    "fullName": "Delegation",
+    "definition": "Assigning ownership of work with clear outcomes, authority, constraints, and support.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Digital nomad",
+    "fullName": "Digital nomad",
+    "definition": "A person who works remotely while moving between locations, often creating tax, immigration, and employment risks.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Distributed team",
+    "fullName": "Distributed team",
+    "definition": "A team whose members work from multiple locations, often across time zones.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "onboarding-remote-employees-whats-different"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Diversity dimensions",
+    "fullName": "Diversity dimensions",
+    "definition": "Characteristics and experiences that shape identity, such as gender, ethnicity, disability, age, class, religion, and caregiving.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Document retention",
+    "fullName": "Document retention",
+    "definition": "Rules for how long employee records must be kept before secure deletion or archiving.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "record retention"
+    ]
+  },
+  {
+    "term": "EAP",
+    "fullName": "Employee Assistance Program",
+    "definition": "A confidential support service that may offer counselling, referrals, crisis support, and wellbeing resources.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "mental-health-days-the-case-for-them"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "EEOC",
+    "fullName": "Equal Employment Opportunity Commission",
+    "definition": "The United States federal agency that enforces major anti-discrimination employment laws.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Employee engagement",
+    "fullName": "Employee engagement",
+    "definition": "The level of connection, commitment, motivation, and discretionary effort employees bring to work.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Employee file",
+    "fullName": "Employee file",
+    "definition": "The official personnel record containing employment documents, changes, performance records, and required acknowledgments.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "personnel file"
+    ]
+  },
+  {
+    "term": "Employee handbook",
+    "fullName": "Employee handbook",
+    "definition": "A central document explaining employment basics, policies, expectations, benefits, conduct, and procedures.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "building-your-first-employee-handbook"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Employee ID",
+    "fullName": "Employee ID",
+    "definition": "A unique identifier assigned to an employee for HRIS, payroll, access, reporting, and records management.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "staff number"
+    ]
+  },
+  {
+    "term": "Employee lifecycle",
+    "fullName": "Employee lifecycle",
+    "definition": "The full journey of an employee from attraction and hiring through onboarding, development, retention, and exit.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Employee referral",
+    "fullName": "Employee referral",
+    "definition": "A hiring source where employees recommend candidates from their network, often with a referral bonus.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "sourcing-candidates-beyond-linkedin"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Employer brand",
+    "fullName": "Employer brand",
+    "definition": "The reputation and promise an employer has in the labour market, shaped by culture, work, leadership, and employee stories.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "building-an-employer-brand-from-scratch"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "eNPS",
+    "fullName": "Employee Net Promoter Score",
+    "definition": "A survey metric asking how likely employees are to recommend the company as a place to work.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "EOR",
+    "fullName": "Employer of Record",
+    "definition": "A third party that legally employs workers in a country while the client directs day-to-day work.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "international-payroll-getting-started-with-global-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Equal opportunity",
+    "fullName": "Equal opportunity",
+    "definition": "A commitment and legal principle that employment decisions should not be based on protected characteristics.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "anti-harassment-policy-what-every-company-needs"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Equity audit",
+    "fullName": "Equity audit",
+    "definition": "A review of pay, promotion, hiring, ratings, or access to identify unfair differences between groups.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "pay-equity-audits-how-to-run-one"
+    ],
+    "alsoSeeTools": [
+      "pay-equity"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "ER specialist",
+    "fullName": "Employee Relations Specialist",
+    "definition": "An HR professional focused on conduct, grievances, investigations, accommodations, and workplace conflict.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ERG",
+    "fullName": "Employee Resource Group",
+    "definition": "A voluntary employee group organized around shared identity, experience, interest, or allyship.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Ergonomics",
+    "fullName": "Ergonomics",
+    "definition": "Designing work, tools, and workstations to reduce strain, injury, and fatigue.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ERISA",
+    "fullName": "Employee Retirement Income Security Act",
+    "definition": "A United States law regulating many private employer retirement and benefit plans.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "ESOP",
+    "fullName": "Employee Stock Ownership Plan",
+    "definition": "A plan that gives employees ownership interest in the company, usually through shares or trust structures.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "equity-compensation-explained-for-hr"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "EVP",
+    "fullName": "Employee Value Proposition",
+    "definition": "The mix of pay, benefits, growth, culture, purpose, flexibility, and working conditions that makes people join and stay.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "building-an-employer-brand-from-scratch"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Exit interview",
+    "fullName": "Exit interview",
+    "definition": "A structured conversation with a departing employee about their experience and reasons for leaving.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "the-exit-interview-getting-truth-and-using-it"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Feedback culture",
+    "fullName": "Feedback culture",
+    "definition": "A team norm where timely, specific, respectful feedback is expected and used for improvement.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [
+      "how-to-give-feedback-that-lands"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Final pay",
+    "fullName": "Final pay",
+    "definition": "The wages, accrued entitlements, deductions, expenses, and payments due when employment ends.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "termination-letter"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Final written warning",
+    "fullName": "Final written warning",
+    "definition": "A serious disciplinary warning that usually precedes termination if the issue continues.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "FLSA",
+    "fullName": "Fair Labor Standards Act",
+    "definition": "A United States law covering minimum wage, overtime, child labour, and exempt versus non-exempt classification.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "FMLA",
+    "fullName": "Family and Medical Leave Act",
+    "definition": "A United States law giving eligible employees up to 12 weeks of unpaid, job-protected leave for certain reasons.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Form 16",
+    "fullName": "Form 16",
+    "definition": "An Indian tax certificate issued by employers showing salary paid and tax deducted at source.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [
+      "india"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Form I-9",
+    "fullName": "Employment Eligibility Verification",
+    "definition": "A United States form used to verify an employee's identity and authorization to work.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "I-9"
+    ]
+  },
+  {
+    "term": "FTE",
+    "fullName": "Full-Time Equivalent",
+    "definition": "A workforce measure that converts hours worked into full-time-equivalent units.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "headcount-planner"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Garden leave",
+    "fullName": "Garden leave",
+    "definition": "A notice-period arrangement where an employee remains employed but is told not to work or access systems.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "how-to-fire-someone-with-dignity-and-legally"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "GDPR",
+    "fullName": "General Data Protection Regulation",
+    "definition": "The European Union data protection law governing collection, use, transfer, and rights over personal data.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "data-privacy-and-hr-gdpr-ccpa-and-beyond"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Goodhart's Law",
+    "fullName": "Goodhart's Law",
+    "definition": "The principle that when a measure becomes a target, it can stop being a good measure.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "setting-kpis-that-drive-performance"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Grievance",
+    "fullName": "Grievance",
+    "definition": "A formal employee complaint about treatment, working conditions, policy application, or workplace conduct.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "conducting-workplace-investigations"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Gross misconduct",
+    "fullName": "Gross misconduct",
+    "definition": "Serious misconduct that may justify dismissal without normal progressive discipline, depending on law and facts.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Gross pay",
+    "fullName": "Gross pay",
+    "definition": "Total earnings before taxes, employee contributions, deductions, and withholdings.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "gross salary"
+    ]
+  },
+  {
+    "term": "Halo effect",
+    "fullName": "Halo effect",
+    "definition": "A bias where one positive trait distorts judgment about unrelated qualities.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Hazard assessment",
+    "fullName": "Hazard assessment",
+    "definition": "A process for identifying workplace hazards and controls to reduce safety risk.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "manufacturing"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Headcount",
+    "fullName": "Headcount",
+    "definition": "The number of people employed or engaged by an organization, often split by status, department, country, or level.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "headcount-planner"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "HRIS",
+    "fullName": "Human Resources Information System",
+    "definition": "A system used to store employee records and manage HR workflows such as profiles, leave, payroll, and reporting.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "HR system"
+    ]
+  },
+  {
+    "term": "HRMS",
+    "fullName": "Human Resources Management System",
+    "definition": "A broad HR platform covering employee data, workflows, payroll integrations, time, performance, and reporting.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Hybrid work",
+    "fullName": "Hybrid work",
+    "definition": "A work arrangement combining remote work with regular office or site attendance.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Incident report",
+    "fullName": "Incident report",
+    "definition": "A record of a workplace accident, injury, near miss, security event, or serious safety concern.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Inclusive language",
+    "fullName": "Inclusive language",
+    "definition": "Language that avoids unnecessary exclusion, stereotypes, ableism, gender-coding, and culture-specific assumptions.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-write-a-job-description"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Indirect discrimination",
+    "fullName": "Indirect discrimination",
+    "definition": "A neutral rule or practice that disadvantages a protected group and cannot be justified.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "how-to-reduce-bias-in-hiring"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Induction",
+    "fullName": "Induction",
+    "definition": "The formal process of introducing a new hire to the organization, policies, role expectations, and required training.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "the-30-60-90-day-onboarding-plan-that-works"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "orientation"
+    ]
+  },
+  {
+    "term": "IR35",
+    "fullName": "IR35",
+    "definition": "UK tax rules for assessing whether contractors are effectively employees for tax purposes.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-kingdom"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Job architecture",
+    "fullName": "Job architecture",
+    "definition": "The framework of job families, levels, titles, career paths, and pay structures in an organization.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [
+      "how-to-design-a-salary-structure-from-scratch"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Job description",
+    "fullName": "Job description",
+    "definition": "A role document explaining why a job exists, what it owns, required skills, reporting line, and working conditions.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "how-to-write-a-job-description"
+    ],
+    "alsoSeeTools": [
+      "job-description-generator"
+    ],
+    "synonyms": [
+      "JD"
+    ]
+  },
+  {
+    "term": "Job family",
+    "fullName": "Job family",
+    "definition": "A group of related jobs with similar work, skills, and career paths.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [
+      "how-to-design-a-salary-structure-from-scratch"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Just cause",
+    "fullName": "Just cause",
+    "definition": "A legally sufficient reason for discipline or dismissal, often requiring evidence and fair process.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "how-to-fire-someone-with-dignity-and-legally"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Kirkpatrick model",
+    "fullName": "Kirkpatrick model",
+    "definition": "A four-level model for evaluating training reaction, learning, behaviour change, and business results.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Knowledge transfer",
+    "fullName": "Knowledge transfer",
+    "definition": "The planned handover of information, processes, relationships, and decisions before a person leaves or changes role.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "redundancy-legal-requirements-and-humane-execution"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "KPI",
+    "fullName": "Key Performance Indicator",
+    "definition": "A measurable indicator used to track whether an employee, team, or organization is achieving an important objective.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "setting-kpis-that-drive-performance"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Lagging indicator",
+    "fullName": "Lagging indicator",
+    "definition": "A metric that reports an outcome after it has happened, such as turnover after employees have left.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [
+      "setting-kpis-that-drive-performance"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Leading indicator",
+    "fullName": "Leading indicator",
+    "definition": "A metric that predicts or influences a future outcome, such as pipeline quality before hiring results appear.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [
+      "setting-kpis-that-drive-performance"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Leveling",
+    "fullName": "Leveling",
+    "definition": "Defining role levels based on scope, impact, autonomy, skills, and complexity.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [
+      "technology"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "job leveling"
+    ]
+  },
+  {
+    "term": "LMS",
+    "fullName": "Learning Management System",
+    "definition": "Software used to assign, deliver, track, and report learning activities.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Loudermill hearing",
+    "fullName": "Loudermill hearing",
+    "definition": "A pre-termination due process meeting required for many US public-sector employees.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Manager enablement",
+    "fullName": "Manager enablement",
+    "definition": "Training, tools, templates, and support that help managers lead people well.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Manager self-service",
+    "fullName": "Manager self-service",
+    "definition": "HR systems or workflows that allow managers to complete routine people tasks directly.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Market midpoint",
+    "fullName": "Market midpoint",
+    "definition": "The middle point of a salary range, usually aligned to a target labour market percentile.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "how-to-design-a-salary-structure-from-scratch"
+    ],
+    "alsoSeeTools": [
+      "salary-benchmark"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Mediation",
+    "fullName": "Mediation",
+    "definition": "A facilitated conversation where a neutral person helps parties reach a workable resolution.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Mental health day",
+    "fullName": "Mental health day",
+    "definition": "A day off used to manage mental wellbeing, either as sick leave or a separate policy category.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "mental-health-days-the-case-for-them"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Mentorship",
+    "fullName": "Mentorship",
+    "definition": "A development relationship where a more experienced person supports another person's growth and judgment.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [
+      "buddy-systems-and-mentorship-in-onboarding"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Merit increase",
+    "fullName": "Merit increase",
+    "definition": "A salary increase linked to performance, contribution, skills, or position in range.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "managing-salary-increases-during-economic-uncertainty"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "merit raise"
+    ]
+  },
+  {
+    "term": "Meritocracy",
+    "fullName": "Meritocracy",
+    "definition": "A system that claims rewards are based on merit; in HR, it should be tested for fairness and hidden bias.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Misconduct",
+    "fullName": "Misconduct",
+    "definition": "Behaviour that breaches policy, contract, standards, law, or reasonable workplace expectations.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Near miss",
+    "fullName": "Near miss",
+    "definition": "An unplanned event that could have caused injury, damage, or loss but did not.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "manufacturing"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Net pay",
+    "fullName": "Net pay",
+    "definition": "The amount an employee receives after required and voluntary deductions.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "take-home pay"
+    ]
+  },
+  {
+    "term": "New hire checklist",
+    "fullName": "New hire checklist",
+    "definition": "A checklist covering preboarding, day-one setup, training, access, policy acknowledgments, and manager actions.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "onboarding-remote-employees-whats-different"
+    ],
+    "alsoSeeTools": [
+      "onboarding-checklist"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Offboarding",
+    "fullName": "Offboarding",
+    "definition": "The process of managing an employee's exit, including handover, access removal, final pay, documents, and feedback.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "the-exit-interview-getting-truth-and-using-it"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Offer acceptance rate",
+    "fullName": "Offer acceptance rate",
+    "definition": "The percentage of job offers accepted by candidates during a period.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "how-to-negotiate-salaries-with-candidates"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "OKR",
+    "fullName": "Objectives and Key Results",
+    "definition": "A goal-setting framework that pairs an objective with measurable key results, often set quarterly.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "okrs-vs-kpis-which-framework"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Onboarding cliff",
+    "fullName": "Onboarding cliff",
+    "definition": "The drop in confidence or performance that happens when early support disappears before a new hire is fully productive.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Org design",
+    "fullName": "Organization design",
+    "definition": "The deliberate design of structures, roles, decision rights, processes, and reporting lines.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "organisation design"
+    ]
+  },
+  {
+    "term": "OSHA",
+    "fullName": "Occupational Safety and Health Administration",
+    "definition": "The United States agency enforcing workplace safety and health standards.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "manufacturing"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Outplacement",
+    "fullName": "Outplacement",
+    "definition": "Support offered to departing employees, such as career coaching, CV help, job search support, and workshops.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "redundancy-legal-requirements-and-humane-execution"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "P11D",
+    "fullName": "P11D",
+    "definition": "A UK form used to report certain employee benefits and expenses to HMRC.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [
+      "united-kingdom"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "P90",
+    "fullName": "90th percentile",
+    "definition": "The value below which 90 percent of observations fall, often used for time-to-hire or pay analysis.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "time-to-hire",
+      "salary-benchmark"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Parental leave",
+    "fullName": "Parental leave",
+    "definition": "Leave for parents after birth, adoption, surrogacy, or placement, with rules varying widely by country.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "maternity-and-paternity-leave-globally"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Pay band",
+    "fullName": "Pay band",
+    "definition": "A salary range assigned to a level, grade, or role family.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "how-to-design-a-salary-structure-from-scratch"
+    ],
+    "alsoSeeTools": [
+      "salary-benchmark"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Pay compression",
+    "fullName": "Pay compression",
+    "definition": "A pay problem where differences between employees, levels, or tenures become too small to reflect value fairly.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "pay-equity-audits-how-to-run-one"
+    ],
+    "alsoSeeTools": [
+      "pay-equity"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Pay equity",
+    "fullName": "Pay equity",
+    "definition": "Fair pay for comparable work after accounting for legitimate factors such as role, level, location, tenure, and performance.",
+    "category": "Diversity, Equity & Inclusion",
+    "alsoSeeArticles": [
+      "pay-equity-audits-how-to-run-one"
+    ],
+    "alsoSeeTools": [
+      "pay-equity"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "PAYE",
+    "fullName": "Pay As You Earn",
+    "definition": "A payroll withholding system where employers deduct income tax from employee pay and remit it to the tax authority.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "nigeria"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Payroll cadence",
+    "fullName": "Payroll cadence",
+    "definition": "The schedule on which employees are paid, such as weekly, biweekly, semimonthly, or monthly.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "international-payroll-getting-started-with-global-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "pay frequency"
+    ]
+  },
+  {
+    "term": "Payroll register",
+    "fullName": "Payroll register",
+    "definition": "A payroll report listing employees, earnings, deductions, taxes, and net pay for a pay period.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Pension contribution",
+    "fullName": "Pension contribution",
+    "definition": "Employer or employee payments into a retirement or pension scheme.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "nigeria",
+      "india"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "retirement contribution"
+    ]
+  },
+  {
+    "term": "People analytics",
+    "fullName": "People analytics",
+    "definition": "Using workforce data and analysis to answer HR and business questions.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "hr-dashboard"
+    ],
+    "synonyms": [
+      "HR analytics"
+    ]
+  },
+  {
+    "term": "Performance coaching",
+    "fullName": "Performance coaching",
+    "definition": "Manager support that helps an employee improve skills, habits, judgment, or delivery before formal discipline is needed.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [
+      "performance-improvement-plans-the-right-way"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Permanent establishment",
+    "fullName": "Permanent establishment",
+    "definition": "A tax concept where business activity in a country can create corporate tax obligations.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "international-payroll-getting-started-with-global-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Personnel record",
+    "fullName": "Personnel record",
+    "definition": "Any official record relating to an employee's employment, pay, performance, leave, conduct, or exit.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "employee record"
+    ]
+  },
+  {
+    "term": "PIP",
+    "fullName": "Performance Improvement Plan",
+    "definition": "A structured plan documenting performance gaps, expected improvement, support offered, timelines, and consequences.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "performance-improvement-plans-the-right-way"
+    ],
+    "alsoSeeTools": [
+      "pip-builder"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Policy owner",
+    "fullName": "Policy owner",
+    "definition": "The person or function accountable for keeping a policy accurate, reviewed, and operational.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Position management",
+    "fullName": "Position management",
+    "definition": "Planning and controlling approved roles or seats independent of the current employee occupying them.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "headcount-planner"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Preboarding",
+    "fullName": "Preboarding",
+    "definition": "The period between offer acceptance and day one, used for paperwork, equipment, welcome messages, and expectation setting.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "onboarding-starts-before-day-one-pre-boarding"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "pre-boarding"
+    ]
+  },
+  {
+    "term": "Probation period",
+    "fullName": "Probation period",
+    "definition": "An initial employment period used to assess role fit and performance; legal meaning varies heavily by country.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "probation-periods-legal-and-practical"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "trial period"
+    ]
+  },
+  {
+    "term": "Progressive discipline",
+    "fullName": "Progressive discipline",
+    "definition": "A discipline approach that escalates through coaching, warnings, final warning, and termination unless severity requires faster action.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Psychological safety",
+    "fullName": "Psychological safety",
+    "definition": "A team climate where people can speak up, ask questions, and admit mistakes without fear of humiliation or punishment.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "PTO",
+    "fullName": "Paid Time Off",
+    "definition": "A paid leave bank that may combine vacation, personal, and sometimes sick time.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "designing-a-leave-policy-that-works-for-everyone"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Pulse survey",
+    "fullName": "Pulse survey",
+    "definition": "A short recurring employee survey used to monitor sentiment, workload, engagement, or change impact.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "RACI",
+    "fullName": "Responsible, Accountable, Consulted, Informed",
+    "definition": "A responsibility matrix clarifying who does, owns, advises, and is notified about work.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Ramp time",
+    "fullName": "Ramp time",
+    "definition": "The time it takes a new hire to reach expected productivity in the role.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "the-30-60-90-day-onboarding-plan-that-works"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Reasonable adjustment",
+    "fullName": "Reasonable adjustment",
+    "definition": "A UK-style term for changes that remove disadvantage for disabled workers or applicants.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "united-kingdom"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Recognition program",
+    "fullName": "Recognition program",
+    "definition": "A structured way to acknowledge employee contributions through praise, awards, points, bonuses, or public appreciation.",
+    "category": "Employee Engagement & Culture",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Redundancy",
+    "fullName": "Redundancy",
+    "definition": "A role elimination caused by business needs rather than employee conduct or performance.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "redundancy-legal-requirements-and-humane-execution"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "layoff"
+    ]
+  },
+  {
+    "term": "Reference check",
+    "fullName": "Reference check",
+    "definition": "A structured conversation with a former manager or colleague to verify role-relevant work history and behaviours.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "reference-checks-what-to-ask-what-to-avoid"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Regression analysis",
+    "fullName": "Regression analysis",
+    "definition": "A statistical method for estimating relationships between variables, often used in pay equity analysis.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [
+      "pay-equity-audits-how-to-run-one"
+    ],
+    "alsoSeeTools": [
+      "pay-equity"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Remote stipend",
+    "fullName": "Remote stipend",
+    "definition": "A payment or allowance for remote work costs such as internet, equipment, coworking, or ergonomics.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Remote work policy",
+    "fullName": "Remote work policy",
+    "definition": "A policy defining eligibility, location rules, equipment, security, expenses, working hours, and approval for remote work.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Resignation",
+    "fullName": "Resignation",
+    "definition": "An employee's voluntary notice that they intend to end employment.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "the-exit-interview-getting-truth-and-using-it"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Reskilling",
+    "fullName": "Reskilling",
+    "definition": "Training employees for substantially different work as business needs or technology change.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Retaliation",
+    "fullName": "Retaliation",
+    "definition": "Adverse treatment because someone reported a concern, participated in an investigation, or exercised a protected right.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "handling-harassment-complaints-step-by-step"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Return-to-work plan",
+    "fullName": "Return-to-work plan",
+    "definition": "A structured plan for an employee returning after illness, injury, parental leave, or extended absence.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "maternity-and-paternity-leave-globally"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Right to disconnect",
+    "fullName": "Right to disconnect",
+    "definition": "A legal or policy right to disengage from work communications outside working time.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Role clarity",
+    "fullName": "Role clarity",
+    "definition": "A shared understanding of responsibilities, decision rights, success measures, and boundaries for a role.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "RSU",
+    "fullName": "Restricted Stock Unit",
+    "definition": "An equity award that converts into shares after vesting conditions are met.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "equity-compensation-explained-for-hr"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Salary benchmarking",
+    "fullName": "Salary benchmarking",
+    "definition": "The process of comparing roles and pay against market data to set or validate compensation.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "salary-benchmarking-a-practical-guide"
+    ],
+    "alsoSeeTools": [
+      "salary-benchmark"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "SBI model",
+    "fullName": "Situation-Behavior-Impact model",
+    "definition": "A feedback structure that names the situation, describes observable behaviour, and explains impact.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "how-to-give-feedback-that-lands"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Scenario planning",
+    "fullName": "Scenario planning",
+    "definition": "Planning workforce needs under multiple plausible business futures.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "headcount-planner"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Severance",
+    "fullName": "Severance",
+    "definition": "Pay or benefits provided when employment ends, required in some countries and discretionary in others.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "how-to-fire-someone-with-dignity-and-legally"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "severance pay"
+    ]
+  },
+  {
+    "term": "Show-cause letter",
+    "fullName": "Show-cause letter",
+    "definition": "A formal letter asking an employee to explain alleged misconduct before a decision is made.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Sick leave",
+    "fullName": "Sick leave",
+    "definition": "Time off when an employee is ill, injured, attending medical care, or unable to work for health reasons.",
+    "category": "Leave & Attendance",
+    "alsoSeeArticles": [
+      "sick-leave-abuse-handling-without-being-a-jerk"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Skills matrix",
+    "fullName": "Skills matrix",
+    "definition": "A table showing which employees have which skills, proficiency levels, or certifications.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Skip-level meeting",
+    "fullName": "Skip-level meeting",
+    "definition": "A meeting between an employee and their manager's manager, often used to understand team health and leadership gaps.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "SMART goal",
+    "fullName": "SMART goal",
+    "definition": "A goal written to be specific, measurable, achievable, relevant, and time-bound.",
+    "category": "Performance Management",
+    "alsoSeeArticles": [
+      "setting-kpis-that-drive-performance"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Social media policy",
+    "fullName": "Social media policy",
+    "definition": "A policy covering work-related online conduct, confidentiality, harassment, advocacy, and protected employee speech.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "social-media-policy-balancing-freedom-and-protection"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Span of control",
+    "fullName": "Span of control",
+    "definition": "The number of direct reports a manager has.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Speak-up culture",
+    "fullName": "Speak-up culture",
+    "definition": "A workplace environment where people can raise concerns without fear of punishment or dismissal.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "whistleblower-policy-why-you-need-one"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Structured interview",
+    "fullName": "Structured interview",
+    "definition": "An interview where every candidate is assessed using the same competencies, questions, rating scale, and evidence rules.",
+    "category": "Recruitment & Talent Acquisition",
+    "alsoSeeArticles": [
+      "the-complete-guide-to-structured-interviews"
+    ],
+    "alsoSeeTools": [
+      "interview-questions"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Succession planning",
+    "fullName": "Succession planning",
+    "definition": "Identifying and preparing people for critical roles before vacancies or leadership transitions happen.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Suspension pending investigation",
+    "fullName": "Suspension pending investigation",
+    "definition": "A temporary removal from work while serious allegations are investigated, ideally neutral and documented.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "conducting-workplace-investigations"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Tax equalization",
+    "fullName": "Tax equalization",
+    "definition": "An expatriate pay approach designed so an assignee pays roughly the same tax as they would at home.",
+    "category": "Payroll Administration",
+    "alsoSeeArticles": [
+      "international-payroll-getting-started-with-global-teams"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Team charter",
+    "fullName": "Team charter",
+    "definition": "A document that defines a team's purpose, operating norms, decision rights, roles, and communication rules.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Termination",
+    "fullName": "Termination",
+    "definition": "The ending of employment by employer decision, employee resignation, contract expiry, redundancy, or mutual agreement.",
+    "category": "Offboarding & Exit Management",
+    "alsoSeeArticles": [
+      "how-to-fire-someone-with-dignity-and-legally"
+    ],
+    "alsoSeeTools": [
+      "termination-letter"
+    ],
+    "synonyms": [
+      "dismissal"
+    ]
+  },
+  {
+    "term": "Time to fill",
+    "fullName": "Time to fill",
+    "definition": "The number of days between opening a role and accepting an offer or filling the vacancy.",
+    "category": "HR Analytics & Reporting",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "time-to-hire"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Total rewards",
+    "fullName": "Total rewards",
+    "definition": "The full value of employment including cash, equity, benefits, time off, recognition, flexibility, and growth.",
+    "category": "Compensation, Reward & Benefits",
+    "alsoSeeArticles": [
+      "total-rewards-communicating-full-value"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Training needs analysis",
+    "fullName": "Training needs analysis",
+    "definition": "A structured assessment of capability gaps and learning priorities.",
+    "category": "Learning & Development",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "TNA"
+    ]
+  },
+  {
+    "term": "Travel and expense policy",
+    "fullName": "Travel and expense policy",
+    "definition": "A policy defining business travel, approvals, expense limits, receipts, reimbursement, and audit rules.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "travel-and-expense-policy-clarity-prevents-conflict"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Trust equation",
+    "fullName": "Trust equation",
+    "definition": "A model that frames trust through credibility, reliability, intimacy, and self-orientation.",
+    "category": "Manager Support",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Verbal warning",
+    "fullName": "Verbal warning",
+    "definition": "A spoken warning that should still be documented with facts, expectations, and follow-up.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Virtual onboarding",
+    "fullName": "Virtual onboarding",
+    "definition": "Onboarding delivered through remote tools, documentation, meetings, and structured manager support.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "onboarding-remote-employees-whats-different"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "W-2",
+    "fullName": "Form W-2",
+    "definition": "A United States tax form reporting wages paid and taxes withheld for an employee.",
+    "category": "Employee Records & Documentation",
+    "alsoSeeArticles": [
+      "united-states"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "WARN Act",
+    "fullName": "Worker Adjustment and Retraining Notification Act",
+    "definition": "A United States law requiring advance notice for certain large layoffs and plant closures.",
+    "category": "Compliance & Labour Law",
+    "alsoSeeArticles": [
+      "united-states",
+      "redundancy-legal-requirements-and-humane-execution"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Welcome pack",
+    "fullName": "Welcome pack",
+    "definition": "A set of documents, messages, equipment, and practical information sent to a new hire before or on day one.",
+    "category": "Onboarding & Induction",
+    "alsoSeeArticles": [
+      "onboarding-starts-before-day-one-pre-boarding"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "welcome kit"
+    ]
+  },
+  {
+    "term": "Whistleblower policy",
+    "fullName": "Whistleblower policy",
+    "definition": "A policy that enables reporting serious concerns with confidentiality, no retaliation, and investigation commitments.",
+    "category": "HR Policies & Employee Handbook",
+    "alsoSeeArticles": [
+      "whistleblower-policy-why-you-need-one"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Work from anywhere",
+    "fullName": "Work from anywhere",
+    "definition": "A policy allowing work from many locations, subject to tax, immigration, security, and employment-law controls.",
+    "category": "Remote & Hybrid Work",
+    "alsoSeeArticles": [
+      "the-remote-work-policy-with-country-variants"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": [
+      "WFA"
+    ]
+  },
+  {
+    "term": "Workers' compensation",
+    "fullName": "Workers' compensation",
+    "definition": "A system providing benefits for employees injured or made ill through work, with country-specific rules.",
+    "category": "Health, Safety & Wellbeing",
+    "alsoSeeArticles": [
+      "manufacturing"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Workforce plan",
+    "fullName": "Workforce plan",
+    "definition": "A forward-looking plan for the headcount, skills, roles, timing, and cost needed to deliver business goals.",
+    "category": "Workforce Planning & Org Design",
+    "alsoSeeArticles": [],
+    "alsoSeeTools": [
+      "headcount-planner"
+    ],
+    "synonyms": []
+  },
+  {
+    "term": "Workplace investigation",
+    "fullName": "Workplace investigation",
+    "definition": "A structured fact-finding process used to assess complaints, misconduct, harassment, fraud, or safety concerns.",
+    "category": "Employee Relations",
+    "alsoSeeArticles": [
+      "conducting-workplace-investigations"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  },
+  {
+    "term": "Written warning",
+    "fullName": "Written warning",
+    "definition": "A formal document setting out a conduct or performance concern, required improvement, support, timeline, and consequences.",
+    "category": "Discipline & Grievance",
+    "alsoSeeArticles": [
+      "verbal-vs-written-warnings-when-to-use-each"
+    ],
+    "alsoSeeTools": [],
+    "synonyms": []
+  }
+]

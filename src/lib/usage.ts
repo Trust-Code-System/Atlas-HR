@@ -47,6 +47,8 @@ export async function consumeUsage(
   resource: keyof ReturnType<typeof getLimits>,
   period: UsagePeriod
 ): Promise<UsageResult> {
+  // TEST_MODE: getLimits() already returns Infinity limits, so the isFinite
+  // check below short-circuits and never hits the DB.
   const limits = getLimits(role);
   const limit = limits[resource] as number;
 

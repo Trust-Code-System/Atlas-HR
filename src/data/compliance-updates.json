@@ -1,0 +1,236 @@
+{
+  "lastUpdated": "2026-05-16",
+  "updates": [
+    {
+      "id": "ng-minimum-wage-payroll-review",
+      "country": "Nigeria",
+      "countrySlug": "nigeria",
+      "title": "Minimum wage and payroll file review",
+      "date": "2026-05-16",
+      "status": "Review recommended",
+      "severity": "review_recommended",
+      "whatChanged": "Nigeria's national minimum wage was raised to ₦70,000 per month in 2024. Payroll structures, allowance breakdowns, and statutory remittance records should reflect the new floor.",
+      "whoIsAffected": "Employers with Nigerian employees in junior, hourly, clerical, factory, retail, or support roles whose base pay is near or below the new minimum.",
+      "whatToDoNext": [
+        "Review current pay floors and verify all roles meet the ₦70,000 minimum.",
+        "Check PAYE withholding, pension contributions, and NSITF remittance evidence.",
+        "Update contracts and payroll records where base pay has changed."
+      ],
+      "linkedTemplates": ["employment-contract-permanent", "final-settlement-statement"],
+      "linkedArticles": ["international-payroll-getting-started-with-global-teams"],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-16",
+      "adminStatus": "published"
+    },
+    {
+      "id": "ng-nsitf-compliance-check",
+      "country": "Nigeria",
+      "countrySlug": "nigeria",
+      "title": "NSITF employer contribution compliance",
+      "date": "2026-05-14",
+      "status": "Action needed",
+      "severity": "action_needed",
+      "whatChanged": "NSITF (Nigeria Social Insurance Trust Fund) administers the Employees' Compensation Scheme requiring 1% of total monthly payroll. Enforcement attention has increased for employers missing registration or remittance.",
+      "whoIsAffected": "All Nigerian employers — NSITF coverage is broad and covers workplace injuries. Unregistered employers face liability without coverage.",
+      "whatToDoNext": [
+        "Confirm NSITF registration for the organisation.",
+        "Verify 1% monthly payroll contribution is being remitted correctly.",
+        "Keep remittance receipts and ensure payroll records reconcile with NSITF filings."
+      ],
+      "linkedTemplates": ["final-settlement-statement"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-14",
+      "adminStatus": "published"
+    },
+    {
+      "id": "ng-pension-group-life-audit",
+      "country": "Nigeria",
+      "countrySlug": "nigeria",
+      "title": "Pension and group life insurance audit",
+      "date": "2026-05-10",
+      "status": "Monitoring",
+      "severity": "monitoring",
+      "whatChanged": "PenCom requires 18% minimum pension contribution (10% employer, 8% employee) for employers with 3 or more staff. Group life insurance under pension rules must be current. Many employers have gaps in RSA collection or remittance reconciliation.",
+      "whoIsAffected": "Private-sector employers with 3 or more Nigerian employees. Non-compliance risks employee trust issues and regulatory exposure.",
+      "whatToDoNext": [
+        "Collect RSA (Retirement Savings Account) PINs from all employees at onboarding.",
+        "Confirm remittance is split correctly: 10% employer, 8% employee.",
+        "Check group life insurance policy is active, beneficiaries are updated, and employees are informed."
+      ],
+      "linkedTemplates": ["employee-handbook-template"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-10",
+      "adminStatus": "published"
+    },
+    {
+      "id": "in-state-leave-contract-review",
+      "country": "India",
+      "countrySlug": "india",
+      "title": "State-aware leave and contract review",
+      "date": "2026-05-16",
+      "status": "Monitoring",
+      "severity": "monitoring",
+      "whatChanged": "Distributed teams in India need clearer state-aware leave, holiday, payroll, and contract controls as remote hiring expands across states with different Shops and Establishments rules.",
+      "whoIsAffected": "Companies hiring employees across multiple Indian states or transitioning contractors to employees.",
+      "whatToDoNext": [
+        "Map each employee's location to the applicable state Shops and Establishments rules.",
+        "Check leave entitlements, public holidays, PF, ESI, gratuity, and professional tax by state.",
+        "Update contracts and employee handbooks to reflect state-specific requirements."
+      ],
+      "linkedTemplates": ["employment-contract-permanent", "employee-handbook-template"],
+      "linkedArticles": ["international-payroll-getting-started-with-global-teams"],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-16",
+      "adminStatus": "published"
+    },
+    {
+      "id": "in-pf-esic-registration-check",
+      "country": "India",
+      "countrySlug": "india",
+      "title": "PF and ESIC registration and contribution audit",
+      "date": "2026-05-12",
+      "status": "Action needed",
+      "severity": "action_needed",
+      "whatChanged": "Provident Fund (12% employer + 12% employee on basic wage) and ESIC (3.25% employer + 0.75% employee for covered employees) have strict remittance deadlines. Late payments attract interest and penalties. New joiners must be enrolled within prescribed timelines.",
+      "whoIsAffected": "All Indian employers above PF/ESIC threshold headcount. Remote-first companies often miss enrolment deadlines for new hires.",
+      "whatToDoNext": [
+        "Verify all employees above the statutory threshold have active UAN (Universal Account Number) for PF.",
+        "Check ESIC registration and ensure eligible employees' IP numbers are generated at onboarding.",
+        "Reconcile monthly remittance dates against payroll and fix any missed or late filings."
+      ],
+      "linkedTemplates": ["final-settlement-statement"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-12",
+      "adminStatus": "published"
+    },
+    {
+      "id": "uk-fair-process-checkpoint",
+      "country": "United Kingdom",
+      "countrySlug": "uk",
+      "title": "Fair process checkpoint for exits and grievances",
+      "date": "2026-05-16",
+      "status": "Action needed",
+      "severity": "action_needed",
+      "whatChanged": "UK employment tribunal decisions continue to emphasise fair process, documented consultation, and protected-characteristic checks. HR teams should review discipline, grievance, redundancy, and dismissal workflows.",
+      "whoIsAffected": "UK employers managing performance exits, misconduct investigations, grievances, long-term sickness, or redundancy situations.",
+      "whatToDoNext": [
+        "Audit current warning and investigation templates for ACAS Code compliance.",
+        "Add protected-characteristic risk checks to all exit workflows.",
+        "Review final pay, notice, and holiday pay calculations against current rules."
+      ],
+      "linkedTemplates": ["termination-letter", "written-warning", "verbal-warning-record"],
+      "linkedArticles": ["how-to-fire-someone-with-dignity-and-legally", "redundancy-legal-requirements-and-humane-execution"],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-16",
+      "adminStatus": "published"
+    },
+    {
+      "id": "uk-employment-rights-bill-2025",
+      "country": "United Kingdom",
+      "countrySlug": "uk",
+      "title": "Employment Rights Bill 2025 — day-one rights review",
+      "date": "2026-05-13",
+      "status": "Action needed",
+      "severity": "action_needed",
+      "whatChanged": "The Employment Rights Bill 2025 introduces significant changes including day-one unfair dismissal rights (removing the two-year qualifying period), new flexible working provisions, and enhanced protections. Employers should review probation clauses, dismissal procedures, and offer letters.",
+      "whoIsAffected": "All UK employers. Particularly affects organisations relying on probationary-period flexibility and those with high employee turnover.",
+      "whatToDoNext": [
+        "Review employment contracts and probation clauses for alignment with new day-one rights.",
+        "Update dismissal procedures to ensure fair process applies from day one.",
+        "Brief line managers on the new protections and revised documentation requirements."
+      ],
+      "linkedTemplates": ["employment-contract-permanent", "offer-letter", "probation-review"],
+      "linkedArticles": ["probation-periods-legal-and-practical"],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-13",
+      "adminStatus": "published"
+    },
+    {
+      "id": "uk-auto-enrolment-review",
+      "country": "United Kingdom",
+      "countrySlug": "uk",
+      "title": "Auto-enrolment contribution and eligibility review",
+      "date": "2026-05-08",
+      "status": "Review recommended",
+      "severity": "review_recommended",
+      "whatChanged": "The Pensions Regulator continues to increase compliance oversight. Employers must auto-enrol eligible workers from the first day of employment and maintain accurate contribution records. Postponement windows and opt-out processes must be properly administered.",
+      "whoIsAffected": "All UK employers with at least one eligible employee. High-risk areas include recent joiners, part-time staff, and employees approaching the earnings threshold.",
+      "whatToDoNext": [
+        "Verify all eligible employees are correctly enrolled and contribution rates meet minimums (5% employee, 3% employer on qualifying earnings).",
+        "Check postponement letters and opt-out records are within legal timeframes.",
+        "Review payroll integration with pension provider for accuracy."
+      ],
+      "linkedTemplates": ["employee-handbook-template"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-08",
+      "adminStatus": "published"
+    },
+    {
+      "id": "us-multistate-policy-review",
+      "country": "United States",
+      "countrySlug": "us",
+      "title": "Multi-state handbook and final-pay review",
+      "date": "2026-05-16",
+      "status": "Review recommended",
+      "severity": "review_recommended",
+      "whatChanged": "US employers hiring across state lines need policies handling leave, wage statements, final pay, PTO payout, and restrictive covenant differences that vary significantly by state.",
+      "whoIsAffected": "Remote-first or multi-state US employers using a single national handbook or offer template.",
+      "whatToDoNext": [
+        "Add state-specific addenda to the employee handbook for states with different requirements.",
+        "Review final-pay timing and PTO payout rules for each state where employees work.",
+        "Check restrictive covenant and arbitration clause enforceability by state."
+      ],
+      "linkedTemplates": ["employee-handbook-template", "employment-contract-permanent"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-16",
+      "adminStatus": "published"
+    },
+    {
+      "id": "us-flsa-overtime-threshold",
+      "country": "United States",
+      "countrySlug": "us",
+      "title": "FLSA overtime exemption threshold — eligibility audit",
+      "date": "2026-05-11",
+      "status": "Action needed",
+      "severity": "action_needed",
+      "whatChanged": "The Department of Labor's updated FLSA salary thresholds for exempt employees mean some previously exempt salaried workers may now qualify for overtime. Employers should audit classification and pay levels for all salaried exempt roles.",
+      "whoIsAffected": "US employers with salaried employees who may fall below the updated minimum salary threshold for overtime exemption.",
+      "whatToDoNext": [
+        "Run a pay audit of all employees classified as exempt under the executive, administrative, or professional exemptions.",
+        "Verify that salaries meet the current DOL threshold — reclassify to non-exempt or increase salary where needed.",
+        "Update job descriptions and classification documentation."
+      ],
+      "linkedTemplates": ["employment-contract-permanent"],
+      "linkedArticles": [],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-11",
+      "adminStatus": "published"
+    },
+    {
+      "id": "us-pay-transparency-laws",
+      "country": "United States",
+      "countrySlug": "us",
+      "title": "Pay transparency law compliance — state-by-state check",
+      "date": "2026-05-06",
+      "status": "Monitoring",
+      "severity": "monitoring",
+      "whatChanged": "Pay transparency requirements — including salary range disclosure in job postings — now apply in California, New York, Colorado, Washington, and other states. Requirements vary by employer size, location, and role type.",
+      "whoIsAffected": "US employers posting jobs in covered states, including remote roles that employees in those states could fill.",
+      "whatToDoNext": [
+        "Identify all states where pay transparency laws apply to your hiring activity.",
+        "Add salary range disclosures to job postings for covered states.",
+        "Develop salary band frameworks so range disclosures are accurate and defensible."
+      ],
+      "linkedTemplates": ["job-description"],
+      "linkedArticles": ["designing-a-fair-transparent-salary-banding-structure"],
+      "publishedBy": "Atlas HR Editorial",
+      "publishedAt": "2026-05-06",
+      "adminStatus": "published"
+    }
+  ]
+}

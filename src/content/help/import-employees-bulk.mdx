@@ -1,0 +1,56 @@
+---
+title: "Importing employees in bulk"
+slug: "import-employees-bulk"
+category: "hris"
+description: "How to bulk-import employees into the Atlas HR Mini-HRIS using the CSV template, with troubleshooting tips."
+updatedAt: "2026-05-12"
+---
+
+## When to use bulk import
+
+Use bulk import when you're setting up the Mini-HRIS for the first time and have existing employee data in a spreadsheet or HRIS. For ongoing additions (1–3 employees at a time), it's faster to add them individually.
+
+## Step-by-step
+
+1. Go to **People → Employees**.
+2. Click **Import** in the top-right corner.
+3. Click **Download template** to get the CSV with the correct column headers.
+4. Fill in the template using your existing employee data.
+5. Save the file as CSV (UTF-8 encoding).
+6. Click **Upload CSV** and select your file.
+7. Review the import preview — Atlas HR shows a summary of rows to be created and any errors.
+8. Fix errors if needed (re-download, correct, re-upload).
+9. Click **Confirm import**.
+
+## CSV column reference
+
+| Column | Required | Notes |
+|---|---|---|
+| `full_name` | Yes | First and last name |
+| `email` | Yes | Must be unique |
+| `start_date` | Yes | Format: YYYY-MM-DD |
+| `job_title` | Yes | |
+| `department` | Yes | |
+| `employment_type` | No | full_time / part_time / contractor |
+| `manager_email` | No | Must match another row's email |
+| `salary_band` | No | Text field, e.g. "£40k–£50k" |
+
+## Common import errors
+
+**"Email already exists"** — An employee with that email is already in your Mini-HRIS. Skip or update their record manually.
+
+**"Invalid date format"** — Dates must be in YYYY-MM-DD format. E.g. use `2023-04-03` not `03/04/2023`.
+
+**"Manager email not found"** — The email in `manager_email` doesn't match any row being imported or existing employee. Either add the manager as a separate row or leave the field blank.
+
+**"Missing required field"** — One of the required columns is empty for that row.
+
+## Import limits
+
+Each import batch supports up to **500 rows**. For larger rosters, split the file and import in batches.
+
+## After import
+
+After a successful import, all employees appear in **People → Employees**. Profiles are created with the data from your CSV. You can add further details (photos, documents, emergency contacts) to individual profiles afterwards.
+
+Imported employees are not automatically invited to the employee portal. To invite them, use **Invite to portal** on individual profiles or select multiple employees and use **Bulk invite**.

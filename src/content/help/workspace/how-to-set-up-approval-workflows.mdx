@@ -1,0 +1,84 @@
+---
+title: "How to Set Up Approval Workflows"
+slug: "how-to-set-up-approval-workflows"
+category: "workspace"
+excerpt: "How to configure approval workflows in Atlas HR — the trigger types available, how to add steps and approvers, setting SLA hours, and what happens when a request times out."
+publishedAt: "2026-05-11"
+updatedAt: "2026-05-11"
+relatedArticles: ["managing-leave-requests", "how-to-add-an-employee", "understanding-document-compliance"]
+---
+
+Approval workflows let you route leave requests, document submissions, and other HR actions through a structured approval chain before they're finalised. Here's how to set one up.
+
+## What triggers an approval workflow?
+
+Atlas HR supports approval workflows for the following event types:
+
+- **Leave requests** — when an employee submits a leave request via the portal
+- **Document submissions** — when an employee uploads a document that requires HR review
+- **Onboarding task completion** — when an employee marks a task done and it needs sign-off
+- **Contract changes** — when a contract amendment is created and requires a second pair of eyes
+
+## Creating a workflow
+
+<Steps>
+1. Go to **Settings → Workflows**.
+2. Click **New workflow**.
+3. Give the workflow a name (e.g. "Annual leave approval" or "Right to work document review").
+4. Choose the **trigger** — select from the list of trigger types above.
+5. Configure the conditions (optional) — for example, trigger only for leave requests over 5 days.
+6. Add approval steps.
+7. Set an SLA and escalation rule.
+8. Click **Save and activate**.
+</Steps>
+
+## Adding approval steps
+
+Each workflow can have one or more sequential steps. Common patterns:
+
+- **Single approver** — goes to the employee's direct manager and that's it.
+- **Two-step** — goes to the manager, then to HR for final sign-off.
+- **Role-based** — goes to anyone with a specific role (e.g. "HR Admin") rather than a named individual.
+
+For each step, choose:
+
+- **Approver type** — Named person, Employee's manager, or Role
+- **Named approver** — if you chose "Named person," select from the list of workspace members
+
+<Callout type="tip">
+Use "Employee's manager" as the approver type wherever possible. This means the workflow works automatically for all employees without you needing to configure individual names. Atlas HR looks up the manager from each employee's profile.
+</Callout>
+
+## Setting SLA hours
+
+The SLA is how long an approver has to respond before the system escalates or flags the request.
+
+- Enter the SLA in hours (e.g. 48 hours = two business days)
+- Atlas HR counts only working hours (09:00–17:00 Monday to Friday by default)
+- Working hours can be customised in **Settings → Workspace → Working hours**
+
+## Escalation rules
+
+When the SLA expires without a response, you can configure Atlas HR to:
+
+- **Send a reminder** — notify the approver again
+- **Escalate to another approver** — route to a backup (e.g. if the manager hasn't responded, escalate to HR Admin)
+- **Auto-approve** — mark the request as approved after SLA expires (useful for short leave requests)
+
+<Callout type="warning">
+Be careful with auto-approve on document submissions. It's fine for routine leave, but for compliance documents like right-to-work, an auto-approval could create a legal risk if the document hasn't actually been reviewed.
+</Callout>
+
+## Deactivating a workflow
+
+To pause or remove a workflow:
+
+1. Go to **Settings → Workflows**.
+2. Click the workflow name.
+3. Toggle **Active** to off, or click **Delete workflow**.
+
+Deactivating a workflow doesn't affect requests already in progress — those continue through their existing approval chain.
+
+## Still need help?
+
+[Contact support →](/help/contact) if you need help designing your approval chain.

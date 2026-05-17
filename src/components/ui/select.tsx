@@ -1,224 +1,307 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { AnimatePresence, motion } from "framer-motion"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
-import { cn } from "@/lib/utils"
-
-const Select = SelectPrimitive.Root
-
-function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
-  return (
-    <SelectPrimitive.Group
-      data-slot="select-group"
-      className={cn("scroll-my-1 p-1", className)}
-      {...props}
-    />
-  )
+export interface SelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
-  return (
-    <SelectPrimitive.Value
-      data-slot="select-value"
-      className={cn(
-        "flex min-w-0 flex-1 items-center text-left text-[var(--text-primary)] data-[placeholder]:text-[var(--text-tertiary)]",
-        className
-      )}
-      {...props}
-    />
-  )
+interface SelectProps {
+  id?: string;
+  name?: string;
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+  "aria-label"?: string;
+  error?: string;
+  className?: string;
+  triggerClassName?: string;
+  menuClassName?: string;
 }
 
-function SelectTrigger({
-  className,
-  children,
-  ...props
-}: SelectPrimitive.Trigger.Props) {
+function ChevronDown({ className }: { className?: string }) {
   return (
-    <SelectPrimitive.Trigger
-      data-slot="select-trigger"
-      className={cn(
-        "flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] px-3 text-sm text-[var(--text-primary)] outline-none transition-[background-color,border-color,box-shadow,color] [duration:280ms] placeholder:text-[var(--text-tertiary)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-[var(--text-tertiary)] data-[popup-open]:border-[var(--accent)] aria-invalid:border-[var(--danger)] aria-invalid:ring-2 aria-invalid:ring-[var(--danger)]/20 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        className
-      )}
-      {...props}
+    <svg
+      className={cn("h-4 w-4 shrink-0 text-navy-400", className)}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 20 20"
+      aria-hidden
     >
-      {children}
-      <SelectPrimitive.Icon
-        className="flex shrink-0 items-center text-[var(--text-secondary)] transition-transform [duration:280ms] data-[popup-open]:rotate-180"
-        render={<ChevronDown size={16} aria-hidden="true" />}
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M6 8l4 4 4-4"
       />
-    </SelectPrimitive.Trigger>
-  )
+    </svg>
+  );
 }
 
-function SelectContent({
+function Select({
+  id,
+  name,
+  value,
+  defaultValue,
+  onChange,
+  options,
+  placeholder = "Select...",
+  disabled = false,
+  required = false,
+  "aria-label": ariaLabel,
+  error,
   className,
-  children,
-  side = "bottom",
-  sideOffset = 4,
-  align = "center",
-  alignOffset = 0,
-  alignItemWithTrigger = true,
-  ...props
-}: SelectPrimitive.Popup.Props &
-  Pick<
-    SelectPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
-  >) {
+  triggerClassName,
+  menuClassName,
+}: SelectProps) {
+  const listboxId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
+  const isControlled = value !== undefined;
+  const firstEnabledValue = options.find((option) => !option.disabled)?.value ?? "";
+  const [internalValue, setInternalValue] = useState(defaultValue ?? value ?? firstEnabledValue);
+  const [open, setOpen] = useState(false);
+  const [highlightIndex, setHighlightIndex] = useState(-1);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; width: number; maxHeight: number } | null>(null);
+
+  const currentValue = isControlled ? (value ?? "") : internalValue;
+  const selected = options.find((o) => o.value === currentValue);
+  const displayLabel = selected?.label ?? placeholder;
+  const isPlaceholder = !selected;
+
+  const updateMenuPosition = useCallback(() => {
+    const trigger = rootRef.current?.querySelector("button");
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const padding = 8;
+    const gap = 4;
+    const idealHeight = Math.min(240, Math.max(44, options.length * 40 + 8));
+    const spaceBelow = window.innerHeight - rect.bottom - padding;
+    const spaceAbove = rect.top - padding;
+    const openAbove = spaceBelow < idealHeight && spaceAbove > spaceBelow;
+    const maxHeight = Math.max(44, Math.min(240, openAbove ? spaceAbove - gap : spaceBelow - gap));
+    const top = openAbove ? Math.max(padding, rect.top - maxHeight - gap) : rect.bottom + gap;
+    const width = Math.max(rect.width, 160);
+    const left = Math.min(
+      Math.max(padding, rect.left),
+      Math.max(padding, window.innerWidth - width - padding),
+    );
+    setMenuPosition({ top, left, width, maxHeight });
+  }, [options.length]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(e: PointerEvent) {
+      const target = e.target as Node;
+      if (
+        rootRef.current &&
+        !rootRef.current.contains(target) &&
+        menuRef.current &&
+        !menuRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    function reposition() {
+      updateMenuPosition();
+    }
+
+    updateMenuPosition();
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", reposition, true);
+    };
+  }, [open, updateMenuPosition]);
+
+  function getInitialHighlightIndex() {
+    const idx = options.findIndex((o) => o.value === currentValue && !o.disabled);
+    if (idx >= 0) return idx;
+    return Math.max(options.findIndex((o) => !o.disabled), 0);
+  }
+
+  function openSelect() {
+    updateMenuPosition();
+    setHighlightIndex(getInitialHighlightIndex());
+    setOpen(true);
+  }
+
+  function selectOption(option: SelectOption) {
+    if (option.disabled) return;
+    if (!isControlled) setInternalValue(option.value);
+    onChange?.(option.value);
+    setOpen(false);
+  }
+
+  function moveHighlight(direction: 1 | -1) {
+    setHighlightIndex((index) => {
+      let next = index;
+      for (let i = 0; i < options.length; i++) {
+        next = Math.min(Math.max(next + direction, 0), options.length - 1);
+        if (!options[next]?.disabled) return next;
+      }
+      return index;
+    });
+  }
+
+  function onTriggerKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
+    if (disabled) return;
+
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+      e.preventDefault();
+      openSelect();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      openSelect();
+    }
+  }
+
+  function onListKeyDown(e: React.KeyboardEvent<HTMLUListElement>) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      moveHighlight(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveHighlight(-1);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      const option = options[highlightIndex];
+      if (option) selectOption(option);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setHighlightIndex(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setHighlightIndex(options.length - 1);
+    }
+  }
+
   return (
-    <SelectPrimitive.Portal>
-      <SelectPrimitive.Positioner
-        side={side}
-        sideOffset={sideOffset}
-        align={align}
-        alignOffset={alignOffset}
-        alignItemWithTrigger={alignItemWithTrigger}
-        className="isolate z-50"
+    <div ref={rootRef} className={cn("relative", className)}>
+      {name && (
+        <input
+          aria-hidden="true"
+          tabIndex={-1}
+          className="sr-only"
+          name={name}
+          value={currentValue}
+          required={required}
+          onChange={() => {}}
+        />
+      )}
+      <button
+        id={id}
+        type="button"
+        disabled={disabled}
+        aria-label={ariaLabel}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        onClick={() => {
+          if (disabled) return;
+          if (open) setOpen(false);
+          else openSelect();
+        }}
+        onKeyDown={onTriggerKeyDown}
+        className={cn(
+          "flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-navy-200 bg-white px-3 py-2 text-left text-sm transition-colors",
+          "focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent",
+          "disabled:cursor-not-allowed disabled:bg-navy-50 disabled:opacity-60",
+          open && "ring-2 ring-blue-600 border-transparent",
+          isPlaceholder ? "text-navy-400" : "text-navy-900",
+          error && "border-error focus:ring-error",
+          !error && open && "ring-blue-600",
+          triggerClassName
+        )}
       >
-        <SelectPrimitive.Popup
-          data-slot="select-content"
-          data-align-trigger={alignItemWithTrigger}
+        <span className="truncate">{displayLabel}</span>
+        <ChevronDown className={cn("transition-transform", open && "rotate-180")} />
+      </button>
+
+      {typeof document !== "undefined" && open && menuPosition && createPortal(
+        <ul
+          ref={menuRef}
+          id={listboxId}
+          role="listbox"
+          tabIndex={-1}
+          onKeyDown={onListKeyDown}
           className={cn(
-            "relative isolate z-50 max-h-[min(var(--available-height),20rem)] w-[var(--anchor-width)] min-w-40 origin-[var(--transform-origin)] overflow-x-hidden overflow-y-auto scroll-smooth rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-1 text-[var(--text-primary)] shadow-[var(--shadow-dropdown)] outline-none transition-[opacity,transform] duration-[280ms] ease-[cubic-bezier(0.32,0.72,0,1)] data-[ending-style]:duration-[280ms] data-[ending-style]:ease-[cubic-bezier(0.32,0.72,0,1)] data-[ending-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:-translate-y-1 data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:-translate-y-1",
-            className
+            "fixed z-[1000] overflow-auto rounded-xl border border-blue-100 bg-white py-1 shadow-2xl shadow-navy-900/12",
+            menuClassName
           )}
-          {...props}
+          style={{
+            top: menuPosition.top,
+            left: menuPosition.left,
+            width: menuPosition.width,
+            maxHeight: menuPosition.maxHeight,
+          }}
         >
-          <AnimatePresence>
-            <motion.div
-              key="select-motion"
-              initial={{ opacity: 0, scale: 0.95, y: -4 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                transition: { duration: 0.18, ease: "easeOut" },
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.95,
-                y: -4,
-                transition: { duration: 0.15, ease: "easeIn" },
-              }}
-            >
-              <SelectScrollUpButton />
-              <SelectPrimitive.List>{children}</SelectPrimitive.List>
-              <SelectScrollDownButton />
-            </motion.div>
-          </AnimatePresence>
-        </SelectPrimitive.Popup>
-      </SelectPrimitive.Positioner>
-    </SelectPrimitive.Portal>
-  )
-}
+          {options.map((option, index) => {
+            const isSelected = option.value === currentValue;
+            const isHighlighted = index === highlightIndex;
 
-function SelectLabel({
-  className,
-  ...props
-}: SelectPrimitive.GroupLabel.Props) {
-  return (
-    <SelectPrimitive.GroupLabel
-      data-slot="select-label"
-      className={cn(
-        "px-2 py-1.5 text-xs font-medium text-[var(--text-tertiary)]",
-        className
+            return (
+              <li key={option.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  disabled={option.disabled}
+                  onMouseEnter={() => !option.disabled && setHighlightIndex(index)}
+                  onClick={() => selectOption(option)}
+                  className={cn(
+                    "flex w-full items-center justify-between px-3 py-2 text-left text-sm transition-colors",
+                    isSelected && "bg-blue-600 text-white font-semibold",
+                    !isSelected && isHighlighted && "bg-blue-50 text-blue-700",
+                    !isSelected && !isHighlighted && "text-navy-700 hover:bg-blue-50 hover:text-blue-700",
+                    option.disabled && "cursor-not-allowed text-navy-300 hover:bg-white"
+                  )}
+                >
+                  <span className="truncate">{option.label}</span>
+                  {isSelected && (
+                    <svg
+                      className="h-4 w-4 shrink-0 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>,
+        document.body
       )}
-      {...props}
-    />
-  )
+    </div>
+  );
 }
 
-function SelectItem({
-  className,
-  children,
-  ...props
-}: SelectPrimitive.Item.Props) {
-  return (
-    <SelectPrimitive.Item
-      data-slot="select-item"
-      className={cn(
-        "relative flex min-h-9 w-full cursor-default select-none items-center gap-2 rounded-md py-2 pr-8 pl-2 text-sm text-[var(--text-primary)] outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-[var(--bg-hover)] data-[selected]:bg-[var(--accent-soft)] data-selected:text-text-primary",
-        className
-      )}
-      {...props}
-    >
-      <SelectPrimitive.ItemText className="flex min-w-0 flex-1 items-center gap-2 truncate">
-        {children}
-      </SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator
-        render={
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center text-[var(--accent)]" />
-        }
-      >
-        <Check size={16} aria-hidden="true" />
-      </SelectPrimitive.ItemIndicator>
-    </SelectPrimitive.Item>
-  )
-}
-
-function SelectSeparator({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="select-separator"
-      role="separator"
-      className={cn("pointer-events-none -mx-1 my-1 h-px bg-[var(--border)]", className)}
-      {...props}
-    />
-  )
-}
-
-function SelectScrollUpButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
-  return (
-    <SelectPrimitive.ScrollUpArrow
-      data-slot="select-scroll-up-button"
-      className={cn(
-        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-[var(--bg-card)] py-1 text-[var(--text-secondary)]",
-        className
-      )}
-      {...props}
-    >
-      <ChevronUp size={16} aria-hidden="true" />
-    </SelectPrimitive.ScrollUpArrow>
-  )
-}
-
-function SelectScrollDownButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
-  return (
-    <SelectPrimitive.ScrollDownArrow
-      data-slot="select-scroll-down-button"
-      className={cn(
-        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-[var(--bg-card)] py-1 text-[var(--text-secondary)]",
-        className
-      )}
-      {...props}
-    >
-      <ChevronDown size={16} aria-hidden="true" />
-    </SelectPrimitive.ScrollDownArrow>
-  )
-}
-
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-}
+export { Select };

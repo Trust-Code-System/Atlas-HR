@@ -1,0 +1,4 @@
+full_name,email,job_title,department,employment_type,start_date,country,phone,salary,salary_currency
+Jane Smith,jane.smith@company.com,Marketing Manager,Marketing,full_time,2026-01-15,United Kingdom,+44-7700-900123,55000,GBP
+John Doe,john.doe@company.com,Software Engineer,Engineering,full_time,2026-02-01,United States,,80000,USD
+Mary Johnson,mary.j@company.com,HR Business Partner,People,full_time,2026-03-10,Nigeria,+234-800-123-4567,4500000,NGN

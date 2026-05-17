@@ -1,19 +1,51 @@
-import * as React from "react"
+import { cn } from "@/lib/utils";
+import { type InputHTMLAttributes, forwardRef } from "react";
 
-import { cn } from "@/lib/utils"
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  error?: string;
+}
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = "text", error, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        ref={ref}
+        className={cn(
+          "flex h-10 w-full rounded-xl border border-navy-200 bg-white px-3 py-2 text-sm text-navy-900 placeholder:text-navy-400 transition-colors",
+          "focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent",
+          "disabled:cursor-not-allowed disabled:bg-navy-50 disabled:opacity-60",
+          "read-only:bg-navy-50 read-only:cursor-default",
+          error && "border-error focus:ring-error",
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+
+Input.displayName = "Input";
+
+const Textarea = forwardRef<
+  HTMLTextAreaElement,
+  React.TextareaHTMLAttributes<HTMLTextAreaElement> & { error?: string }
+>(({ className, error, ...props }, ref) => {
   return (
-    <input
-      type={type}
-      data-slot="input"
+    <textarea
+      ref={ref}
       className={cn(
-        "flex h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        "flex min-h-[80px] w-full rounded-xl border border-navy-200 bg-white px-3 py-2 text-sm text-navy-900 placeholder:text-navy-400 transition-colors resize-y",
+        "focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent",
+        "disabled:cursor-not-allowed disabled:bg-navy-50 disabled:opacity-60",
+        error && "border-error focus:ring-error",
         className
       )}
       {...props}
     />
-  )
-}
+  );
+});
 
-export { Input }
+Textarea.displayName = "Textarea";
+
+export { Input, Textarea };

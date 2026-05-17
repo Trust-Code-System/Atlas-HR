@@ -1,0 +1,64 @@
+---
+title: "How to Export My Data"
+slug: "how-to-export-my-data"
+category: "privacy"
+excerpt: "How to download a complete export of your Atlas HR data — your profile, generated documents, and saved items — what the export includes, what format it comes in, and how long it takes."
+publishedAt: "2026-05-11"
+updatedAt: "2026-05-11"
+relatedArticles: ["how-to-delete-my-account", "understanding-our-security-practices"]
+---
+
+You own your data. Atlas HR lets you export a complete copy of everything associated with your account. Here's how to do it.
+
+## What's included in the export
+
+Your data export is a JSON file that includes:
+
+- **Profile information** — your name, email, company, role, and account settings
+- **Generated documents** — all documents you've created using Atlas HR tools, with the inputs used to generate them
+- **Saved templates** — any templates you've saved and customised
+- **Document library** — if you're on Pro or above, all documents stored in your library
+- **Copilot conversation history** — all conversations from the date you started using Copilot
+- **Workspace data** — if you're the workspace admin, this includes organisation settings (not employee records — those are exported separately)
+
+<Callout type="info">
+Employee records are **not** included in a personal account data export. If you're an HR Admin who needs a copy of employee data (for GDPR subject access requests, for example), use the separate export function in People → export, or contact us for assistance.
+</Callout>
+
+## How to export your data
+
+<Steps>
+1. Go to **Settings → Data**.
+2. Click **Export my data**.
+3. Confirm the export by clicking **Request export**.
+4. You'll receive an email to your account email with a download link when the export is ready.
+</Steps>
+
+The export typically takes 5–15 minutes to prepare. Once ready, the download link is valid for **48 hours**.
+
+## About the JSON format
+
+Your export arrives as a `.json` file. This is a structured text format readable by:
+
+- Any text editor (open it in Notepad, VS Code, etc.)
+- JSON viewers (paste it into [jsonviewer.stack.hu](https://jsonviewer.stack.hu) for a readable tree view)
+- Excel or Google Sheets (import → JSON)
+- Developer tools for building further processing
+
+If you're not technically inclined and just want to view your documents, they're also included as readable text within the JSON. Each document has a `content` field with the full text.
+
+<Callout type="tip">
+If you need your documents in DOCX or PDF format rather than JSON, re-download them individually from the document library before requesting an account deletion or cancelling your subscription.
+</Callout>
+
+## Frequency of exports
+
+You can export your data as many times as you like. There's no limit on export frequency.
+
+## GDPR and data rights
+
+If you're in the EU or UK, you have a right to access your personal data under GDPR / UK GDPR. The export feature fulfils this right. If you need the data in a specific format for legal purposes, or need a human-readable version rather than JSON, contact us and we'll assist.
+
+## Still need help?
+
+[Contact support →](/help/contact) if your export hasn't arrived after 30 minutes, or if you need data in a specific format.

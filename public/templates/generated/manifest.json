@@ -1,0 +1,234 @@
+{
+  "generatedAt": "2026-05-09T20:02:01.372Z",
+  "templates": [
+    {
+      "slug": "employment-contract-permanent",
+      "variants": [
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/employment-contract-permanent.png"
+    },
+    {
+      "slug": "employment-contract-fixed-term",
+      "variants": [
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/employment-contract-fixed-term.png"
+    },
+    {
+      "slug": "independent-contractor-agreement",
+      "variants": [
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/independent-contractor-agreement.png"
+    },
+    {
+      "slug": "nda-confidentiality",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/nda-confidentiality.png"
+    },
+    {
+      "slug": "offer-letter",
+      "variants": [
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/offer-letter.png"
+    },
+    {
+      "slug": "employee-handbook-template",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/employee-handbook-template.png"
+    },
+    {
+      "slug": "remote-work-policy",
+      "variants": [
+        "global",
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/remote-work-policy.png"
+    },
+    {
+      "slug": "anti-harassment-policy",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/anti-harassment-policy.png"
+    },
+    {
+      "slug": "code-of-conduct",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/code-of-conduct.png"
+    },
+    {
+      "slug": "data-privacy-policy-employee",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/data-privacy-policy-employee.png"
+    },
+    {
+      "slug": "social-media-policy",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/social-media-policy.png"
+    },
+    {
+      "slug": "travel-and-expense-policy",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/travel-and-expense-policy.png"
+    },
+    {
+      "slug": "whistleblower-policy",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/whistleblower-policy.png"
+    },
+    {
+      "slug": "annual-performance-review",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/annual-performance-review.png"
+    },
+    {
+      "slug": "quarterly-check-in",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/quarterly-check-in.png"
+    },
+    {
+      "slug": "probation-review",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/probation-review.png"
+    },
+    {
+      "slug": "performance-improvement-plan-pip",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/performance-improvement-plan-pip.png"
+    },
+    {
+      "slug": "360-feedback-form",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/360-feedback-form.png"
+    },
+    {
+      "slug": "job-description",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/job-description.png"
+    },
+    {
+      "slug": "interview-scorecard",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/interview-scorecard.png"
+    },
+    {
+      "slug": "reference-check-form",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/reference-check-form.png"
+    },
+    {
+      "slug": "offer-letter-acceptance-form",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/offer-letter-acceptance-form.png"
+    },
+    {
+      "slug": "new-hire-checklist",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/new-hire-checklist.png"
+    },
+    {
+      "slug": "employee-information-form",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/employee-information-form.png"
+    },
+    {
+      "slug": "resignation-acceptance-letter",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/resignation-acceptance-letter.png"
+    },
+    {
+      "slug": "termination-letter",
+      "variants": [
+        "us",
+        "uk",
+        "ng",
+        "in"
+      ],
+      "previewImageUrl": "/templates/previews/termination-letter.png"
+    },
+    {
+      "slug": "exit-interview-form",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/exit-interview-form.png"
+    },
+    {
+      "slug": "verbal-warning-record",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/verbal-warning-record.png"
+    },
+    {
+      "slug": "written-warning",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/written-warning.png"
+    },
+    {
+      "slug": "final-settlement-statement",
+      "variants": [
+        "global"
+      ],
+      "previewImageUrl": "/templates/previews/final-settlement-statement.png"
+    }
+  ]
+}
