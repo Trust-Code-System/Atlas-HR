@@ -153,17 +153,6 @@ export default function SignUpPage() {
                 </svg>
                 Continue with Google
               </button>
-              <button
-                onClick={() => signInWithOAuth("linkedin_oidc")}
-                type="button"
-                className="w-full flex items-center justify-center gap-3 h-10 rounded-xl border-2 border-navy-200 bg-white text-navy-700 text-sm font-medium hover:border-navy-300 hover:bg-navy-50 transition-colors"
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <rect width="24" height="24" rx="3" fill="#0A66C2"/>
-                  <path fill="#fff" d="M7.2 10.1H4.8v8.9h2.4v-8.9zm-1.2-3.9C5.1 6.2 4.3 7 4.3 8s.8 1.8 1.7 1.8 1.7-.8 1.7-1.8-.8-1.8-1.7-1.8zM19.7 13.6c0-2.2-1.3-3.7-3.2-3.7-1 0-1.8.5-2.3 1.2v-1h-2.4v8.9h2.4v-4.8c0-1 .5-1.9 1.5-1.9s1.5.8 1.5 1.9v4.8h2.5v-5.4z"/>
-                </svg>
-                Continue with LinkedIn
-              </button>
             </div>
 
             <Separator label="or" className="mb-6" />

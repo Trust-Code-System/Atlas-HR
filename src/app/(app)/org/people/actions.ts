@@ -193,7 +193,8 @@ export async function updateEmployee(
   const fullName = normalize(formData.get("full_name"));
   if (!fullName) return { error: "Full name is required." };
 
-  const { error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from("employees")
     .update({
       full_name: fullName,
@@ -214,6 +215,7 @@ export async function updateEmployee(
       is_department_head: formData.get("is_department_head") === "on",
       emergency_contact_name: normalize(formData.get("emergency_contact_name")),
       emergency_contact_phone: normalize(formData.get("emergency_contact_phone")),
+      linkedin_url: normalize(formData.get("linkedin_url")),
       notes: normalize(formData.get("notes")),
       status:
         ((formData.get("status") as string) ||

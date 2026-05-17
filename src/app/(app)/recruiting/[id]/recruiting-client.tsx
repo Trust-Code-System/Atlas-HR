@@ -130,6 +130,10 @@ function AddCandidateModal({ jobId, onClose }: { jobId: string; onClose: () => v
             </select>
           </div>
           <div>
+            <label htmlFor="add_linkedin" className="text-xs font-semibold text-navy-600 uppercase tracking-wide block mb-1.5">LinkedIn profile URL</label>
+            <Input id="add_linkedin" name="linkedin_url" type="url" placeholder="https://linkedin.com/in/username" />
+          </div>
+          <div>
             <label htmlFor="add_notes" className="text-xs font-semibold text-navy-600 uppercase tracking-wide block mb-1.5">Notes</label>
             <textarea
               id="add_notes"
@@ -273,7 +277,27 @@ function CandidateDrawer({
   const [stagePending, startStageTransition] = useTransition();
   const [showConvert, setShowConvert] = useState(false);
   const [converted, setConverted] = useState<string | null>(null);
+  const [fitAnalysis, setFitAnalysis] = useState<string | null>(null);
+  const [fitLoading, setFitLoading] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  async function runFitCheck() {
+    setFitLoading(true);
+    setFitAnalysis(null);
+    try {
+      const res = await fetch("/api/recruiting/fit-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicationId: app.id }),
+      });
+      const data = await res.json();
+      setFitAnalysis(data.analysis ?? data.error ?? "No response.");
+    } catch {
+      setFitAnalysis("Failed to run analysis. Please try again.");
+    } finally {
+      setFitLoading(false);
+    }
+  }
 
   function handleStageChange(next: JobApplication["stage"]) {
     setStage(next);
@@ -354,12 +378,14 @@ function CandidateDrawer({
               { label: "Email", value: app.candidate_email, href: app.candidate_email ? `mailto:${app.candidate_email}` : undefined },
               { label: "Phone", value: app.candidate_phone, href: app.candidate_phone ? `tel:${app.candidate_phone}` : undefined },
               { label: "Source", value: app.source ? SOURCE_LABELS[app.source] : null },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { label: "LinkedIn", value: (app as any).linkedin_url as string | null, href: (app as any).linkedin_url as string | undefined },
             ].map((row) => (
               <div key={row.label} className="flex items-center gap-3 px-4 py-2.5">
                 <span className="w-16 shrink-0 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{row.label}</span>
                 {row.value ? (
                   row.href ? (
-                    <a href={row.href} className="text-sm text-blue-600 hover:underline truncate">{row.value}</a>
+                    <a href={row.href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline truncate">{row.value}</a>
                   ) : (
                     <span className="text-sm text-navy-900">{row.value}</span>
                   )
@@ -369,6 +395,43 @@ function CandidateDrawer({
               </div>
             ))}
           </div>
+
+          {/* AI Fit Check */}
+          {isAdmin && (
+            <div className="rounded-[14px] border border-blue-100 bg-blue-50/60 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  <p className="text-sm font-semibold text-blue-900">AI Fit Check</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={runFitCheck}
+                  disabled={fitLoading}
+                  className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  {fitLoading ? "Analysing…" : fitAnalysis ? "Re-run" : "Analyse candidate"}
+                </button>
+              </div>
+              {fitLoading && (
+                <div className="flex items-center gap-2 text-xs text-blue-600">
+                  <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                  </svg>
+                  Running analysis…
+                </div>
+              )}
+              {fitAnalysis && !fitLoading && (
+                <div className="text-xs text-navy-700 whitespace-pre-wrap leading-relaxed">{fitAnalysis}</div>
+              )}
+              {!fitAnalysis && !fitLoading && (
+                <p className="text-xs text-blue-600">Click &ldquo;Analyse candidate&rdquo; to get an AI assessment of this candidate&apos;s fit for the role.</p>
+              )}
+            </div>
+          )}
 
           {/* Stage selector */}
           {isAdmin && (

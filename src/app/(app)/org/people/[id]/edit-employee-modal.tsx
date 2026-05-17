@@ -226,6 +226,14 @@ export function EditEmployeeModal({
                   </div>
                 </div>
 
+                {/* Online */}
+                <p className="text-xs font-bold text-navy-400 uppercase tracking-widest pt-2">Online</p>
+                <div>
+                  <FieldLabel>LinkedIn profile URL</FieldLabel>
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  <Input name="linkedin_url" type="url" defaultValue={(employee as any).linkedin_url ?? ""} placeholder="https://linkedin.com/in/username" />
+                </div>
+
                 {/* Notes */}
                 <p className="text-xs font-bold text-navy-400 uppercase tracking-widest pt-2">Notes</p>
                 <Textarea name="notes" defaultValue={employee.notes ?? ""} rows={3} placeholder="Internal notes about this employee…" />

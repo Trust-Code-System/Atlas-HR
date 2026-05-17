@@ -95,6 +95,7 @@ export async function addApplication(
   const candidate_phone = (formData.get("candidate_phone") as string) || null;
   const notes = (formData.get("notes") as string) || null;
   const source = (formData.get("source") as string) || null;
+  const linkedin_url = (formData.get("linkedin_url") as string) || null;
 
   if (!candidate_name?.trim()) return { error: "Candidate name is required." };
 
@@ -116,8 +117,10 @@ export async function addApplication(
     candidate_phone: candidate_phone?.trim() || null,
     notes: notes?.trim() || null,
     source: (source as "linkedin" | "indeed" | "referral" | "careers_page" | "glassdoor" | "agency" | "direct" | "other") || null,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    linkedin_url: linkedin_url?.trim() || null,
     stage: "applied",
-  });
+  } as any);
 
   if (error) return { error: error.message };
 
