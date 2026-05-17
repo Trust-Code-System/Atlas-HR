@@ -1,8 +1,8 @@
 {
   "crons": [
     { "path": "/api/cron/weekly-digest", "schedule": "0 9 * * 1" },
-    { "path": "/api/cron/scheduled-reports", "schedule": "0 * * * *" },
-    { "path": "/api/cron/document-compliance", "schedule": "15 * * * *" },
-    { "path": "/api/cron/escalation", "schedule": "30 * * * *" }
+    { "path": "/api/cron/scheduled-reports", "schedule": "0 7 * * *" },
+    { "path": "/api/cron/document-compliance", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/escalation", "schedule": "0 9 * * *" }
   ]
 }
