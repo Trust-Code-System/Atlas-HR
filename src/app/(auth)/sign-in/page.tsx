@@ -51,12 +51,9 @@ function SignInForm() {
             type="button"
             className="w-full flex items-center justify-center gap-3 h-10 rounded-xl border-2 border-navy-200 bg-white text-navy-700 text-sm font-medium hover:border-navy-300 hover:bg-navy-50 transition-colors"
           >
-            <svg className="h-5 w-5" viewBox="0 0 34 34" aria-hidden="true">
-              <rect width="34" height="34" rx="4" fill="#0A66C2" />
-              <path
-                fill="#fff"
-                d="M10.1 14.3h5.1v16.4h-5.1V14.3Zm2.6-8.1a3 3 0 1 1 0 6.1 3 3 0 0 1 0-6.1ZM18.4 14.3h4.9v2.2h.1c.7-1.3 2.4-2.7 4.9-2.7 5.2 0 6.2 3.4 6.2 7.9v9h-5.1v-8c0-1.9 0-4.4-2.7-4.4s-3.1 2.1-3.1 4.3v8.1h-5.1V14.3Z"
-              />
+            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" rx="3" fill="#0A66C2"/>
+              <path fill="#fff" d="M7.2 10.1H4.8v8.9h2.4v-8.9zm-1.2-3.9C5.1 6.2 4.3 7 4.3 8s.8 1.8 1.7 1.8 1.7-.8 1.7-1.8-.8-1.8-1.7-1.8zM19.7 13.6c0-2.2-1.3-3.7-3.2-3.7-1 0-1.8.5-2.3 1.2v-1h-2.4v8.9h2.4v-4.8c0-1 .5-1.9 1.5-1.9s1.5.8 1.5 1.9v4.8h2.5v-5.4z"/>
             </svg>
             Continue with LinkedIn
           </button>
