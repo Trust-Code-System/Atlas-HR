@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0C1628"/>
+      <stop offset="50%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#0891B2"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="18" y1="17" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#BAE6FD"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#bg)"/>
+  <path d="M18 45.5 31.9 17.5 46 45.5" stroke="url(#mark)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24.7 34.6h14.6" stroke="white" stroke-width="4.6" stroke-linecap="round"/>
+  <path d="M14.6 21.5c5.1-5.8 11.1-8.7 17.4-8.7 6.4 0 12.3 2.9 17.4 8.7M14.6 42.5c5.1 5.8 11.1 8.7 17.4 8.7 6.4 0 12.3-2.9 17.4-8.7" stroke="#93C5FD" stroke-width="2.6" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="32" cy="17.5" r="3.2" fill="white"/>
+  <circle cx="18" cy="45.5" r="3.2" fill="#DBEAFE"/>
+  <circle cx="46" cy="45.5" r="3.2" fill="#DBEAFE"/>
+</svg>
