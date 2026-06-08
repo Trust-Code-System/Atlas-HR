@@ -68,7 +68,7 @@ function EmployeeCard({ node }: { node: TreeNode }) {
   return (
     <Link
       href={`/org/people/${node.id}`}
-      className="group flex items-center gap-3 bg-white border border-navy-200 rounded-2xl px-4 py-3 hover:border-blue-300 hover:shadow-md transition-all w-[188px]"
+      className="group flex items-center gap-3 bg-white border border-navy-200 rounded-2xl px-4 py-3 hover:border-blue-300 hover:shadow-md transition-all w-[188px] min-h-19"
     >
       <div className="relative shrink-0">
         <div className={`h-10 w-10 rounded-xl bg-linear-to-br ${grad} flex items-center justify-center text-sm font-bold text-white shadow-sm`}>

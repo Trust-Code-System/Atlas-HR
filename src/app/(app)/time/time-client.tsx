@@ -353,23 +353,34 @@ export function TimeClient({
           <div className="px-5 py-4 border-b border-navy-200">
             <h2 className="text-sm font-bold text-navy-900">Pending approvals ({pendingEntries.length})</h2>
           </div>
+          {/* Column headers */}
+          <div className="hidden sm:grid grid-cols-[1fr_140px_56px_90px_80px] gap-x-4 px-5 py-2 bg-navy-50 border-b border-navy-100">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-navy-500">Employee</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-navy-500">Date</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-navy-500">Hours</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-navy-500">Category</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-navy-500"></span>
+          </div>
           <div className="divide-y divide-navy-100">
             {pendingEntries.map((entry) => {
               const emp = employeeMap[entry.employee_id];
               return (
-                <div key={entry.id} className="px-5 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-navy-800">
-                      {emp ? emp.full_name : "Unknown"}
-                    </p>
-                    <p className="font-mono text-xs text-navy-500">
-                      {new Date(entry.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
-                      {" · "}{entry.hours}h
-                      {" · "}<span className={`font-semibold rounded-full px-1.5 py-0.5 text-xs ${categoryColors[entry.category] ?? ""}`}>{entry.category}</span>
-                      {entry.notes && ` · ${entry.notes}`}
-                    </p>
+                <div key={entry.id} className="px-5 py-3 grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_140px_56px_90px_80px] gap-x-4 items-center">
+                  <p className="text-sm font-semibold text-navy-800 truncate">
+                    {emp ? emp.full_name : "Unknown"}
+                  </p>
+                  <p className="font-mono text-xs text-navy-500 sm:col-auto col-start-2 row-start-1 sm:row-auto text-right sm:text-left">
+                    {new Date(entry.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
+                  </p>
+                  <p className="hidden sm:block font-mono text-xs text-navy-700 font-semibold">{entry.hours}h</p>
+                  <div className="hidden sm:flex items-center">
+                    <span className={`text-xs font-semibold rounded-full px-2 py-0.5 ${categoryColors[entry.category] ?? ""}`}>
+                      {entry.category}
+                    </span>
                   </div>
-                  <ApproveButton entryId={entry.id} />
+                  <div className="flex justify-end sm:justify-start col-span-2 sm:col-auto mt-1 sm:mt-0">
+                    <ApproveButton entryId={entry.id} />
+                  </div>
                 </div>
               );
             })}

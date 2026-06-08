@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default async function AppLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   const user = await getUser();
   if (!user) redirect("/sign-in");
@@ -14,7 +14,7 @@ export default async function AppLayout({
   return (
     <div className="flex h-screen bg-[#f8fafc] overflow-hidden">
       <AppSidebar userRole={user.role} />
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden w-full lg:w-auto">
         <AppHeader />
         <main className="flex-1 overflow-y-auto">
           {children}

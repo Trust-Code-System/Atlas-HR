@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import { AtlasLogo, AtlasLogoMark } from "@/components/atlas-logo";
 import { cn } from "@/lib/utils";
@@ -474,6 +474,18 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("sidebar-collapsed") === "true";
   });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    function handleOpen() { setMobileOpen(true); }
+    window.addEventListener("sidebar-open", handleOpen);
+    return () => window.removeEventListener("sidebar-open", handleOpen);
+  }, []);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   function toggle() {
     setCollapsed((prev) => {
@@ -512,10 +524,23 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
   }
 
   return (
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
     <aside
       className={cn(
-        "flex flex-col min-h-screen bg-blue-50 border-r border-blue-100 shrink-0 transition-all duration-200",
-        collapsed ? "w-[56px]" : "w-[232px]"
+        "flex flex-col bg-blue-50 border-r border-blue-100 shrink-0 transition-all duration-200",
+        // Desktop: static, collapsible
+        "lg:relative lg:z-auto lg:translate-x-0 lg:min-h-screen",
+        collapsed ? "lg:w-14" : "lg:w-58",
+        // Mobile: fixed overlay drawer, always full width
+        "fixed inset-y-0 left-0 z-50 w-58",
+        mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
     >
       {/* Logo + toggle */}
@@ -592,5 +617,6 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
         {bottomItems.map((item) => navLink(item))}
       </div>
     </aside>
+    </>
   );
 }
