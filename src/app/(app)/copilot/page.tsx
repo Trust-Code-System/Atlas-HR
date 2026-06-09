@@ -573,6 +573,16 @@ function CopilotChat() {
     } finally {
       setLoading(false);
       setIsThinkingActive(false);
+      // If the stream ended without producing any text (e.g. the serverless
+      // function timed out, or the model returned nothing), replace the
+      // perpetual typing indicator with a recoverable message.
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId && m.role === "assistant" && !m.content.trim()
+            ? { ...m, content: "I couldn't generate a response just now. Please try again.", isThinking: false }
+            : m
+        )
+      );
     }
   }
 

@@ -186,6 +186,15 @@ export function AtlasAiWidget({ enabledSkills }: Props) {
       );
     } finally {
       setLoading(false);
+      // If nothing streamed back (timeout / empty response), replace the
+      // perpetual typing indicator with a recoverable message.
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId && m.role === "assistant" && !m.content.trim()
+            ? { ...m, content: "I couldn't generate a response just now. Please try again." }
+            : m,
+        ),
+      );
     }
   }
 
