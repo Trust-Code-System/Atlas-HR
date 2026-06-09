@@ -12,12 +12,11 @@ export default async function AppLayout({
 }: {
   readonly children: React.ReactNode;
 }) {
-  const user = await getUser();
+  // Runs on every app navigation. getUser + getCurrentOrg share one cached auth
+  // validation (see getAuthUser) and their remaining queries run in parallel,
+  // so the shell isn't gated on a serial chain of round-trips.
+  const [user, orgCtx] = await Promise.all([getUser(), getCurrentOrg()]);
   if (!user) redirect("/sign-in");
-
-  // Load workspace context so the global AI widget knows which skills are
-  // enabled and the sidebar can gate admin-only items (e.g. Demo Data).
-  const orgCtx = await getCurrentOrg();
   let widgetSkills: { id: string; name: string; placeholder: string }[] = [];
   if (orgCtx) {
     try {

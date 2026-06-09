@@ -4,6 +4,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  // Only pull in the parts of these barrel-export packages that are actually
+  // used, instead of the whole module — smaller bundles + faster compiles.
+  experimental: {
+    optimizePackageImports: [
+      "@react-email/components",
+      "posthog-js",
+      "docx",
+    ],
+  },
   images: {
     remotePatterns: [
       {

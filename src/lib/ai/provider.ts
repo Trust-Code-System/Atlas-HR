@@ -50,6 +50,27 @@ export interface StreamChatOptions {
   thinking?: boolean;
 }
 
+/** A tool the model may call. Mirrors the Anthropic tool schema. */
+export interface ToolDef {
+  name: string;
+  description: string;
+  input_schema: {
+    type: "object";
+    properties: Record<string, unknown>;
+    required?: string[];
+  };
+}
+
+/** Executes a tool the model requested and returns a string result. */
+export type ToolRunner = (name: string, input: Record<string, unknown>) => Promise<string>;
+
+export interface StreamChatWithToolsOptions extends StreamChatOptions {
+  tools: ToolDef[];
+  runTool: ToolRunner;
+  /** Max tool→response round-trips before forcing a final answer. Default 6. */
+  maxToolRounds?: number;
+}
+
 async function* streamAnthropic(opts: StreamChatOptions): AsyncGenerator<string> {
   const stream = anthropicClient().messages.stream({
     model: ANTHROPIC_MODEL,
@@ -100,6 +121,90 @@ export async function* streamChatText(opts: StreamChatOptions): AsyncGenerator<s
     } catch (err) {
       if (yielded || !status.openai) throw err;
       // Claude failed before emitting anything — fall through to OpenAI.
+    }
+  }
+
+  yield* streamOpenAI(opts);
+}
+
+/**
+ * Anthropic agentic loop: streams text and, when the model requests tools, runs
+ * them, feeds the results back, and continues until the model produces a final
+ * answer (or the round budget is exhausted). Text from every round is streamed
+ * as it arrives.
+ */
+async function* streamAnthropicWithTools(opts: StreamChatWithToolsOptions): AsyncGenerator<string> {
+  const messages: Anthropic.Messages.MessageParam[] = [...opts.anthropicMessages];
+  const maxRounds = opts.maxToolRounds ?? 6;
+
+  for (let round = 0; round < maxRounds; round++) {
+    const isLastRound = round === maxRounds - 1;
+    const stream = anthropicClient().messages.stream({
+      model: ANTHROPIC_MODEL,
+      max_tokens: opts.maxTokens,
+      system: opts.system,
+      messages,
+      tools: opts.tools as unknown as Anthropic.Messages.Tool[],
+      // On the final allowed round, forbid further tool calls so the model must
+      // answer from what it already has.
+      ...(isLastRound ? { tool_choice: { type: "none" as const } } : {}),
+      ...(opts.thinking ? { thinking: { type: "enabled" as const, budget_tokens: 10000 } } : {}),
+    });
+
+    for await (const chunk of stream) {
+      if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
+        yield chunk.delta.text;
+      }
+    }
+
+    const final = await stream.finalMessage();
+    if (final.stop_reason !== "tool_use") return;
+
+    const toolUses = final.content.filter(
+      (b): b is Anthropic.Messages.ToolUseBlock => b.type === "tool_use",
+    );
+    if (toolUses.length === 0) return;
+
+    // Preserve the assistant turn (incl. thinking + tool_use blocks) verbatim.
+    messages.push({ role: "assistant", content: final.content });
+
+    const results: Anthropic.Messages.ToolResultBlockParam[] = [];
+    for (const tu of toolUses) {
+      let content: string;
+      try {
+        content = await opts.runTool(tu.name, (tu.input ?? {}) as Record<string, unknown>);
+      } catch (err) {
+        content = `Error running tool: ${(err as Error).message}`;
+      }
+      results.push({ type: "tool_result", tool_use_id: tu.id, content });
+    }
+    messages.push({ role: "user", content: results });
+  }
+}
+
+/**
+ * Streams an assistant answer with live tool access. Claude drives the agentic
+ * loop (calling HR data tools as needed). If Claude is unconfigured or fails
+ * before emitting anything, falls back to a plain OpenAI text answer WITHOUT
+ * tools (degraded — no live data, but still responsive).
+ */
+export async function* streamChatWithTools(opts: StreamChatWithToolsOptions): AsyncGenerator<string> {
+  const status = aiProviderStatus();
+  if (!status.anthropic && !status.openai) {
+    throw new Error("No AI provider configured. Set ANTHROPIC_API_KEY or OPENAI_API_KEY.");
+  }
+
+  if (status.anthropic) {
+    let yielded = false;
+    try {
+      for await (const text of streamAnthropicWithTools(opts)) {
+        yielded = true;
+        yield text;
+      }
+      return;
+    } catch (err) {
+      if (yielded || !status.openai) throw err;
+      // Claude failed before emitting anything — fall back to plain OpenAI.
     }
   }
 

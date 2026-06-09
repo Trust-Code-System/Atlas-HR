@@ -8,10 +8,11 @@ import { trackEvent } from "@/lib/analytics/track-server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getAllKnowledgeArticles } from "@/lib/knowledge";
 import type { KnowledgeArticle } from "@/lib/knowledge-shared";
-import { streamChatText, type StreamChatOptions } from "@/lib/ai/provider";
+import { streamChatText, streamChatWithTools, type StreamChatOptions } from "@/lib/ai/provider";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { getOrgAiContext } from "@/lib/ai/org-ai-context";
 import { searchOrgKnowledge, buildGroundingFragment, type KbSource } from "@/lib/ai/kb/retrieve";
+import { HR_TOOLS, makeHrToolRunner, type HrToolContext } from "@/lib/ai/tools/hr-tools";
 
 const SYSTEM_PROMPT = `You are Atlas, the AI assistant built into Atlas HR. You help HR professionals with every people-related challenge — recruitment, compliance, performance management, employee relations, payroll, onboarding, offboarding, and more.
 
@@ -28,6 +29,8 @@ You can:
 - Help with difficult people situations and employee relations
 - Generate report summaries, checklists, and action plans
 
+You have live, read-only access to this workspace's HR data through tools (headcount and org overview, employee lookup, who's on leave, leave requests, expiring documents, pending approvals). When a question can be answered from the workspace's own data — "who's on leave this week", "how many people are in Engineering", "what's pending approval", details about a specific employee — CALL THE RELEVANT TOOL and answer with the real figures. Never claim you lack access to the organisation's data or tell the user to check another system; you can look it up. If a tool returns nothing, say so plainly. Results are already scoped to what this user is permitted to see.
+
 When drafting documents, produce the full, complete document — not an outline. Format with clear section headers, professional language, and add a brief review disclaimer where appropriate.
 
 When your response involves specific legal obligations, statutory minimums, regulatory requirements, or situations where an employer error could carry legal or financial consequences, end your response with a line in this exact format — no extra text before or after it:
@@ -37,7 +40,7 @@ const EMPLOYEE_SYSTEM_PROMPT = `You are Atlas, an AI assistant helping employees
 
 You help employees understand company policies, complete HR forms, calculate leave planning, and answer general HR questions. You only use the employee context provided and general Atlas HR knowledge.
 
-You do not have access to other employees' data, HR admin operations, or compensation details beyond the employee's own visible record. If a question is outside that scope, suggest they contact their HR team.`;
+You have read-only tools to look up the employee's own HR data (their profile and leave). Use them when the employee asks about their own records (e.g. "when is my next leave"). The tools are access-controlled — they only ever return data this employee is permitted to see, so you do not have other employees' data, HR admin operations, or compensation details beyond the employee's own visible record. If a question is outside that scope, suggest they contact their HR team.`;
 
 const bodySchema = z.object({
   messages: z
@@ -198,10 +201,16 @@ async function handlePost(req: NextRequest) {
   // Document grounding applies to employees too, so they get answers from the
   // org's published policies (with citations + no-guess / contact-HR behaviour).
   let docSources: KbSource[] = [];
+  // Org context used to give the assistant live HR data tools (read-only,
+  // RLS-scoped). Captured here so the stream call below can attach the runner.
+  let toolOrgId: string | null = null;
+  let toolIsAdmin = false;
   if (user) {
     try {
       const orgCtx = await getCurrentOrg();
       if (orgCtx) {
+        toolOrgId = orgCtx.org.id;
+        toolIsAdmin = orgCtx.isAdmin;
         const hits = await searchOrgKnowledge(supabase, orgCtx.org.id, userQuery, 6);
         const { systemFragment, sources } = buildGroundingFragment(hits);
         if (systemFragment) {
@@ -284,13 +293,30 @@ async function handlePost(req: NextRequest) {
   const useThinking = thinking === true;
   const copilotStart = Date.now();
 
-  const aiStream = streamChatText({
+  const baseStreamOpts = {
     system: finalSystem,
     anthropicMessages: toAnthropicMessages(messages) as StreamChatOptions["anthropicMessages"],
     openaiMessages: messages.map((m) => ({ role: m.role, content: m.content })),
     maxTokens: useThinking ? 16000 : 2048,
     thinking: useThinking,
-  });
+  };
+
+  // When the user belongs to an org, give the assistant live HR data tools.
+  // Tools run on the request's RLS-scoped client, so results are automatically
+  // limited to what this user may see (admins → whole org, managers → their
+  // reports, employees → their own record).
+  const aiStream =
+    toolOrgId !== null
+      ? streamChatWithTools({
+          ...baseStreamOpts,
+          tools: HR_TOOLS,
+          runTool: makeHrToolRunner({
+            supabase,
+            orgId: toolOrgId,
+            isAdmin: toolIsAdmin,
+          } satisfies HrToolContext),
+        })
+      : streamChatText(baseStreamOpts);
   const encoder = new TextEncoder();
 
   const readableStream = new ReadableStream({

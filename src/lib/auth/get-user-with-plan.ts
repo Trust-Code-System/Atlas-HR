@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth/get-auth-user";
 import { FEATURES, getLimits, type FeatureKey, type UserRole } from "@/lib/limits";
 
 type QueryResult<T> = Promise<{ data: T | null }>;
@@ -32,9 +33,7 @@ type SubscriptionRow = {
 
 export const getUserWithPlan = cache(async () => {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthUser();
 
   if (!user) {
     return {

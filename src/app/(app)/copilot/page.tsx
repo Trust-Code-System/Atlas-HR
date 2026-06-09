@@ -147,17 +147,6 @@ const MODE_ICON_BG: Record<Mode, string> = {
   analyse: "bg-amber-500",
 };
 
-const CAPABILITY_CARDS = [
-  { icon: "📄", title: "Document Drafting", desc: "Job descriptions, offer letters, contracts, PIPs, warning letters, policies, onboarding plans — complete & ready to use." },
-  { icon: "🔍", title: "Research & Analysis", desc: "Employment law, salary benchmarking, compliance requirements across 40+ countries." },
-  { icon: "📊", title: "Performance Management", desc: "Review templates, goal frameworks, 360° feedback, PIP builders, calibration guidance." },
-  { icon: "⚖️", title: "Compliance Advice", desc: "GDPR, labour law, redundancy rules, discrimination law — with country-specific context." },
-  { icon: "🤝", title: "Employee Relations", desc: "Guidance on grievances, disciplinaries, difficult conversations, and conflict resolution." },
-  { icon: "💰", title: "Compensation & Rewards", desc: "Salary banding, benchmarking, bonus structures, pay equity analysis, total rewards." },
-  { icon: "🧠", title: "Extended Thinking", desc: "Enable Deep Thinking for complex restructuring plans, strategy questions, and sensitive employee cases." },
-  { icon: "📋", title: "Document Analysis", desc: "Paste any HR document — contract, policy, JD, PIP — for structured review, risk flags, and recommendations." },
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const SUPPORTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
@@ -518,6 +507,11 @@ function CopilotChat() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
 
+  // Conversation history
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [conversations, setConversations] = useState<{ id: string; title: string; updated_at: string }[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
   // Save modal
   const [saveModal, setSaveModal] = useState<{ id: string; content: string } | null>(null);
   const [saveTitle, setSaveTitle] = useState("");
@@ -561,7 +555,46 @@ function CopilotChat() {
     setAttachments([]);
     setFileError(null);
     setTasksPanel(null);
+    setHistoryOpen(false);
     textareaRef.current?.focus();
+  }
+
+  async function openHistory() {
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      const res = await fetch("/api/copilot/conversations");
+      const data = await res.json();
+      if (res.ok) setConversations(data.conversations ?? []);
+    } catch {
+      /* ignore — panel shows empty state */
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
+
+  async function loadConversation(id: string) {
+    try {
+      const res = await fetch(`/api/copilot/conversations/${id}`);
+      const data = await res.json();
+      if (!res.ok) return;
+      setMode("chat");
+      setMessages(
+        (data.messages ?? []).map((m: { role: "user" | "assistant"; content: string }) => ({
+          id: crypto.randomUUID(),
+          role: m.role,
+          content: m.content,
+        }))
+      );
+      setConversationId(id);
+      setInput("");
+      setAttachments([]);
+      setFileError(null);
+      setTasksPanel(null);
+      setHistoryOpen(false);
+    } catch {
+      /* ignore */
+    }
   }
 
   async function handleFiles(files: FileList | null) {
@@ -792,6 +825,62 @@ function CopilotChat() {
                 {thinkingEnabled ? "Deep thinking on" : "Deep thinking"}
               </span>
             </label>
+
+            {/* History */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => (historyOpen ? setHistoryOpen(false) : void openHistory())}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 ring-1 ring-white/20 transition-colors"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                History
+              </button>
+
+              {historyOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setHistoryOpen(false)} />
+                  <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-80 max-h-[70vh] overflow-y-auto rounded-2xl border border-navy-200 bg-white shadow-2xl">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-navy-100 sticky top-0 bg-white">
+                      <p className="text-sm font-bold text-navy-900">Conversations</p>
+                      <button type="button" onClick={newChat} className="flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-900">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        New
+                      </button>
+                    </div>
+                    {historyLoading ? (
+                      <div className="flex items-center justify-center gap-2 py-8 text-sm text-navy-400">
+                        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Loading…
+                      </div>
+                    ) : conversations.length > 0 ? (
+                      <div className="divide-y divide-navy-50">
+                        {conversations.map((c) => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => void loadConversation(c.id)}
+                            className={cn(
+                              "w-full text-left px-4 py-2.5 hover:bg-blue-50 transition-colors",
+                              c.id === conversationId && "bg-blue-50"
+                            )}
+                          >
+                            <p className="text-sm font-medium text-navy-800 truncate">{c.title || "Untitled chat"}</p>
+                            <p className="text-[11px] text-navy-400">
+                              {new Date(c.updated_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="px-4 py-8 text-center text-sm text-navy-400">No saved conversations yet.</p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
 
             {messages.length > 0 && (
               <button
@@ -1343,21 +1432,6 @@ function Landing({
               </button>
             ))}
           </div>
-
-          {mode === "chat" && (
-            <>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-navy-400 mb-3">Capabilities</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {CAPABILITY_CARDS.map((c) => (
-                  <div key={c.title} className="bg-white rounded-2xl border border-navy-100 p-4 hover:border-blue-200 hover:shadow-sm transition-all">
-                    <span className="text-2xl">{c.icon}</span>
-                    <p className="font-bold text-navy-900 text-xs mt-2 mb-1">{c.title}</p>
-                    <p className="text-[10px] text-navy-400 leading-snug">{c.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>

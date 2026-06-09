@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth/get-auth-user";
 import { normalizeRoles, type WorkspaceRole } from "@/lib/auth/permissions";
 import type { Organisation, OrgMember } from "@/types/database";
 
@@ -15,7 +16,7 @@ export type OrgContext = {
 // components calling getCurrentOrg() on the same page share one DB round-trip.
 export const getCurrentOrg = cache(async (): Promise<OrgContext | null> => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) return null;
 
   const cookieStore = await cookies();
