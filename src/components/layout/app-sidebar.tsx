@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AtlasAiMark } from "@/components/atlas-ai-mark";
@@ -314,15 +314,6 @@ const NAV_GROUPS = [
         ),
       },
       {
-        href: "/salary-benchmark",
-        label: "Salary Benchmark",
-        icon: (
-          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19V9m6 10V5M5 19v-6m14 6v-8" />
-          </svg>
-        ),
-      },
-      {
         href: "/tools/pay-equity",
         label: "Pay Equity",
         icon: (
@@ -467,6 +458,24 @@ const bottomItems = [
   },
 ];
 
+// Renders the nav item icon, swapping to a spinner the moment the link is
+// clicked so navigation feels instant even while the next route is loading.
+function NavIcon({ icon, active }: { icon: React.ReactNode; active: boolean }) {
+  const { pending } = useLinkStatus();
+  return (
+    <span className={cn("flex shrink-0 transition-colors", active ? "text-white" : "text-slate-400")}>
+      {pending ? (
+        <svg className="h-[18px] w-[18px] animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" />
+          <path className="opacity-90" fill="currentColor" d="M12 3a9 9 0 019 9h-2.5A6.5 6.5 0 0012 5.5V3z" />
+        </svg>
+      ) : (
+        icon
+      )}
+    </span>
+  );
+}
+
 export function AppSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname();
   const isAdmin = userRole === "admin" || userRole === "moderator";
@@ -515,9 +524,7 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
             : "text-slate-600 hover:bg-blue-100 hover:text-navy-900"
         )}
       >
-        <span className={cn("flex shrink-0 transition-colors", active ? "text-white" : "text-slate-400")}>
-          {item.icon}
-        </span>
+        <NavIcon icon={item.icon} active={active} />
         {!collapsed && item.label}
       </Link>
     );

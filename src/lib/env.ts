@@ -8,6 +8,10 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
   ANTHROPIC_API_KEY: z.string().min(1, "ANTHROPIC_API_KEY is required"),
+  // OpenAI — optional. When set, used as an automatic fallback for Atlas AI.
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().optional(),
+  ANTHROPIC_MODEL: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().min(1, "STRIPE_SECRET_KEY is required"),
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
     .string()
@@ -72,6 +76,9 @@ function validateEnv() {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_MODEL: process.env.OPENAI_MODEL,
+    ANTHROPIC_MODEL: process.env.ANTHROPIC_MODEL,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth/get-user";
+import { AcceptInviteButton } from "./accept-invite-button";
 
 interface Props {
   params: Promise<{ token: string }>;
@@ -72,15 +73,7 @@ export default async function InvitePage({ params }: Props) {
               </p>
 
               {user ? (
-                <form action={`/api/invites/accept`} method="POST">
-                  <input type="hidden" name="token" value={token} />
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
-                  >
-                    Accept invitation
-                  </button>
-                </form>
+                <AcceptInviteButton token={token} />
               ) : (
                 <div className="space-y-3">
                   <Link

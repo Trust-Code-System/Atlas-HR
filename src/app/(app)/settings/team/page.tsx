@@ -3,6 +3,7 @@ import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { TeamClient } from "./team-client";
+import { InviteForm } from "./invite-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Team Members | Atlas HR" };
@@ -71,6 +72,8 @@ export default async function TeamSettingsPage() {
           );
         })}
       </div>
+
+      <InviteForm />
 
       <TeamClient
         members={members ?? []}

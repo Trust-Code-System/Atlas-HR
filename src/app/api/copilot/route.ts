@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -9,16 +8,7 @@ import { trackEvent } from "@/lib/analytics/track-server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getAllKnowledgeArticles } from "@/lib/knowledge";
 import type { KnowledgeArticle } from "@/lib/knowledge-shared";
-
-let anthropicClient: Anthropic | null = null;
-
-function getAnthropicClient() {
-  anthropicClient ??= new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return anthropicClient;
-}
-
-type AnthropicClient = ReturnType<typeof getAnthropicClient>;
-type MessageStreamParams = Parameters<AnthropicClient["messages"]["stream"]>[0];
+import { streamChatText, type StreamChatOptions } from "@/lib/ai/provider";
 
 const SYSTEM_PROMPT = `You are Atlas, the AI assistant built into Atlas HR. You help HR professionals with every people-related challenge — recruitment, compliance, performance management, employee relations, payroll, onboarding, offboarding, and more.
 
@@ -266,15 +256,13 @@ async function handlePost(req: NextRequest) {
   const useThinking = thinking === true;
   const copilotStart = Date.now();
 
-  const streamParams: MessageStreamParams = {
-    model: "claude-sonnet-4-6",
-    max_tokens: useThinking ? 16000 : 2048,
+  const aiStream = streamChatText({
     system: finalSystem,
-    messages: toAnthropicMessages(messages) as MessageStreamParams["messages"],
-    ...(useThinking ? { thinking: { type: "enabled", budget_tokens: 10000 } } : {}),
-  };
-
-  const stream = await getAnthropicClient().messages.stream(streamParams);
+    anthropicMessages: toAnthropicMessages(messages) as StreamChatOptions["anthropicMessages"],
+    openaiMessages: messages.map((m) => ({ role: m.role, content: m.content })),
+    maxTokens: useThinking ? 16000 : 2048,
+    thinking: useThinking,
+  });
   const encoder = new TextEncoder();
 
   const readableStream = new ReadableStream({
@@ -300,17 +288,11 @@ async function handlePost(req: NextRequest) {
         );
       }
 
-      for await (const chunk of stream) {
-        if (
-          chunk.type === "content_block_delta" &&
-          chunk.delta.type === "text_delta"
-        ) {
-          const text = chunk.delta.text;
-          fullText += text;
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "chunk", text })}\n\n`)
-          );
-        }
+      for await (const text of aiStream) {
+        fullText += text;
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: "chunk", text })}\n\n`)
+        );
       }
 
       if (user) {

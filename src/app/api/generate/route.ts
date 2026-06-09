@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 import { getToolConfig } from "@/lib/tools-config";
@@ -8,13 +7,7 @@ import { consumeUsage } from "@/lib/usage";
 import { getUserWithPlan } from "@/lib/auth/get-user-with-plan";
 import { trackEvent } from "@/lib/analytics/track-server";
 import { checkRateLimit } from "@/lib/rate-limit";
-
-let anthropicClient: Anthropic | null = null;
-
-function getAnthropicClient() {
-  anthropicClient ??= new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  return anthropicClient;
-}
+import { streamChatText } from "@/lib/ai/provider";
 
 const bodySchema = z.object({
   toolSlug: z.string().min(1).max(100),
@@ -89,12 +82,13 @@ async function handlePost(req: NextRequest) {
 
   const generationStart = Date.now();
   const prompt = tool.promptTemplate(inputs);
-  const claudeStream = getAnthropicClient().messages.stream({
-    model: "claude-sonnet-4-6",
-    max_tokens: 2048,
-    messages: [{ role: "user", content: prompt }],
-    system:
-      "You are Atlas, an expert HR assistant. Provide professional, actionable, and legally-aware HR content. Always format output as clean markdown.",
+  const system =
+    "You are Atlas, an expert HR assistant. Provide professional, actionable, and legally-aware HR content. Always format output as clean markdown.";
+  const aiStream = streamChatText({
+    system,
+    anthropicMessages: [{ role: "user", content: prompt }],
+    openaiMessages: [{ role: "user", content: prompt }],
+    maxTokens: 2048,
   });
 
   const encoder = new TextEncoder();
@@ -103,17 +97,11 @@ async function handlePost(req: NextRequest) {
     async start(controller) {
       let fullText = "";
 
-      for await (const chunk of claudeStream) {
-        if (
-          chunk.type === "content_block_delta" &&
-          chunk.delta.type === "text_delta"
-        ) {
-          const text = chunk.delta.text;
-          fullText += text;
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "chunk", text })}\n\n`)
-          );
-        }
+      for await (const text of aiStream) {
+        fullText += text;
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: "chunk", text })}\n\n`)
+        );
       }
 
       // Persist the document for authenticated users (usage already consumed atomically above)

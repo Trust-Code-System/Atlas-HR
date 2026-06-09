@@ -82,6 +82,13 @@ export default function SignUpPage() {
     fd.set("email", form.email);
     fd.set("password", form.password);
     fd.set("full_name", form.full_name);
+    if (form.industry) fd.set("industry", form.industry);
+    if (form.company_size) fd.set("company_size", form.company_size);
+    fd.set("goals", JSON.stringify(form.goals));
+    if (form.company_name.trim()) {
+      fd.set("company_name", form.company_name.trim());
+      fd.set("company_slug", slugify(form.company_name.trim()));
+    }
     const result = await signUpWithPassword(fd);
     if (result?.error) {
       setError(result.error);
@@ -89,19 +96,8 @@ export default function SignUpPage() {
       return;
     }
 
-    if (form.company_name.trim()) {
-      await fetch("/api/org", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.company_name.trim(),
-          slug: slugify(form.company_name.trim()),
-        }),
-      });
-    }
-
     localStorage.removeItem(STORAGE_KEY);
-    router.push("/dashboard");
+    router.push(result?.needsVerification ? "/verify-email" : "/dashboard");
   }
 
   return (
@@ -236,13 +232,19 @@ export default function SignUpPage() {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="company_name">Company name</Label>
+                <Label htmlFor="company_name" required>Company name</Label>
                 <Input
                   id="company_name"
                   value={form.company_name}
                   onChange={(e) => persist({ company_name: e.target.value })}
                   placeholder="Acme Corp"
                 />
+                <p className="text-xs text-navy-400">
+                  This creates your workspace at{" "}
+                  <span className="font-mono text-navy-500">
+                    atlashr.com/{slugify(form.company_name.trim()) || "your-company"}
+                  </span>
+                </p>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="industry">Industry</Label>
@@ -272,11 +274,28 @@ export default function SignUpPage() {
               </div>
             </div>
 
+            {error && (
+              <p className="mt-4 text-sm text-error bg-red-50 border border-red-200 rounded-xl p-3">
+                {error}
+              </p>
+            )}
+
             <div className="flex gap-3 mt-6">
               <Button variant="outline" size="lg" className="flex-1" onClick={() => setStep(1)}>
                 ← Back
               </Button>
-              <Button size="lg" className="flex-1" onClick={() => setStep(3)}>
+              <Button
+                size="lg"
+                className="flex-1"
+                onClick={() => {
+                  if (!form.company_name.trim()) {
+                    setError("Please enter your company name.");
+                    return;
+                  }
+                  setError("");
+                  setStep(3);
+                }}
+              >
                 Continue →
               </Button>
             </div>

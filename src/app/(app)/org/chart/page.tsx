@@ -68,7 +68,7 @@ function EmployeeCard({ node }: { node: TreeNode }) {
   return (
     <Link
       href={`/org/people/${node.id}`}
-      className="group flex items-center gap-3 bg-white border border-navy-200 rounded-2xl px-4 py-3 hover:border-blue-300 hover:shadow-md transition-all w-[188px] min-h-19"
+      className="group relative flex items-center gap-3 bg-white border border-navy-200 rounded-2xl px-4 py-3 hover:border-blue-300 hover:shadow-md transition-all w-[188px] h-[76px]"
     >
       <div className="relative shrink-0">
         <div className={`h-10 w-10 rounded-xl bg-linear-to-br ${grad} flex items-center justify-center text-sm font-bold text-white shadow-sm`}>
@@ -76,16 +76,16 @@ function EmployeeCard({ node }: { node: TreeNode }) {
         </div>
         <span className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white ${statusDot[node.status] ?? "bg-navy-300"}`} />
       </div>
+      {node.is_department_head && (
+        <span className="absolute top-1.5 right-1.5 inline-flex text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-1.5 py-0.5">
+          Head
+        </span>
+      )}
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-navy-900 truncate group-hover:text-blue-700 transition-colors leading-tight">
+        <p className={`text-sm font-semibold text-navy-900 truncate group-hover:text-blue-700 transition-colors leading-tight ${node.is_department_head ? "pr-9" : ""}`}>
           {node.full_name}
         </p>
         {node.job_title && <p className="text-xs text-navy-500 truncate mt-0.5">{node.job_title}</p>}
-        {node.is_department_head && (
-          <span className="mt-1 inline-flex text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-1.5 py-0.5">
-            Head
-          </span>
-        )}
       </div>
     </Link>
   );

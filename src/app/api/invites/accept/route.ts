@@ -7,25 +7,46 @@ import { sendEmail } from "@/lib/email/send";
 import { InviteAccepted } from "@/emails/org/InviteAccepted";
 import { normalizeRoles } from "@/lib/auth/permissions";
 
+async function readToken(req: NextRequest): Promise<string | null> {
+  const contentType = req.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    const body = await req.json().catch(() => null);
+    return (body?.token as string) ?? null;
+  }
+  // Native HTML form POST (form-encoded)
+  const form = await req.formData().catch(() => null);
+  return (form?.get("token") as string) ?? null;
+}
+
 export async function POST(req: NextRequest) {
-  const { token, orgId } = await req.json();
+  const token = await readToken(req);
+  const wantsRedirect = (req.headers.get("content-type") ?? "").includes("form");
+
+  if (!token) {
+    return NextResponse.json({ ok: false, error: "Missing invite token" }, { status: 400 });
+  }
 
   // Verify user is authenticated
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ ok: false, error: "Not authenticated" }, { status: 401 });
+  if (!user) {
+    if (wantsRedirect) {
+      return NextResponse.redirect(new URL(`/sign-in?invite=${token}`, req.url));
+    }
+    return NextResponse.json({ ok: false, error: "Not authenticated" }, { status: 401 });
+  }
 
   const admin = createAdminClient();
 
-  // Validate invite
+  // Validate invite — the token is unique, so look it up directly and derive org.
   const { data: invite } = await admin
     .from("org_invites")
     .select("id, org_id, email, org_role, roles, expires_at, accepted_at, invited_by")
     .eq("token", token)
-    .eq("org_id", orgId)
     .maybeSingle();
 
   if (!invite) return NextResponse.json({ ok: false, error: "Invite not found" }, { status: 404 });
+  const orgId = invite.org_id;
   if (invite.accepted_at) return NextResponse.json({ ok: false, error: "Already accepted" }, { status: 400 });
   if (new Date(invite.expires_at) < new Date()) return NextResponse.json({ ok: false, error: "Invite expired" }, { status: 400 });
   if (!user.email || user.email.toLowerCase() !== invite.email.toLowerCase()) {
@@ -74,6 +95,9 @@ export async function POST(req: NextRequest) {
     console.error("Failed to send invite accepted email", err);
   });
 
+  if (wantsRedirect) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
   return NextResponse.json({ ok: true });
 }
 
