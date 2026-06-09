@@ -6,6 +6,7 @@ import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import { MarkdownContent } from "@/components/ai/markdown-content";
 import { cn } from "@/lib/utils";
 import { buildWorkflowCopilotPrompt, getWorkflowBundle } from "@/lib/public-resource-data";
+import { LEGACY_MODE_CONTEXT } from "@/lib/ai/prompts/atlas-system-prompt";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,12 +86,9 @@ const MODES: { id: Mode; label: string; desc: string; color: string; icon: React
   },
 ];
 
-const MODE_CONTEXT: Record<Mode, string> = {
-  chat: "",
-  draft: "The user is in Document Drafting mode. When asked to draft a document, produce the FULL, COMPLETE document ready to copy and use immediately — not an outline, not a summary. Use clear section headers, numbered clauses where appropriate, and professional language. Always end with a brief disclaimer: 'Review this document with your HR/legal team before use.'",
-  research: "The user is in Research mode. They want thorough, accurate research on HR topics, employment law, salary data, and compliance. Structure all responses with clear headers. Cite specific laws, figures, and regulations where known. Always note that key compliance decisions should be verified with local legal counsel.",
-  analyse: "The user is in Analysis mode. They will paste HR documents or text for structured review. Always respond with: (1) Executive Summary, (2) Strengths, (3) Risks & Gaps, (4) Specific Recommendations with line-level detail. Be direct and specific — name exact issues and suggest exact fixes.",
-};
+// Mode context lives in the central prompt module so every Atlas AI surface
+// shares one source of truth (see @/lib/ai/prompts/atlas-system-prompt).
+const MODE_CONTEXT: Record<Mode, string> = LEGACY_MODE_CONTEXT;
 
 const MODE_SUGGESTIONS: Record<Mode, string[]> = {
   chat: [

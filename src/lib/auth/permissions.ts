@@ -45,3 +45,38 @@ export async function manages(employeeId: string): Promise<boolean> {
 
   return data ?? false;
 }
+
+// ─── Atlas AI capability checks ─────────────────────────────────────────────
+// Named, server-side permission gates that Atlas AI (and its tools) must call
+// before reading sensitive data or preparing an action. Each resolves against
+// the live `has_permission` RPC for the given org, so it reflects the user's
+// real roles. The capability → permission mapping lives in permissions-shared
+// (AI_CAPABILITY_PERMISSIONS) and is mirrored by the pure `roleCan` helper used
+// in tests.
+import { AI_CAPABILITY_PERMISSIONS, type AiCapability } from "@/lib/auth/permissions-shared";
+
+/** Generic capability check against the live permission model. */
+export async function canDo(orgId: string, capability: AiCapability): Promise<boolean> {
+  return hasAnyPermission(orgId, AI_CAPABILITY_PERMISSIONS[capability]);
+}
+
+/** Any signed-in member may see their own employee data — RLS enforces the scope. */
+export function canViewOwnEmployeeData(): boolean {
+  return true;
+}
+
+export const canViewTeamData = (orgId: string) => canDo(orgId, "canViewTeamData");
+export const canViewAllEmployees = (orgId: string) => canDo(orgId, "canViewAllEmployees");
+export const canViewSalaryData = (orgId: string) => canDo(orgId, "canViewSalaryData");
+export const canViewMedicalData = (orgId: string) => canDo(orgId, "canViewMedicalData");
+export const canViewDisciplinaryCases = (orgId: string) => canDo(orgId, "canViewDisciplinaryCases");
+export const canManagePolicies = (orgId: string) => canDo(orgId, "canManagePolicies");
+export const canCreateDocuments = (orgId: string) => canDo(orgId, "canCreateDocuments");
+export const canSendEmails = (orgId: string) => canDo(orgId, "canSendEmails");
+export const canApproveLeave = (orgId: string) => canDo(orgId, "canApproveLeave");
+export const canManageOnboarding = (orgId: string) => canDo(orgId, "canManageOnboarding");
+export const canManagePerformance = (orgId: string) => canDo(orgId, "canManagePerformance");
+export const canViewAnalytics = (orgId: string) => canDo(orgId, "canViewAnalytics");
+export const canManageSettings = (orgId: string) => canDo(orgId, "canManageSettings");
+export const canExecuteRestrictedActions = (orgId: string) =>
+  canDo(orgId, "canExecuteRestrictedActions");

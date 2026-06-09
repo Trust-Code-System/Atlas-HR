@@ -17,6 +17,11 @@ type ServerEventMap = {
     message_chars: number;
     conversation_id: string | null;
     thinking_enabled?: boolean;
+    // Atlas AI intent classification (see @/lib/ai/intent)
+    detected_mode?: string;
+    risk_level?: string;
+    needs_approval?: boolean;
+    sensitive_data?: boolean;
   };
   copilot_message_received: {
     conversation_id: string | null;
