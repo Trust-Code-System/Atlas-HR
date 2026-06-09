@@ -160,6 +160,9 @@ function CalI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24
 function SrchI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>; }
 function ClpI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>; }
 function UsrPI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>; }
+function MailI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>; }
+function MtgI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>; }
+function MgrI() { return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>; }
 
 const SKILLS: Skill[] = [
   { id: "jd-writer", name: "Job Description Writer", category: "Recruiting", description: "Generate structured, bias-free job descriptions from a brief role summary.", icon: <JobI />, badge: "popular", placeholder: "E.g. Senior Product Manager, fintech startup, leading a team of 4, remote-first. 5+ years experience required." },
@@ -174,6 +177,10 @@ const SKILLS: Skill[] = [
   { id: "exit-analyzer", name: "Exit Interview Analyzer", category: "Insights", description: "Surface themes and retention risk signals from exit interview responses.", icon: <SrchI />, placeholder: "Paste one or more exit interview responses here and I will identify patterns, risks, and recommend retention actions." },
   { id: "pip-writer", name: "Performance Improvement Plan Writer", category: "Performance", description: "Draft legally sound PIPs with clear objectives, timelines, and consequence statements.", icon: <ClpI />, placeholder: "E.g. Employee: Tom Bradley, Role: Account Manager, Issue: Missed quota for 3 consecutive quarters. Duration: 60-day PIP." },
   { id: "cv-screener", name: "CV Screening Assistant", category: "Recruiting", description: "Rank candidates against a job description and get a structured shortlist with reasoning.", icon: <PplI />, placeholder: "Paste the job description first, then each candidate's CV separated by '---'. I will rank and assess each one." },
+  { id: "email-assistant", name: "HR Email Assistant", category: "Communications", description: "Draft, rewrite, or summarise HR emails — tone-adjusted and professional.", icon: <MailI />, badge: "new", placeholder: "E.g. Draft an email to a candidate offering them the Marketing Manager role, warm tone, asking them to confirm by Friday." },
+  { id: "meeting-assistant", name: "Meeting Notes Assistant", category: "Communications", description: "Turn rough meeting notes into clean minutes with decisions and action items.", icon: <MtgI />, badge: "new", placeholder: "Paste your rough meeting notes and I will produce structured minutes, decisions, and a clear action-item list with owners." },
+  { id: "manager-assistant", name: "Manager Assistant", category: "Management", description: "Coach managers through people situations — 1:1s, feedback, tough conversations, team planning.", icon: <MgrI />, badge: "new", placeholder: "E.g. One of my team keeps missing deadlines. How do I raise it constructively in our next 1:1?" },
+  { id: "analytics-assistant", name: "HR Analytics Assistant", category: "Insights", description: "Interpret HR metrics and turn them into a plain-English summary with recommended actions.", icon: <ChrtI />, badge: "new", placeholder: "E.g. Headcount 48, 6 new hires this quarter, 9 pending leave requests, attrition up 4%. What does this tell me and what should I do?" },
 ];
 
 const PLUGINS: Plugin[] = [
@@ -197,6 +204,8 @@ const SKILL_COLORS: Record<string, string> = {
   Compensation: "bg-amber-50 text-amber-700 border-amber-200",
   Onboarding: "bg-teal-50 text-teal-700 border-teal-200",
   Insights: "bg-sky-50 text-sky-700 border-sky-200",
+  Communications: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  Management: "bg-emerald-50 text-emerald-700 border-emerald-200",
 };
 const SKILL_ICON_COLORS: Record<string, string> = {
   Recruiting: "bg-pink-100 text-pink-600",
@@ -206,6 +215,8 @@ const SKILL_ICON_COLORS: Record<string, string> = {
   Compensation: "bg-amber-100 text-amber-600",
   Onboarding: "bg-teal-100 text-teal-600",
   Insights: "bg-sky-100 text-sky-600",
+  Communications: "bg-indigo-100 text-indigo-600",
+  Management: "bg-emerald-100 text-emerald-600",
 };
 const PLUGIN_TYPE_COLORS: Record<string, string> = {
   Messaging: "bg-purple-100 text-purple-700",

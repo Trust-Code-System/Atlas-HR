@@ -4,6 +4,7 @@ import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { EditEmployeeModal } from "./edit-employee-modal";
+import { AiSummaryButton } from "@/components/ai/ai-summary-button";
 import type { Metadata } from "next";
 import { dataOrEmpty } from "@/lib/supabase/schema";
 import type { AssetAssignment, CompanyAsset } from "@/types/database";
@@ -98,6 +99,13 @@ export default async function EmployeeProfilePage({ params }: { params: Promise<
 
   if (!employee) notFound();
 
+  // The AI summary is for admins and the employee's manager (matches the route's auth).
+  let canSummarize = isAdmin;
+  if (!canSummarize) {
+    const { data: managesThis } = await supabase.rpc("manages_employee", { _employee_id: id });
+    canSummarize = Boolean(managesThis);
+  }
+
   const [{ data: managerData }, { data: leaveRequests }, { data: documents }, { data: allEmployees }] =
     await Promise.all([
       employee.manager_id
@@ -185,12 +193,22 @@ export default async function EmployeeProfilePage({ params }: { params: Promise<
                     )}
                   </div>
                 </div>
-                {isAdmin && (
-                  <EditEmployeeModal
-                    employee={employee}
-                    managers={(allEmployees ?? []) as { id: string; full_name: string }[]}
-                  />
-                )}
+                <div className="flex items-center gap-2 shrink-0">
+                  {canSummarize && (
+                    <AiSummaryButton
+                      endpoint={`/api/ai/profile-summary?id=${employee.id}`}
+                      title="AI Profile Summary"
+                      subtitle={employee.full_name}
+                      buttonLabel="AI summary"
+                    />
+                  )}
+                  {isAdmin && (
+                    <EditEmployeeModal
+                      employee={employee}
+                      managers={(allEmployees ?? []) as { id: string; full_name: string }[]}
+                    />
+                  )}
+                </div>
               </div>
 
               {/* Quick meta strip */}

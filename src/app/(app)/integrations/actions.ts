@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { revalidatePath } from "next/cache";
+import { encryptConfig } from "@/lib/crypto";
 
 export type IntegrationActionResult = { error?: string; success?: boolean } | null;
 
@@ -24,7 +25,8 @@ export async function saveConnectorConfig(
         org_id: orgCtx.org.id,
         integration_id: integrationId,
         integration_type: integrationType,
-        config,
+        // Encrypt secret values (tokens, webhook URLs, service-account JSON) at rest.
+        config: encryptConfig(config),
         is_active: true,
         connected_by: user?.id ?? null,
         updated_at: new Date().toISOString(),

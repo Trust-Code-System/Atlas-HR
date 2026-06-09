@@ -52,6 +52,39 @@ export async function addEmployeeDocument(
   return { success: true };
 }
 
+export async function toggleEmployeeDocAi(docId: string, enabled: boolean): Promise<DocActionResult> {
+  const orgCtx = await getCurrentOrg();
+  if (!orgCtx?.isAdmin) return { error: "Admin access required." };
+
+  const supabase = await createClient();
+
+  // Verify via employee → org
+  const { data: doc } = await supabase
+    .from("employee_documents")
+    .select("id, employee_id")
+    .eq("id", docId)
+    .single();
+  if (!doc) return { error: "Document not found." };
+
+  const { data: employee } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("id", doc.employee_id)
+    .eq("org_id", orgCtx.org.id)
+    .single();
+  if (!employee) return { error: "Not authorised." };
+
+  const { error } = await supabase
+    .from("employee_documents")
+    .update({ ai_enabled: enabled })
+    .eq("id", docId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/org/documents");
+  return { success: true };
+}
+
 export async function deleteEmployeeDocument(docId: string): Promise<DocActionResult> {
   const orgCtx = await getCurrentOrg();
   if (!orgCtx?.isAdmin) return { error: "Admin access required." };

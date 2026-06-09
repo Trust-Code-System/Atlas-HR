@@ -9,6 +9,9 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getAllKnowledgeArticles } from "@/lib/knowledge";
 import type { KnowledgeArticle } from "@/lib/knowledge-shared";
 import { streamChatText, type StreamChatOptions } from "@/lib/ai/provider";
+import { getCurrentOrg } from "@/lib/org/get-current-org";
+import { getOrgAiContext } from "@/lib/ai/org-ai-context";
+import { searchOrgKnowledge, buildGroundingFragment, type KbSource } from "@/lib/ai/kb/retrieve";
 
 const SYSTEM_PROMPT = `You are Atlas, the AI assistant built into Atlas HR. You help HR professionals with every people-related challenge — recruitment, compliance, performance management, employee relations, payroll, onboarding, offboarding, and more.
 
@@ -190,6 +193,31 @@ async function handlePost(req: NextRequest) {
     finalSystem += `\n\n--- Relevant Atlas Knowledge Hub Articles ---\nThe following articles from the Atlas knowledge base are relevant to this query. Reference them naturally in your response where appropriate:\n${refs}`;
   }
 
+  // Ground answers in the organisation's own uploaded documents (RAG) and make
+  // the assistant aware of which integrations/skills the workspace has enabled.
+  // Document grounding applies to employees too, so they get answers from the
+  // org's published policies (with citations + no-guess / contact-HR behaviour).
+  let docSources: KbSource[] = [];
+  if (user) {
+    try {
+      const orgCtx = await getCurrentOrg();
+      if (orgCtx) {
+        const hits = await searchOrgKnowledge(supabase, orgCtx.org.id, userQuery, 6);
+        const { systemFragment, sources } = buildGroundingFragment(hits);
+        if (systemFragment) {
+          finalSystem += systemFragment;
+          docSources = sources;
+        }
+        if (!isEmployeePortal) {
+          const { promptFragment } = await getOrgAiContext(supabase, orgCtx.org.id);
+          finalSystem += promptFragment;
+        }
+      }
+    } catch {
+      // Non-fatal — the assistant still works without grounding/integration awareness.
+    }
+  }
+
   if (user) {
     const { role } = await getUserWithPlan();
     const usage = await consumeUsage(user.id, role, "copilot_messages_per_day", "day");
@@ -269,15 +297,23 @@ async function handlePost(req: NextRequest) {
     async start(controller) {
       let fullText = "";
 
-      // Emit knowledge sources found for this query
-      if (relevantArticles.length > 0) {
-        const sources = relevantArticles.map((a) => ({
-          title: a.title,
-          slug: a.slug,
-          category: a.category,
-        }));
+      // Emit knowledge sources found for this query — curated Atlas articles plus
+      // the organisation's own indexed documents (RAG).
+      const articleSources = relevantArticles.map((a) => ({
+        kind: "article" as const,
+        title: a.title,
+        slug: a.slug,
+        category: a.category,
+      }));
+      const documentSources = docSources.map((d) => ({
+        kind: "document" as const,
+        title: d.title,
+        docId: d.docId,
+      }));
+      const allSources = [...articleSources, ...documentSources];
+      if (allSources.length > 0) {
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "sources", sources })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ type: "sources", sources: allSources })}\n\n`)
         );
       }
 

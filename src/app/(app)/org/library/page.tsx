@@ -47,6 +47,20 @@ export default async function OrgLibraryPage() {
 
   const allItems = items ?? [];
 
+  // Index status for the "AI-indexed" badge + per-document AI toggle (§28).
+  const kbDocs = orgCtx.isAdmin
+    ? await dataOrEmpty(supabase
+        .from("kb_documents")
+        .select("source_id, status, chunk_count, ai_enabled")
+        .eq("org_id", orgCtx.org.id)
+        .eq("source", "policy_library"))
+    : [];
+  const kbMap = Object.fromEntries(
+    (kbDocs ?? [])
+      .filter((d): d is typeof d & { source_id: string } => Boolean(d.source_id))
+      .map((d) => [d.source_id, { status: d.status, chunkCount: d.chunk_count, aiEnabled: d.ai_enabled }])
+  );
+
   const grouped = CATEGORIES.reduce<Record<string, typeof allItems>>((acc, cat) => {
     const catItems = allItems.filter((i) => i.category === cat);
     if (catItems.length > 0) acc[cat] = catItems;
@@ -105,7 +119,7 @@ export default async function OrgLibraryPage() {
               <div className="bg-white rounded-2xl border border-navy-200 overflow-hidden shadow-sm">
                 <div className="divide-y divide-navy-100">
                   {catItems.map((item) => (
-                    <LibraryClient key={item.id} item={item} isAdmin={orgCtx.isAdmin} />
+                    <LibraryClient key={item.id} item={item} isAdmin={orgCtx.isAdmin} kb={kbMap[item.id] ?? null} />
                   ))}
                 </div>
               </div>

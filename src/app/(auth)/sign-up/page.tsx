@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signUpWithPassword } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { COMPANY_SIZES, INDUSTRIES, GOALS } from "@/lib/constants";
+import { COMPANY_SIZES, INDUSTRIES, GOALS, HR_ROLES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "atlas-signup-wizard";
@@ -31,6 +31,7 @@ interface WizardState {
   company_name: string;
   industry: string;
   company_size: string;
+  role: string;
   goals: string[];
 }
 
@@ -41,6 +42,7 @@ const defaultState: WizardState = {
   company_name: "",
   industry: "",
   company_size: "",
+  role: "",
   goals: [],
 };
 
@@ -53,21 +55,42 @@ function getStored(): Partial<WizardState> {
   }
 }
 
-const steps = [
-  { label: "Account", number: 1 },
-  { label: "Company", number: 2 },
-  { label: "Goals", number: 3 },
-];
-
 export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-lg" />}>
+      <SignUpWizard />
+    </Suspense>
+  );
+}
+
+function SignUpWizard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get("invite") ?? "";
+  const inviteEmail = searchParams.get("email") ?? "";
+  const isInvited = Boolean(inviteToken);
+
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<WizardState>({
     ...defaultState,
     ...getStored(),
+    // An invited user's email is fixed by the invitation.
+    ...(inviteEmail ? { email: inviteEmail } : {}),
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Invited users join an existing workspace, so the Company step is skipped.
+  const steps = isInvited
+    ? [
+        { label: "Account", number: 1 as const },
+        { label: "Goals", number: 3 as const },
+      ]
+    : [
+        { label: "Account", number: 1 as const },
+        { label: "Company", number: 2 as const },
+        { label: "Goals", number: 3 as const },
+      ];
 
   function persist(updates: Partial<WizardState>) {
     const next = { ...form, ...updates };
@@ -82,13 +105,20 @@ export default function SignUpPage() {
     fd.set("email", form.email);
     fd.set("password", form.password);
     fd.set("full_name", form.full_name);
-    if (form.industry) fd.set("industry", form.industry);
-    if (form.company_size) fd.set("company_size", form.company_size);
     fd.set("goals", JSON.stringify(form.goals));
-    if (form.company_name.trim()) {
-      fd.set("company_name", form.company_name.trim());
-      fd.set("company_slug", slugify(form.company_name.trim()));
+
+    if (isInvited) {
+      fd.set("invite_token", inviteToken);
+    } else {
+      if (form.industry) fd.set("industry", form.industry);
+      if (form.company_size) fd.set("company_size", form.company_size);
+      if (form.role) fd.set("role", form.role);
+      if (form.company_name.trim()) {
+        fd.set("company_name", form.company_name.trim());
+        fd.set("company_slug", slugify(form.company_name.trim()));
+      }
     }
+
     const result = await signUpWithPassword(fd);
     if (result?.error) {
       setError(result.error);
@@ -122,7 +152,7 @@ export default function SignUpPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
-                  s.number
+                  i + 1
                 )}
               </div>
               <span
@@ -152,7 +182,11 @@ export default function SignUpPage() {
           <>
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-navy-900">Create your account</h1>
-              <p className="text-navy-500 text-sm mt-1">Get started with Atlas HR — free forever.</p>
+              <p className="text-navy-500 text-sm mt-1">
+                {isInvited
+                  ? "You've been invited to join a workspace on Atlas HR."
+                  : "Get started with Atlas HR — free forever."}
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -175,7 +209,12 @@ export default function SignUpPage() {
                   onChange={(e) => persist({ email: e.target.value })}
                   placeholder="jane@company.com"
                   autoComplete="email"
+                  readOnly={isInvited && Boolean(inviteEmail)}
+                  className={isInvited && inviteEmail ? "bg-navy-50 text-navy-500" : undefined}
                 />
+                {isInvited && inviteEmail && (
+                  <p className="text-xs text-navy-400">This is the address your invitation was sent to.</p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="password" required>Password</Label>
@@ -203,7 +242,7 @@ export default function SignUpPage() {
                   return;
                 }
                 setError("");
-                setStep(2);
+                setStep(isInvited ? 3 : 2);
               }}
             >
               Continue →
@@ -215,22 +254,40 @@ export default function SignUpPage() {
 
             <p className="mt-4 text-center text-sm text-navy-500">
               Already have an account?{" "}
-              <Link href="/sign-in" className="text-blue-600 font-semibold hover:text-blue-700">
+              <Link
+                href={isInvited ? `/sign-in?invite=${inviteToken}` : "/sign-in"}
+                className="text-blue-600 font-semibold hover:text-blue-700"
+              >
                 Sign in
               </Link>
             </p>
           </>
         )}
 
-        {/* Step 2: Company */}
-        {step === 2 && (
+        {/* Step 2: Company (workspace creators only) */}
+        {step === 2 && !isInvited && (
           <>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-navy-900">About your company</h1>
-              <p className="text-navy-500 text-sm mt-1">Help us personalise your experience.</p>
+              <h1 className="text-2xl font-bold text-navy-900">About you &amp; your company</h1>
+              <p className="text-navy-500 text-sm mt-1">
+                You&apos;ll be the workspace admin and can invite your team after signup.
+              </p>
             </div>
 
             <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="role" required>Your role</Label>
+                <Select
+                  id="role"
+                  value={form.role}
+                  onChange={(value) => persist({ role: value })}
+                  placeholder="Select your role…"
+                  options={HR_ROLES.map((r) => ({ value: r, label: r }))}
+                />
+                <p className="text-xs text-navy-400">
+                  As the person setting up Atlas HR, you become the workspace admin.
+                </p>
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="company_name" required>Company name</Label>
                 <Input
@@ -288,6 +345,10 @@ export default function SignUpPage() {
                 size="lg"
                 className="flex-1"
                 onClick={() => {
+                  if (!form.role) {
+                    setError("Please select your role.");
+                    return;
+                  }
                   if (!form.company_name.trim()) {
                     setError("Please enter your company name.");
                     return;
@@ -344,11 +405,11 @@ export default function SignUpPage() {
             )}
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" size="lg" className="flex-1" onClick={() => setStep(2)}>
+              <Button variant="outline" size="lg" className="flex-1" onClick={() => setStep(isInvited ? 1 : 2)}>
                 ← Back
               </Button>
               <Button size="lg" className="flex-1" loading={loading} onClick={handleSubmit}>
-                Create account
+                {isInvited ? "Join workspace" : "Create account"}
               </Button>
             </div>
 

@@ -54,6 +54,36 @@ const textareaCls = "flex w-full rounded-xl border border-navy-200 bg-white px-3
 function CreateCaseModal({ employees, onClose }: { employees: EmployeeRow[]; onClose: () => void }) {
   const [state, formAction, isPending] = useActionState<DisciplinaryActionResult, FormData>(createCase, null);
 
+  // Controlled so the AI attendance draft (§4) can prefill them.
+  const [employeeId, setEmployeeId] = useState("");
+  const [title, setTitle] = useState("");
+  const [severity, setSeverity] = useState("minor");
+  const [description, setDescription] = useState("");
+  const [drafting, setDrafting] = useState(false);
+  const [draftError, setDraftError] = useState<string | null>(null);
+
+  async function draftFromAttendance() {
+    if (!employeeId) { setDraftError("Select an employee first."); return; }
+    setDrafting(true);
+    setDraftError(null);
+    try {
+      const res = await fetch("/api/ai/attendance-warning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId, focus: title || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setDraftError(data?.error ?? "Couldn't draft."); return; }
+      if (data.title && !title) setTitle(data.title);
+      if (data.severity) setSeverity(data.severity);
+      if (data.description) setDescription(data.description);
+    } catch {
+      setDraftError("Something went wrong drafting the note.");
+    } finally {
+      setDrafting(false);
+    }
+  }
+
   useEffect(() => { if (state?.success) onClose(); }, [state, onClose]);
 
   return (
@@ -77,6 +107,8 @@ function CreateCaseModal({ employees, onClose }: { employees: EmployeeRow[]; onC
               name="employee_id"
               required
               aria-label="Employee"
+              value={employeeId}
+              onChange={setEmployeeId}
               options={[
                 { value: "", label: "Select employee…" },
                 ...employees.map((e) => ({
@@ -88,7 +120,7 @@ function CreateCaseModal({ employees, onClose }: { employees: EmployeeRow[]; onC
           </div>
           <div>
             <label className={labelCls} htmlFor="dc-title">Title <span className="text-red-500">*</span></label>
-            <input id="dc-title" name="title" required className={inputCls} placeholder="e.g. Repeated tardiness — formal warning" />
+            <input id="dc-title" name="title" required className={inputCls} placeholder="e.g. Repeated tardiness — formal warning" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -97,7 +129,7 @@ function CreateCaseModal({ employees, onClose }: { employees: EmployeeRow[]; onC
             </div>
             <div>
               <label className={labelCls} htmlFor="dc-severity">Severity</label>
-              <Select id="dc-severity" name="severity" aria-label="Severity" options={SEVERITIES.map((s) => ({ value: s.key, label: s.label }))} />
+              <Select id="dc-severity" name="severity" aria-label="Severity" value={severity} onChange={setSeverity} options={SEVERITIES.map((s) => ({ value: s.key, label: s.label }))} />
             </div>
           </div>
           <div>
@@ -105,8 +137,31 @@ function CreateCaseModal({ employees, onClose }: { employees: EmployeeRow[]; onC
             <DatePicker id="dc-date" name="incident_date" defaultValue={new Date().toISOString().split("T")[0]} placeholder="Select incident date" />
           </div>
           <div>
-            <label className={labelCls} htmlFor="dc-description">Description</label>
-            <textarea id="dc-description" name="description" className={`${textareaCls} min-h-[90px]`} placeholder="Describe the incident, evidence, and any prior discussions…" />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className={`${labelCls} mb-0`} htmlFor="dc-description">Description</label>
+              <button
+                type="button"
+                onClick={() => void draftFromAttendance()}
+                disabled={drafting || !employeeId}
+                title={employeeId ? "Draft a factual attendance note from this employee's logged time entries" : "Select an employee first"}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-900 disabled:opacity-50"
+              >
+                {drafting ? (
+                  <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                )}
+                AI draft from attendance
+              </button>
+            </div>
+            {draftError && <p className="text-xs text-red-600 mb-1.5">{draftError}</p>}
+            <textarea id="dc-description" name="description" className={`${textareaCls} min-h-[90px]`} placeholder="Describe the incident, evidence, and any prior discussions…" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <p className="text-[11px] text-navy-400 mt-1">AI drafts are based on logged time entries — review and verify before opening the case.</p>
           </div>
           <div className="flex items-center justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="text-sm font-medium text-navy-600 hover:text-navy-800 px-4 py-2 rounded-lg hover:bg-navy-50 transition-colors">Cancel</button>

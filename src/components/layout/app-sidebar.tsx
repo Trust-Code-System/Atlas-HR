@@ -41,6 +41,24 @@ const NAV_GROUPS = [
         ),
       },
       {
+        href: "/manager",
+        label: "My Team",
+        icon: (
+          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        ),
+      },
+      {
+        href: "/complaints",
+        label: "Raise a Concern",
+        icon: (
+          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 2H21l-3 6 3 6h-8.5l-1-2H5a2 2 0 00-2 2zm9-13.5V9" />
+          </svg>
+        ),
+      },
+      {
         href: "/portal/leave",
         label: "My Leave",
         icon: (
@@ -164,6 +182,24 @@ const NAV_GROUPS = [
         ),
       },
       {
+        href: "/tasks",
+        label: "Tasks",
+        icon: (
+          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7l2 2 4-4" />
+          </svg>
+        ),
+      },
+      {
+        href: "/complaints",
+        label: "Complaints",
+        icon: (
+          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 2H21l-3 6 3 6h-8.5l-1-2H5a2 2 0 00-2 2zm9-13.5V9" />
+          </svg>
+        ),
+      },
+      {
         href: "/exit",
         label: "Exit",
         icon: (
@@ -260,6 +296,15 @@ const NAV_GROUPS = [
         icon: (
           <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+        ),
+      },
+      {
+        href: "/automations",
+        label: "AI Workflows",
+        icon: (
+          <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         ),
       },
@@ -476,7 +521,7 @@ function NavIcon({ icon, active }: { icon: React.ReactNode; active: boolean }) {
   );
 }
 
-export function AppSidebar({ userRole }: { userRole?: string }) {
+export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string; isOrgAdmin?: boolean }) {
   const pathname = usePathname();
   const isAdmin = userRole === "admin" || userRole === "moderator";
   const [collapsed, setCollapsed] = useState(() => {
@@ -604,19 +649,25 @@ export function AppSidebar({ userRole }: { userRole?: string }) {
             </div>
           </div>
         )}
-        {NAV_GROUPS.map((group, gi) => (
-          <div key={gi}>
-            {group.label && !collapsed && (
-              <p className="text-[10px] font-bold uppercase tracking-[0.07em] text-blue-400 px-2.5 mb-1">
-                {group.label}
-              </p>
-            )}
-            {group.label && collapsed && <div className="h-px bg-blue-100 mx-1 mb-1" />}
-            <div className="space-y-0.5">
-              {group.items.map((item) => navLink(item))}
+        {NAV_GROUPS.map((group, gi) => {
+          // Demo Data is admin-only — only the workspace admin who set the
+          // company up can load or clear demo records.
+          const items = group.items.filter((item) => item.href !== "/demo" || isOrgAdmin);
+          if (items.length === 0) return null;
+          return (
+            <div key={gi}>
+              {group.label && !collapsed && (
+                <p className="text-[10px] font-bold uppercase tracking-[0.07em] text-blue-400 px-2.5 mb-1">
+                  {group.label}
+                </p>
+              )}
+              {group.label && collapsed && <div className="h-px bg-blue-100 mx-1 mb-1" />}
+              <div className="space-y-0.5">
+                {items.map((item) => navLink(item))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Bottom items */}

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { DemoSeedForm } from "./demo-seed-form";
 
 export const metadata: Metadata = { title: "Demo Data" };
@@ -24,7 +26,12 @@ const demoAreas = [
   { href: "/dashboard/documents", label: "AI Documents", detail: "Generated offer letter, PIP and job description" },
 ];
 
-export default function DemoPage() {
+export default async function DemoPage() {
+  // Demo data is admin-only — only the workspace admin who set the company up
+  // can load or turn off demo records.
+  const orgCtx = await getCurrentOrg();
+  if (!orgCtx?.isAdmin) redirect("/dashboard");
+
   return (
     <div className="mx-auto w-full max-w-6xl p-5 lg:p-8">
       <section className="overflow-hidden rounded-[24px] border border-blue-100 bg-white shadow-sm">

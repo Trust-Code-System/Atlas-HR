@@ -45,6 +45,9 @@ const envSchema = z.object({
   RESEND_REPLY_TO: z.string().optional(),
   CRON_SECRET: z.string().optional(),
   UNSUBSCRIBE_SECRET: z.string().optional(),
+  // At-rest encryption for stored integration secrets — optional; falls back to
+  // deriving a key from SUPABASE_SERVICE_ROLE_KEY when unset.
+  ATLAS_ENCRYPTION_KEY: z.string().optional(),
   // Sentry — optional until account is created
   SENTRY_DSN: z.string().optional(),
   NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
@@ -103,6 +106,7 @@ function validateEnv() {
     RESEND_REPLY_TO: process.env.RESEND_REPLY_TO,
     CRON_SECRET: process.env.CRON_SECRET,
     UNSUBSCRIBE_SECRET: process.env.UNSUBSCRIBE_SECRET,
+    ATLAS_ENCRYPTION_KEY: process.env.ATLAS_ENCRYPTION_KEY,
     SENTRY_DSN: process.env.SENTRY_DSN,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,

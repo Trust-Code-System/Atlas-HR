@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { decryptValue } from "@/lib/crypto";
 
 export interface SlackNotification {
   title: string;
@@ -17,7 +18,8 @@ export async function sendSlackNotification(orgId: string, notification: SlackNo
     .eq("is_active", true)
     .maybeSingle();
 
-  const webhookUrl = (data?.config as Record<string, string> | null)?.webhook_url;
+  const rawWebhook = (data?.config as Record<string, string> | null)?.webhook_url;
+  const webhookUrl = rawWebhook ? decryptValue(rawWebhook) : undefined;
   if (!webhookUrl) return;
 
   const payload = {

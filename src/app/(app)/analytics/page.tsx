@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { BarFill, MonthlyBarColumn, StackedBarSegment, StatusBarFill } from "./analytics-bars";
+import { AiSummaryButton } from "@/components/ai/ai-summary-button";
 
 export const metadata: Metadata = { title: "Analytics | Atlas HR" };
 
@@ -179,16 +180,24 @@ export default async function AnalyticsPage() {
       <div className="relative overflow-hidden rounded-[24px] bg-linear-to-br from-navy-950 via-navy-900 to-navy-800 px-7 py-6 mb-8 shadow-xl">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.12),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(16,185,129,0.08),transparent_60%)]" />
-        <div className="relative flex items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-white/10 ring-1 ring-white/10 flex items-center justify-center text-white shrink-0">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-white/10 ring-1 ring-white/10 flex items-center justify-center text-white shrink-0">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white tracking-tight">Analytics</h1>
+              <p className="text-blue-300 text-sm mt-0.5">People insights for {orgCtx.org.name}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Analytics</h1>
-            <p className="text-blue-300 text-sm mt-0.5">People insights for {orgCtx.org.name}</p>
-          </div>
+          <AiSummaryButton
+            endpoint="/api/ai/analytics-summary"
+            title="AI HR Summary"
+            subtitle={`${orgCtx.org.name} · this month`}
+            buttonLabel="AI summary"
+          />
         </div>
       </div>
 

@@ -12,6 +12,7 @@ import {
   createLeaveRequest,
 } from "./actions";
 import type { LeaveRequest } from "@/types/database";
+import { AiSummaryButton } from "@/components/ai/ai-summary-button";
 
 interface Employee {
   id: string;
@@ -93,12 +94,22 @@ function DatePickerField({
   label,
   name,
   required,
+  value: controlledValue,
+  onValueChange,
 }: {
   label: string;
   name: string;
   required?: boolean;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }) {
-  const [value, setValue] = useState("");
+  const [internalValue, setInternalValue] = useState("");
+  const isControlled = controlledValue !== undefined;
+  const value = isControlled ? controlledValue : internalValue;
+  const setValue = (v: string) => {
+    if (!isControlled) setInternalValue(v);
+    onValueChange?.(v);
+  };
   const selected = parseIsoDate(value);
   const initialMonth = selected ?? new Date();
   const [viewYear, setViewYear] = useState(initialMonth.getFullYear());
@@ -299,6 +310,47 @@ function RequestLeaveModal({
 }) {
   const [state, formAction, isPending] = useActionState(createLeaveRequest, null);
 
+  // Controlled fields so the AI quick-fill can prefill them.
+  const [leaveType, setLeaveType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [reason, setReason] = useState("");
+
+  // Natural-language quick-fill (§3).
+  const [nl, setNl] = useState("");
+  const [parsing, setParsing] = useState(false);
+  const [nlError, setNlError] = useState<string | null>(null);
+  const [nlNote, setNlNote] = useState<string | null>(null);
+
+  async function quickFill() {
+    if (nl.trim().length < 2) return;
+    setParsing(true);
+    setNlError(null);
+    setNlNote(null);
+    try {
+      const res = await fetch("/api/ai/parse-leave", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: nl.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setNlError(data?.error ?? "Couldn't parse that.");
+        return;
+      }
+      const filled: string[] = [];
+      if (data.leave_type) { setLeaveType(data.leave_type); filled.push("type"); }
+      if (data.start_date) { setStartDate(data.start_date); filled.push("start"); }
+      if (data.end_date) { setEndDate(data.end_date); filled.push("end"); }
+      if (data.reason) { setReason(data.reason); filled.push("reason"); }
+      setNlNote(filled.length ? "Filled in below — review and submit." : "Couldn't pull dates from that — try being more specific.");
+    } catch {
+      setNlError("Something went wrong parsing that.");
+    } finally {
+      setParsing(false);
+    }
+  }
+
   useEffect(() => {
     if (state?.success) onClose();
   }, [state, onClose]);
@@ -337,6 +389,40 @@ function RequestLeaveModal({
             </div>
           )}
 
+          {/* AI natural-language quick-fill (§3) */}
+          <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-3">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 mb-1.5">
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Describe it in plain English
+            </label>
+            <div className="flex gap-2">
+              <input
+                value={nl}
+                onChange={(e) => setNl(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void quickFill(); } }}
+                placeholder="e.g. sick leave Monday to Wednesday next week"
+                className="flex-1 h-10 rounded-lg border border-navy-200 bg-white px-3 text-sm text-navy-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => void quickFill()}
+                disabled={parsing || nl.trim().length < 2}
+                className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {parsing ? (
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : "Fill"}
+              </button>
+            </div>
+            {nlError && <p className="text-xs text-red-600 mt-1.5">{nlError}</p>}
+            {nlNote && !nlError && <p className="text-xs text-blue-700 mt-1.5">{nlNote}</p>}
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-navy-600 uppercase tracking-wide block mb-1.5">
               Employee <span className="text-red-500">*</span>
@@ -361,20 +447,22 @@ function RequestLeaveModal({
             <Select
               name="leave_type"
               required
+              value={leaveType}
+              onChange={setLeaveType}
               options={[{ value: "", label: "Select type…" }, ...leaveTypes]}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <DatePickerField name="start_date" label="Start date" required />
-            <DatePickerField name="end_date" label="End date" required />
+            <DatePickerField name="start_date" label="Start date" required value={startDate} onValueChange={setStartDate} />
+            <DatePickerField name="end_date" label="End date" required value={endDate} onValueChange={setEndDate} />
           </div>
 
           <div>
             <label className="text-xs font-semibold text-navy-600 uppercase tracking-wide block mb-1.5">
               Reason (optional)
             </label>
-            <Input name="reason" placeholder="Brief reason for leave…" />
+            <Input name="reason" placeholder="Brief reason for leave…" value={reason} onChange={(e) => setReason(e.target.value)} />
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
@@ -775,9 +863,18 @@ export function LeaveClient({ leaveRequests, employees, employeeMap, isAdmin }: 
                       <div className="col-span-1 hidden sm:block text-sm text-navy-600">
                         {days}d
                       </div>
-                      <div className="col-span-3 sm:col-span-2 flex items-center gap-2">
+                      <div className="col-span-3 sm:col-span-2 flex items-center gap-2 flex-wrap">
                         {req.status === "pending" && isAdmin ? (
-                          <ApproveRejectButtons requestId={req.id} />
+                          <>
+                            <ApproveRejectButtons requestId={req.id} />
+                            <AiSummaryButton
+                              endpoint={`/api/ai/leave-recommendation?id=${req.id}`}
+                              title="AI eligibility check"
+                              subtitle={`${emp?.full_name ?? "Employee"} · ${req.leave_type.replace(/_/g, " ")} leave`}
+                              buttonLabel="AI check"
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 px-2.5 py-1.5 rounded-lg transition-colors"
+                            />
+                          </>
                         ) : (
                           <Badge variant={statusVariant[req.status] ?? "default"}>
                             {req.status}

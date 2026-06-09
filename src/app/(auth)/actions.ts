@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import type { Database } from "@/types/database";
+import { normalizeRoles } from "@/lib/auth/permissions";
 
 function createServiceClient() {
   return createSupabaseClient<Database>(
@@ -38,6 +39,8 @@ export async function signUpWithPassword(formData: FormData) {
   const companySlug = ((formData.get("company_slug") as string) ?? "").trim();
   const industry = ((formData.get("industry") as string) ?? "").trim() || null;
   const companySize = ((formData.get("company_size") as string) ?? "").trim() || null;
+  const role = ((formData.get("role") as string) ?? "").trim() || null;
+  const inviteToken = ((formData.get("invite_token") as string) ?? "").trim();
   let goals: string[] = [];
   try {
     const rawGoals = formData.get("goals") as string | null;
@@ -77,10 +80,55 @@ export async function signUpWithPassword(formData: FormData) {
       industry,
       company_size: companySize,
       goals,
+      job_title: role,
       onboarding_completed: true,
     },
     { onConflict: "id" }
   );
+
+  // Invited sign-ups join the existing organisation and skip workspace setup
+  // entirely — they never get asked to "set up an organisation".
+  if (inviteToken) {
+    const { data: invite } = await admin
+      .from("org_invites")
+      .select("id, org_id, email, roles, expires_at, accepted_at")
+      .eq("token", inviteToken)
+      .maybeSingle();
+
+    if (
+      invite &&
+      !invite.accepted_at &&
+      new Date(invite.expires_at) > new Date() &&
+      invite.email.toLowerCase() === email.toLowerCase()
+    ) {
+      const { data: existing } = await admin
+        .from("org_members")
+        .select("id")
+        .eq("org_id", invite.org_id)
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (!existing) {
+        await admin
+          .from("org_members")
+          .insert({ org_id: invite.org_id, user_id: userId, roles: normalizeRoles(invite.roles) });
+      }
+
+      await admin
+        .from("org_invites")
+        .update({ accepted_at: new Date().toISOString() })
+        .eq("id", invite.id);
+
+      // Link any pre-created employee record for this email to the new user.
+      await admin
+        .from("employees")
+        .update({ linked_user_id: userId })
+        .eq("org_id", invite.org_id)
+        .ilike("email", email);
+    }
+
+    return { success: true, needsVerification: !data.session };
+  }
 
   // Create the organisation + owner membership during signup so the user never
   // lands on the dashboard being asked to "set up an organisation" again.

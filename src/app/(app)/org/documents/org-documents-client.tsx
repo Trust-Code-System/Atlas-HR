@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useState } from "react";
-import { deleteEmployeeDocument } from "./actions";
+import { deleteEmployeeDocument, toggleEmployeeDocAi } from "./actions";
 
 interface Doc {
   id: string;
@@ -10,6 +10,7 @@ interface Doc {
   file_name: string;
   file_url: string;
   expires_at: string | null;
+  ai_enabled?: boolean;
   created_at: string;
 }
 
@@ -36,6 +37,33 @@ const docTypeIcons: Record<string, string> = {
   tax_form: "🧾",
   certificate: "🏆",
 };
+
+function AiToggle({ docId, enabled }: { docId: string; enabled: boolean }) {
+  const [isPending, startTransition] = useTransition();
+  const [on, setOn] = useState(enabled);
+
+  function handle() {
+    startTransition(async () => {
+      const next = !on;
+      await toggleEmployeeDocAi(docId, next);
+      setOn(next);
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handle}
+      disabled={isPending}
+      title={on ? "Used in AI answers — click to exclude" : "Excluded from AI answers — click to allow"}
+      className={`text-[10px] font-semibold px-2 py-1 rounded-lg transition-colors disabled:opacity-50 ${
+        on ? "text-blue-700 bg-blue-50 hover:bg-blue-100" : "text-navy-500 bg-navy-100 hover:bg-navy-200"
+      }`}
+    >
+      {on ? "AI: on" : "AI: off"}
+    </button>
+  );
+}
 
 function DeleteButton({ docId }: { docId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -149,7 +177,8 @@ export function OrgDocumentsClient({ docs, empMap, docTypeLabels, isAdmin }: Pro
                       )}
                     </div>
                     {isAdmin && (
-                      <div className="col-span-1 flex justify-end">
+                      <div className="col-span-1 flex items-center justify-end gap-2">
+                        <AiToggle docId={doc.id} enabled={doc.ai_enabled !== false} />
                         <DeleteButton docId={doc.id} />
                       </div>
                     )}

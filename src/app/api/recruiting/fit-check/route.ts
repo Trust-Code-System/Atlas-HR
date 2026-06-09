@@ -1,10 +1,7 @@
-"use server";
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+import { streamChatText, aiProviderStatus } from "@/lib/ai/provider";
 
 export async function POST(req: NextRequest) {
   const orgCtx = await getCurrentOrg();
@@ -72,12 +69,23 @@ Return your response in this exact format:
 
 **LinkedIn review:** ${app.linkedin_url ? `Visit ${app.linkedin_url} to verify the candidate's experience and skills listed above.` : "No LinkedIn profile provided. Consider requesting one before proceeding."}`;
 
-  const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 600,
-    messages: [{ role: "user", content: prompt }],
-  });
+  if (!aiProviderStatus().anthropic && !aiProviderStatus().openai) {
+    return NextResponse.json({ error: "AI not configured." }, { status: 500 });
+  }
 
-  const text = message.content[0].type === "text" ? message.content[0].text : "";
+  let text = "";
+  try {
+    for await (const chunk of streamChatText({
+      system: "You are an expert HR recruiter providing concise, practical candidate fit assessments.",
+      anthropicMessages: [{ role: "user", content: prompt }],
+      openaiMessages: [{ role: "user", content: prompt }],
+      maxTokens: 600,
+    })) {
+      text += chunk;
+    }
+  } catch {
+    return NextResponse.json({ error: "Fit check failed." }, { status: 500 });
+  }
+
   return NextResponse.json({ analysis: text });
 }

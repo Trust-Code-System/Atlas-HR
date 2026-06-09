@@ -435,6 +435,7 @@ export interface Database {
           file_url: string;
           expires_at: string | null;
           uploaded_by: string | null;
+          ai_enabled: boolean;
           created_at: string;
         };
         Insert: {
@@ -445,6 +446,7 @@ export interface Database {
           file_url: string;
           expires_at?: string | null;
           uploaded_by?: string | null;
+          ai_enabled?: boolean;
           created_at?: string;
         };
         Update: {
@@ -455,6 +457,7 @@ export interface Database {
           file_url?: string;
           expires_at?: string | null;
           uploaded_by?: string | null;
+          ai_enabled?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -2823,6 +2826,201 @@ export interface Database {
         };
         Relationships: [];
       };
+      kb_documents: {
+        Row: {
+          id: string;
+          org_id: string;
+          title: string;
+          source: string;
+          source_id: string | null;
+          category: string;
+          file_name: string | null;
+          byte_size: number | null;
+          status: string;
+          ai_enabled: boolean;
+          chunk_count: number;
+          error: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          title: string;
+          source?: string;
+          source_id?: string | null;
+          category?: string;
+          file_name?: string | null;
+          byte_size?: number | null;
+          status?: string;
+          ai_enabled?: boolean;
+          chunk_count?: number;
+          error?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          title?: string;
+          source?: string;
+          source_id?: string | null;
+          category?: string;
+          file_name?: string | null;
+          byte_size?: number | null;
+          status?: string;
+          ai_enabled?: boolean;
+          chunk_count?: number;
+          error?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      kb_chunks: {
+        Row: {
+          id: string;
+          document_id: string;
+          org_id: string;
+          chunk_index: number;
+          content: string;
+          token_estimate: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          document_id: string;
+          org_id: string;
+          chunk_index: number;
+          content: string;
+          token_estimate?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          document_id?: string;
+          org_id?: string;
+          chunk_index?: number;
+          content?: string;
+          token_estimate?: number | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      complaints: {
+        Row: {
+          id: string;
+          org_id: string;
+          reporter_user_id: string | null;
+          reporter_employee_id: string | null;
+          is_anonymous: boolean;
+          subject_employee_id: string | null;
+          title: string;
+          description: string;
+          category: string;
+          severity: string;
+          is_sensitive: boolean;
+          status: string;
+          assigned_to: string | null;
+          resolution: string | null;
+          ai_summary: string | null;
+          created_at: string;
+          updated_at: string;
+          resolved_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          reporter_user_id?: string | null;
+          reporter_employee_id?: string | null;
+          is_anonymous?: boolean;
+          subject_employee_id?: string | null;
+          title: string;
+          description: string;
+          category?: string;
+          severity?: string;
+          is_sensitive?: boolean;
+          status?: string;
+          assigned_to?: string | null;
+          resolution?: string | null;
+          ai_summary?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          resolved_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          reporter_user_id?: string | null;
+          reporter_employee_id?: string | null;
+          is_anonymous?: boolean;
+          subject_employee_id?: string | null;
+          title?: string;
+          description?: string;
+          category?: string;
+          severity?: string;
+          is_sensitive?: boolean;
+          status?: string;
+          assigned_to?: string | null;
+          resolution?: string | null;
+          ai_summary?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          resolved_at?: string | null;
+        };
+        Relationships: [];
+      };
+      automation_workflows: {
+        Row: {
+          id: string;
+          org_id: string;
+          name: string;
+          nl_prompt: string | null;
+          trigger_type: string;
+          trigger_days: number;
+          action_type: string;
+          action_config: Json;
+          is_active: boolean;
+          last_run_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          name: string;
+          nl_prompt?: string | null;
+          trigger_type: string;
+          trigger_days?: number;
+          action_type: string;
+          action_config?: Json;
+          is_active?: boolean;
+          last_run_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          name?: string;
+          nl_prompt?: string | null;
+          trigger_type?: string;
+          trigger_days?: number;
+          action_type?: string;
+          action_config?: Json;
+          is_active?: boolean;
+          last_run_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -2841,6 +3039,20 @@ export interface Database {
       manages_employee: {
         Args: { _employee_id: string };
         Returns: boolean;
+      };
+      is_workspace_owner: {
+        Args: { _org_id: string };
+        Returns: boolean;
+      };
+      match_kb_chunks: {
+        Args: { p_org_id: string; p_query: string; p_match_count?: number };
+        Returns: {
+          chunk_id: string;
+          document_id: string;
+          doc_title: string;
+          content: string;
+          rank: number;
+        }[];
       };
     };
     Enums: Record<string, never>;
@@ -2880,6 +3092,10 @@ export type LeaveRequest = Database["public"]["Tables"]["leave_requests"]["Row"]
 export type GeneratedDocument = Database["public"]["Tables"]["generated_documents"]["Row"];
 export type ContentFeedback = Database["public"]["Tables"]["content_feedback"]["Row"];
 export type SavedItem = Database["public"]["Tables"]["saved_items"]["Row"];
+export type Complaint = Database["public"]["Tables"]["complaints"]["Row"];
+export type AutomationWorkflow = Database["public"]["Tables"]["automation_workflows"]["Row"];
+export type KbDocument = Database["public"]["Tables"]["kb_documents"]["Row"];
+export type KbChunk = Database["public"]["Tables"]["kb_chunks"]["Row"];
 export type CopilotConversation = Database["public"]["Tables"]["copilot_conversations"]["Row"];
 export type CopilotMessage = Database["public"]["Tables"]["copilot_messages"]["Row"];
 export type CommunityThread = Database["public"]["Tables"]["community_threads"]["Row"];

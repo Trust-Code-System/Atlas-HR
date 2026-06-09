@@ -12,8 +12,10 @@ type Mode = "chat" | "draft" | "research" | "analyse";
 
 interface Source {
   title: string;
-  slug: string;
-  category: string;
+  kind?: "article" | "document";
+  slug?: string;
+  category?: string;
+  docId?: string;
 }
 
 interface Attachment {
@@ -896,15 +898,29 @@ function CopilotChat() {
                   {m.role === "assistant" && m.sources && m.sources.length > 0 && (
                     <div className="flex flex-wrap items-center gap-1.5 px-1">
                       <span className="text-[10px] text-navy-400 font-medium">Sources:</span>
-                      {m.sources.map((s) => (
-                        <a
-                          key={s.slug}
-                          href={`/knowledge-hub/${s.slug}`}
-                          className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition-colors"
-                        >
-                          {s.title}
-                        </a>
-                      ))}
+                      {m.sources.map((s) =>
+                        s.kind === "document" ? (
+                          <a
+                            key={`doc-${s.docId}`}
+                            href="/org/library"
+                            title="From your organisation's documents"
+                            className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                          >
+                            <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            {s.title}
+                          </a>
+                        ) : (
+                          <a
+                            key={`art-${s.slug}`}
+                            href={`/knowledge-hub/${s.slug}`}
+                            className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition-colors"
+                          >
+                            {s.title}
+                          </a>
+                        )
+                      )}
                     </div>
                   )}
 

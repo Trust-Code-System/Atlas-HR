@@ -50,6 +50,131 @@ async function ignoreMissing<T>(query: PromiseLike<{ data: T | null; error: { co
   return result.data;
 }
 
+type DemoSupabase = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Removes every Atlas demo record from a workspace. Used both before re-seeding
+ * (so demo data is idempotent) and by the standalone "turn off demo data"
+ * action. Only deletes records tagged as Atlas demo data — real data is left
+ * untouched.
+ */
+async function purgeDemoData(supabase: DemoSupabase, orgId: string, userId: string) {
+  const { data: demoEmployees } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("org_id", orgId)
+    .ilike("email", `%@${DEMO_EMAIL_DOMAIN}`);
+  const demoEmployeeIds = (demoEmployees ?? []).map((employee) => employee.id);
+
+  const demoAssets = await ignoreMissing(
+    supabase.from("company_assets").select("id").eq("org_id", orgId).ilike("asset_tag", "DEMO-%"),
+  );
+  const demoAssetIds = (demoAssets ?? []).map((asset) => asset.id);
+
+  const { data: demoJobs } = await supabase
+    .from("jobs")
+    .select("id")
+    .eq("org_id", orgId)
+    .ilike("title", "Demo:%");
+  const demoJobIds = (demoJobs ?? []).map((job) => job.id);
+
+  const { data: demoPayrollRuns } = await supabase
+    .from("payroll_runs")
+    .select("id")
+    .eq("org_id", orgId)
+    .ilike("name", "Demo:%");
+  const demoPayrollRunIds = (demoPayrollRuns ?? []).map((run) => run.id);
+
+  const { data: demoCycles } = await supabase
+    .from("performance_cycles")
+    .select("id")
+    .eq("org_id", orgId)
+    .ilike("name", "Demo:%");
+  const demoCycleIds = (demoCycles ?? []).map((cycle) => cycle.id);
+
+  const { data: demoSurveys } = await supabase
+    .from("surveys")
+    .select("id")
+    .eq("org_id", orgId)
+    .ilike("title", "Demo:%");
+  const demoSurveyIds = (demoSurveys ?? []).map((survey) => survey.id);
+
+  const demoBenefitPlans = await ignoreMissing(
+    supabase.from("benefit_plans").select("id").eq("org_id", orgId).ilike("name", "Demo:%"),
+  );
+  const demoBenefitPlanIds = (demoBenefitPlans ?? []).map((plan) => plan.id);
+
+  const demoCourses = await ignoreMissing(
+    supabase.from("lms_courses").select("id").eq("org_id", orgId).ilike("title", "Demo:%"),
+  );
+  const demoCourseIds = (demoCourses ?? []).map((course) => course.id);
+
+  const demoExits = demoEmployeeIds.length
+    ? await ignoreMissing(
+        supabase.from("exit_records").select("id").eq("org_id", orgId).in("employee_id", demoEmployeeIds),
+      )
+    : [];
+  const demoExitIds = (demoExits ?? []).map((exit) => exit.id);
+
+  if (demoJobIds.length) await ignoreMissing(supabase.from("job_referrals").delete().in("job_id", demoJobIds));
+  if (demoJobIds.length) await ignoreMissing(supabase.from("job_applications").delete().in("job_id", demoJobIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("succession_candidates").delete().in("employee_id", demoEmployeeIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("disciplinary_cases").delete().in("employee_id", demoEmployeeIds));
+  if (demoExitIds.length) await ignoreMissing(supabase.from("exit_checklist_items").delete().in("exit_id", demoExitIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("exit_records").delete().in("employee_id", demoEmployeeIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("lms_certifications").delete().in("employee_id", demoEmployeeIds));
+  if (demoCourseIds.length) await ignoreMissing(supabase.from("lms_enrolments").delete().in("course_id", demoCourseIds));
+  if (demoCourseIds.length) await ignoreMissing(supabase.from("lms_courses").delete().in("id", demoCourseIds));
+  if (demoBenefitPlanIds.length) await ignoreMissing(supabase.from("benefit_enrolments").delete().in("plan_id", demoBenefitPlanIds));
+  if (demoBenefitPlanIds.length) await ignoreMissing(supabase.from("benefit_plans").delete().in("id", demoBenefitPlanIds));
+  if (demoSurveyIds.length) await ignoreMissing(supabase.from("survey_responses").delete().in("survey_id", demoSurveyIds));
+  if (demoSurveyIds.length) await ignoreMissing(supabase.from("surveys").delete().in("id", demoSurveyIds));
+  if (demoCycleIds.length) await ignoreMissing(supabase.from("performance_reviews").delete().in("cycle_id", demoCycleIds));
+  if (demoCycleIds.length) await ignoreMissing(supabase.from("performance_cycles").delete().in("id", demoCycleIds));
+  if (demoPayrollRunIds.length) await ignoreMissing(supabase.from("payroll_entries").delete().in("run_id", demoPayrollRunIds));
+  if (demoPayrollRunIds.length) await ignoreMissing(supabase.from("payroll_runs").delete().in("id", demoPayrollRunIds));
+  if (demoAssetIds.length) await ignoreMissing(supabase.from("asset_assignments").delete().in("asset_id", demoAssetIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("asset_assignments").delete().in("employee_id", demoEmployeeIds));
+  if (demoAssetIds.length) await ignoreMissing(supabase.from("company_assets").delete().in("id", demoAssetIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("time_entries").delete().in("employee_id", demoEmployeeIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("leave_requests").delete().in("employee_id", demoEmployeeIds));
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("employee_documents").delete().in("employee_id", demoEmployeeIds));
+  if (demoJobIds.length) await ignoreMissing(supabase.from("jobs").delete().in("id", demoJobIds));
+
+  await ignoreMissing(supabase.from("policy_library").delete().eq("org_id", orgId).ilike("title", "Demo:%"));
+  await ignoreMissing(supabase.from("org_integrations").delete().eq("org_id", orgId).in("integration_id", ["slack", "google-workspace", "bamboohr", "quickbooks", "greenhouse"]));
+  await ignoreMissing(supabase.from("org_enabled_skills").delete().eq("org_id", orgId).in("skill_id", ["leave-risk-brief", "payroll-explain", "candidate-screen", "policy-gap-check"]));
+  await supabase.from("generated_documents").delete().eq("user_id", userId).ilike("title", `${DEMO_DOC_PREFIX}%`);
+  await supabase.from("notifications").delete().eq("user_id", userId).ilike("title", "Demo:%");
+  if (demoEmployeeIds.length) await ignoreMissing(supabase.from("employees").delete().in("id", demoEmployeeIds));
+}
+
+/**
+ * Turns demo mode off: removes all Atlas demo records from the workspace.
+ * Admin-only — only the workspace admin who set the company up can do this.
+ */
+export async function clearDemoWorkspace(_previousState?: DemoSeedResult): Promise<DemoSeedResult> {
+  void _previousState;
+
+  const orgCtx = await getCurrentOrg();
+  if (!orgCtx) return { error: "Create or join a workspace before managing demo data." };
+  if (!orgCtx.isAdmin) return { error: "Only workspace admins can turn off demo data." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in again before managing demo data." };
+
+  try {
+    await purgeDemoData(supabase, orgCtx.org.id, user.id);
+    revalidatePath("/", "layout");
+    return { success: true, summary: ["All Atlas demo records removed. Your real data is untouched."] };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Could not remove demo data." };
+  }
+}
+
 export async function seedDemoWorkspace(_previousState?: DemoSeedResult): Promise<DemoSeedResult> {
   void _previousState;
 
@@ -67,110 +192,7 @@ export async function seedDemoWorkspace(_previousState?: DemoSeedResult): Promis
   const userId = user.id;
 
   try {
-    const { data: demoEmployees } = await supabase
-      .from("employees")
-      .select("id")
-      .eq("org_id", orgId)
-      .ilike("email", `%@${DEMO_EMAIL_DOMAIN}`);
-    const demoEmployeeIds = (demoEmployees ?? []).map((employee) => employee.id);
-
-    const demoAssets = await ignoreMissing(
-      supabase
-        .from("company_assets")
-        .select("id")
-        .eq("org_id", orgId)
-        .ilike("asset_tag", "DEMO-%")
-    );
-    const demoAssetIds = (demoAssets ?? []).map((asset) => asset.id);
-
-    const { data: demoJobs } = await supabase
-      .from("jobs")
-      .select("id")
-      .eq("org_id", orgId)
-      .ilike("title", "Demo:%");
-    const demoJobIds = (demoJobs ?? []).map((job) => job.id);
-
-    const { data: demoPayrollRuns } = await supabase
-      .from("payroll_runs")
-      .select("id")
-      .eq("org_id", orgId)
-      .ilike("name", "Demo:%");
-    const demoPayrollRunIds = (demoPayrollRuns ?? []).map((run) => run.id);
-
-    const { data: demoCycles } = await supabase
-      .from("performance_cycles")
-      .select("id")
-      .eq("org_id", orgId)
-      .ilike("name", "Demo:%");
-    const demoCycleIds = (demoCycles ?? []).map((cycle) => cycle.id);
-
-    const { data: demoSurveys } = await supabase
-      .from("surveys")
-      .select("id")
-      .eq("org_id", orgId)
-      .ilike("title", "Demo:%");
-    const demoSurveyIds = (demoSurveys ?? []).map((survey) => survey.id);
-
-    const demoBenefitPlans = await ignoreMissing(
-      supabase
-        .from("benefit_plans")
-        .select("id")
-        .eq("org_id", orgId)
-        .ilike("name", "Demo:%")
-    );
-    const demoBenefitPlanIds = (demoBenefitPlans ?? []).map((plan) => plan.id);
-
-    const demoCourses = await ignoreMissing(
-      supabase
-        .from("lms_courses")
-        .select("id")
-        .eq("org_id", orgId)
-        .ilike("title", "Demo:%")
-    );
-    const demoCourseIds = (demoCourses ?? []).map((course) => course.id);
-
-    const demoExits = demoEmployeeIds.length
-      ? await ignoreMissing(
-          supabase
-            .from("exit_records")
-            .select("id")
-            .eq("org_id", orgId)
-            .in("employee_id", demoEmployeeIds)
-        )
-      : [];
-    const demoExitIds = (demoExits ?? []).map((exit) => exit.id);
-
-    if (demoJobIds.length) await ignoreMissing(supabase.from("job_referrals").delete().in("job_id", demoJobIds));
-    if (demoJobIds.length) await ignoreMissing(supabase.from("job_applications").delete().in("job_id", demoJobIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("succession_candidates").delete().in("employee_id", demoEmployeeIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("disciplinary_cases").delete().in("employee_id", demoEmployeeIds));
-    if (demoExitIds.length) await ignoreMissing(supabase.from("exit_checklist_items").delete().in("exit_id", demoExitIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("exit_records").delete().in("employee_id", demoEmployeeIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("lms_certifications").delete().in("employee_id", demoEmployeeIds));
-    if (demoCourseIds.length) await ignoreMissing(supabase.from("lms_enrolments").delete().in("course_id", demoCourseIds));
-    if (demoCourseIds.length) await ignoreMissing(supabase.from("lms_courses").delete().in("id", demoCourseIds));
-    if (demoBenefitPlanIds.length) await ignoreMissing(supabase.from("benefit_enrolments").delete().in("plan_id", demoBenefitPlanIds));
-    if (demoBenefitPlanIds.length) await ignoreMissing(supabase.from("benefit_plans").delete().in("id", demoBenefitPlanIds));
-    if (demoSurveyIds.length) await ignoreMissing(supabase.from("survey_responses").delete().in("survey_id", demoSurveyIds));
-    if (demoSurveyIds.length) await ignoreMissing(supabase.from("surveys").delete().in("id", demoSurveyIds));
-    if (demoCycleIds.length) await ignoreMissing(supabase.from("performance_reviews").delete().in("cycle_id", demoCycleIds));
-    if (demoCycleIds.length) await ignoreMissing(supabase.from("performance_cycles").delete().in("id", demoCycleIds));
-    if (demoPayrollRunIds.length) await ignoreMissing(supabase.from("payroll_entries").delete().in("run_id", demoPayrollRunIds));
-    if (demoPayrollRunIds.length) await ignoreMissing(supabase.from("payroll_runs").delete().in("id", demoPayrollRunIds));
-    if (demoAssetIds.length) await ignoreMissing(supabase.from("asset_assignments").delete().in("asset_id", demoAssetIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("asset_assignments").delete().in("employee_id", demoEmployeeIds));
-    if (demoAssetIds.length) await ignoreMissing(supabase.from("company_assets").delete().in("id", demoAssetIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("time_entries").delete().in("employee_id", demoEmployeeIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("leave_requests").delete().in("employee_id", demoEmployeeIds));
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("employee_documents").delete().in("employee_id", demoEmployeeIds));
-    if (demoJobIds.length) await ignoreMissing(supabase.from("jobs").delete().in("id", demoJobIds));
-
-    await ignoreMissing(supabase.from("policy_library").delete().eq("org_id", orgId).ilike("title", "Demo:%"));
-    await ignoreMissing(supabase.from("org_integrations").delete().eq("org_id", orgId).in("integration_id", ["slack", "google-workspace", "bamboohr", "quickbooks", "greenhouse"]));
-    await ignoreMissing(supabase.from("org_enabled_skills").delete().eq("org_id", orgId).in("skill_id", ["leave-risk-brief", "payroll-explain", "candidate-screen", "policy-gap-check"]));
-    await supabase.from("generated_documents").delete().eq("user_id", userId).ilike("title", `${DEMO_DOC_PREFIX}%`);
-    await supabase.from("notifications").delete().eq("user_id", userId).ilike("title", "Demo:%");
-    if (demoEmployeeIds.length) await ignoreMissing(supabase.from("employees").delete().in("id", demoEmployeeIds));
+    await purgeDemoData(supabase, orgId, userId);
 
     const employeesToInsert = [
       ["Amina Okafor", "amina.okafor", "Chief People Officer", "People", "active", "full_time", "Nigeria", 148000, true],

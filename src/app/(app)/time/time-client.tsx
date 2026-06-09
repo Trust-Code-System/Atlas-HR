@@ -6,6 +6,7 @@ import { logHours, submitWeek, approveEntry } from "./actions";
 import type { TimeActionResult } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { AiSummaryButton } from "@/components/ai/ai-summary-button";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const CATEGORIES = [
@@ -225,6 +226,15 @@ export function TimeClient({
           </div>
           {/* Week navigation */}
           <div className="flex items-center gap-2 shrink-0">
+            {isAdmin && (
+              <AiSummaryButton
+                endpoint="/api/ai/attendance-insights"
+                title="Attendance AI insights"
+                subtitle="Lateness & absence patterns · last 90 days"
+                buttonLabel="Attendance AI"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-2 rounded-xl text-sm transition-colors ring-1 ring-white/15"
+              />
+            )}
             <button type="button" aria-label="Previous week" onClick={prevWeek}
               className="h-9 w-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors ring-1 ring-white/15">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

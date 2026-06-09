@@ -77,7 +77,7 @@ export default async function InvitePage({ params }: Props) {
               ) : (
                 <div className="space-y-3">
                   <Link
-                    href={`/sign-up?invite=${token}`}
+                    href={`/sign-up?invite=${token}&email=${encodeURIComponent(invite.email)}`}
                     className="flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
                   >
                     Create account &amp; accept

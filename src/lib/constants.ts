@@ -55,6 +55,20 @@ export const COMPANY_SIZES = [
   "1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5000+",
 ] as const;
 
+// Roles a person can hold when they register a workspace. Whoever signs up
+// without an invite is creating the company, so they become the workspace
+// admin/owner — this is captured as their job title.
+export const HR_ROLES = [
+  "Head of HR / CHRO",
+  "HR Manager",
+  "HR Generalist / Officer",
+  "People Operations",
+  "Founder / CEO",
+  "Operations / Office Manager",
+  "IT / System Admin",
+  "Other",
+] as const;
+
 export const GOALS = [
   "Generate HR documents faster",
   "Learn HR best practices",
