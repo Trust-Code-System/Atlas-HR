@@ -77,9 +77,22 @@ export default function SignUpPage() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
+      return;
     }
+
+    if (form.company_name.trim()) {
+      await fetch("/api/org", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.company_name.trim(),
+          slug: slugify(form.company_name.trim()),
+        }),
+      });
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
+    router.push("/dashboard");
   }
 
   return (
