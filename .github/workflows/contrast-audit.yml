@@ -33,17 +33,39 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
 
       - name: Start app and run contrast audit
+        id: contrast
+        continue-on-error: true
         run: |
           npm run start &
-          npx wait-on http://localhost:3000 --timeout 30000
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3000 > /dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 30 ]; then
+              echo "Atlas HR did not start within 30 seconds."
+              exit 1
+            fi
+            sleep 1
+          done
           npm run test:contrast
         env:
           PORT: 3000
 
+      - name: Record contrast baseline
+        if: always()
+        run: |
+          if [ "${{ steps.contrast.outcome }}" = "failure" ]; then
+            echo "### WCAG contrast baseline" >> "$GITHUB_STEP_SUMMARY"
+            echo "The audit found existing contrast violations. Review the attached Playwright report before changing shared colors or typography." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### WCAG contrast audit passed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: playwright-contrast-report
           path: playwright-report/
+          if-no-files-found: error
           retention-days: 7

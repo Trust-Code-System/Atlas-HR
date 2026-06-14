@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:contrast": "playwright test src/__tests__/contrast.spec.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",

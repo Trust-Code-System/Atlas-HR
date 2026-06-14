@@ -34,8 +34,10 @@ The application validates its configuration through `src/lib/env.ts`. Provision 
 npm run lint
 npm run build
 npx vitest run
-npx playwright test
+npm run test:contrast
 ```
+
+The contrast audit currently serves as a tracked accessibility baseline and publishes a Playwright report in GitHub Actions.
 
 ## Operations
 
