@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Atlas HR
 
-## Getting Started
+Atlas HR is a multi-country people operations platform for employee onboarding, payroll workflows, compliance, documents, and AI-assisted HR work.
 
-First, run the development server:
+[Open the live application](https://atlas-hr-fq24.vercel.app)
+
+## Core capabilities
+
+- Role-based workspaces for employees, managers, and administrators
+- Employee records, onboarding, leave, documents, and payroll workflows
+- Country-aware HR and compliance support for Nigeria, India, the United Kingdom, and the United States
+- AI-assisted policy, document, and people operations workflows
+- Email delivery, billing, product analytics, rate limiting, and error monitoring
+- Automated accessibility and browser testing
+
+## Architecture
+
+Atlas HR is a Next.js 16 application backed by Supabase. Server-side integrations include OpenAI, Anthropic, Stripe, Resend, Sentry, PostHog, and Upstash Redis. Database changes are versioned as Supabase migrations.
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application validates its configuration through `src/lib/env.ts`. Provision the required Supabase and service credentials in a local environment file before exercising integrated features. Never commit real secrets.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Verification
 
-## Learn More
+```bash
+npm run lint
+npm run build
+npx vitest run
+npx playwright test
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Operations
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Product and engineering documentation: [`docs/`](docs/)
+- Database migration guidance: [`supabase/MIGRATIONS.md`](supabase/MIGRATIONS.md)
+- Pre-launch checks: [`docs/pre-launch-checklist.md`](docs/pre-launch-checklist.md)
+- Production runbook: [`docs/runbook.md`](docs/runbook.md)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Atlas HR is maintained by [TrustCode Systems](https://trustcodesystem.tech/).
