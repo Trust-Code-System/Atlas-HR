@@ -521,7 +521,15 @@ function NavIcon({ icon, active }: { icon: React.ReactNode; active: boolean }) {
   );
 }
 
-export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string; isOrgAdmin?: boolean }) {
+export function AppSidebar({
+  userRole,
+  isOrgAdmin = false,
+  hasEmployeeProfile = false,
+}: {
+  userRole?: string;
+  isOrgAdmin?: boolean;
+  hasEmployeeProfile?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const isAdmin = userRole === "admin" || userRole === "moderator";
@@ -658,6 +666,8 @@ export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string
           </div>
         )}
         {NAV_GROUPS.map((group, gi) => {
+          if (group.label === "Me" && isOrgAdmin && !hasEmployeeProfile) return null;
+
           // Demo Data is admin-only — only the workspace admin who set the
           // company up can load or clear demo records.
           const items = group.items.filter((item) => item.href !== "/demo" || isOrgAdmin);

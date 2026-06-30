@@ -2,6 +2,8 @@
 
 import { getActualUser } from "@/lib/auth/get-user";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
+import { legacyRoleForRoles } from "@/lib/auth/permissions-shared";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -42,8 +44,19 @@ export async function linkMyEmployeeAccount(
 
   const profile = await getActualUser();
   const email = user.email ?? profile?.email ?? null;
+  const admin = createAdminClient();
 
-  const { data: alreadyLinked } = await supabase
+  const expectedOrgRole = legacyRoleForRoles(orgCtx.roles);
+  if (orgCtx.membership.org_role !== expectedOrgRole) {
+    await admin
+      .from("org_members")
+      .update({ org_role: expectedOrgRole })
+      .eq("id", orgCtx.membership.id)
+      .eq("org_id", orgCtx.org.id)
+      .eq("user_id", user.id);
+  }
+
+  const { data: alreadyLinked } = await admin
     .from("employees")
     .select("id")
     .eq("org_id", orgCtx.org.id)
@@ -56,7 +69,7 @@ export async function linkMyEmployeeAccount(
   }
 
   if (email) {
-    const { data: matchingEmployee } = await supabase
+    const { data: matchingEmployee } = await admin
       .from("employees")
       .select("id, linked_user_id")
       .eq("org_id", orgCtx.org.id)
@@ -69,7 +82,7 @@ export async function linkMyEmployeeAccount(
         return { error: "An employee record with this email is already linked to another user." };
       }
 
-      const { error } = await supabase
+      const { error } = await admin
         .from("employees")
         .update({ linked_user_id: user.id })
         .eq("id", matchingEmployee.id)
@@ -83,7 +96,7 @@ export async function linkMyEmployeeAccount(
   }
 
   const fallbackName = email?.split("@")[0] ?? "Workspace admin";
-  const { error } = await supabase.from("employees").insert({
+  const { error } = await admin.from("employees").insert({
     org_id: orgCtx.org.id,
     full_name: profile?.full_name ?? fallbackName,
     email,
