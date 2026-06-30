@@ -87,7 +87,7 @@ export default async function AuditLogPage({
           <div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Settings</h1>
             <p className="text-blue-300 text-sm mt-0.5">
-              Audit log · {count ?? 0} total events
+              Audit log - {count ?? 0} total events
             </p>
           </div>
         </div>
@@ -180,7 +180,9 @@ export default async function AuditLogPage({
               </svg>
             </div>
             <h3 className="text-base font-bold text-navy-900 mb-1">No audit events yet</h3>
-            <p className="text-sm text-navy-500">Admin actions will appear here as they happen.</p>
+            <p className="mx-auto max-w-lg text-sm leading-6 text-navy-500">
+              Sensitive HR actions will appear here as they happen, including leave approvals, salary changes, document uploads or deletions, role changes, and access to restricted records.
+            </p>
           </div>
         )}
       </div>

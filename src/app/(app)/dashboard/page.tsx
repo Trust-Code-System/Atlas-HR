@@ -38,6 +38,22 @@ type PayrollRunRow = {
   created_at: string;
 };
 
+type DocumentStatusRow = {
+  id: string;
+  employee_id: string;
+  doc_type: string;
+  status: string;
+  last_checked_at: string | null;
+};
+
+type ComplaintRow = {
+  id: string;
+  title: string;
+  severity: string;
+  status: string;
+  created_at: string;
+};
+
 type JobRow = {
   id: string;
   title: string;
@@ -632,6 +648,8 @@ export default async function DashboardPage() {
     { data: jobApplicationsData },
     { data: performanceReviewsData },
     { data: surveyResponsesData },
+    { data: documentStatusData },
+    { data: complaintsData },
   ] = await Promise.all([
     employeeIds.length
       ? supabase
@@ -663,12 +681,31 @@ export default async function DashboardPage() {
           .in("survey_id", surveyIds)
           .limit(300)
       : Promise.resolve({ data: [] }),
+    employeeIds.length
+      ? supabase
+          .from("employee_document_status")
+          .select("id, employee_id, doc_type, status, last_checked_at")
+          .in("employee_id", employeeIds)
+          .in("status", ["missing", "expired", "expiring_soon", "submitted"])
+          .limit(100)
+      : Promise.resolve({ data: [] }),
+    org
+      ? supabase
+          .from("complaints")
+          .select("id, title, severity, status, created_at")
+          .eq("org_id", org.id)
+          .not("status", "in", "(resolved,closed)")
+          .order("created_at", { ascending: false })
+          .limit(20)
+      : Promise.resolve({ data: [] }),
   ]);
 
   const leaveRequests = (leaveRequestsData ?? []) as LeaveRequestRow[];
   const jobApplications = (jobApplicationsData ?? []) as JobApplicationRow[];
   const performanceReviews = (performanceReviewsData ?? []) as PerformanceReviewRow[];
   const surveyResponses = (surveyResponsesData ?? []) as SurveyResponseRow[];
+  const documentStatuses = (documentStatusData ?? []) as DocumentStatusRow[];
+  const complaints = (complaintsData ?? []) as ComplaintRow[];
 
   const employeeMap = Object.fromEntries(employees.map((employee) => [employee.id, employee]));
   const activeEmployees = employees.filter((employee) => employee.status === "active");
@@ -676,8 +713,16 @@ export default async function DashboardPage() {
   const inactiveEmployees = employees.filter((employee) => employee.status !== "active" && employee.status !== "on_leave");
   const pendingLeave = leaveRequests.filter((request) => request.status === "pending");
   const approvedLeave = leaveRequests.filter((request) => request.status === "approved");
+  const documentIssues = documentStatuses.filter((document) => ["missing", "expired", "expiring_soon"].includes(document.status));
+  const submittedDocuments = documentStatuses.filter((document) => document.status === "submitted");
   const openJobs = jobs.filter((job) => job.status === "open");
   const newHires = employees.filter((employee) => employee.start_date && new Date(employee.start_date) >= thirtyDaysAgo);
+  const upcomingStarters = employees.filter((employee) => {
+    if (!employee.start_date) return false;
+    const start = new Date(employee.start_date);
+    const thirtyDaysFromNow = new Date(today.getTime() + 30 * 86400000);
+    return start >= today && start <= thirtyDaysFromNow;
+  });
   const draftPayroll = payrollRuns.find((run) => run.status === "draft" || run.status === "processing");
   const latestPayroll = payrollRuns[0];
   const totalPayroll = payrollRuns.reduce((sum, run) => sum + toNumber(run.total_net), 0);
@@ -790,6 +835,7 @@ export default async function DashboardPage() {
     draftPayroll ? `${draftPayroll.name} is still ${draftPayroll.status}` : "Payroll is not waiting on a draft",
     activeSurvey ? `${activeSurvey.title} is collecting responses` : "No active pulse survey",
   ];
+  const openHrItems = pendingLeave.length + complaints.length + documentIssues.length + submittedDocuments.length + (draftPayroll ? 1 : 0);
 
   if (!org) {
     return (
@@ -846,6 +892,15 @@ export default async function DashboardPage() {
                 })}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
+                {isAdmin ? (
+                  <Link
+                    href="/requests"
+                    className="inline-flex items-center gap-2 rounded-xl bg-navy-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-navy-800"
+                  >
+                    <Icon className="h-4 w-4" path="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0l-2.2 4.4A3 3 0 0115.1 19H8.9a3 3 0 01-2.7-1.6L4 13m16 0h-5l-1.5 2h-3L9 13H4" />
+                    Open HR Inbox
+                  </Link>
+                ) : null}
                 {isAdmin ? (
                   <Link
                     href="/org/people/new"
@@ -928,6 +983,47 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </section>
+
+      {isAdmin ? (
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              href: "/requests",
+              label: "Needs attention",
+              value: openHrItems,
+              helper: "Open HR Inbox items",
+              tone: openHrItems > 0 ? "border-amber-200 bg-amber-50 text-amber-800" : "border-emerald-200 bg-emerald-50 text-emerald-800",
+            },
+            {
+              href: "/org/leave?status=pending",
+              label: "Pending approvals",
+              value: pendingLeave.length + (draftPayroll ? 1 : 0),
+              helper: "Leave plus payroll drafts",
+              tone: "border-blue-100 bg-white text-navy-800",
+            },
+            {
+              href: "/onboarding",
+              label: "Starting soon",
+              value: upcomingStarters.length,
+              helper: "Employees starting in 30 days",
+              tone: "border-emerald-100 bg-white text-navy-800",
+            },
+            {
+              href: "/requests",
+              label: "Document follow-up",
+              value: documentIssues.length + submittedDocuments.length,
+              helper: "Missing, expiring, or submitted docs",
+              tone: "border-violet-100 bg-white text-navy-800",
+            },
+          ].map((item) => (
+            <Link key={item.label} href={item.href} className={`rounded-2xl border p-4 shadow-sm transition-colors hover:bg-blue-50 ${item.tone}`}>
+              <p className="text-xs font-bold uppercase tracking-[0.08em] opacity-70">{item.label}</p>
+              <p className="mt-2 font-mono text-3xl font-semibold">{item.value}</p>
+              <p className="mt-1 text-xs font-medium opacity-75">{item.helper}</p>
+            </Link>
+          ))}
+        </section>
+      ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard

@@ -404,8 +404,10 @@ export function BenchmarkClient({ savedBenchmarks: initialSaved }: Props) {
 
       {saved.length === 0 && !result && (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
-          <p className="text-sm font-semibold text-slate-500">No saved benchmarks yet.</p>
-          <p className="text-xs text-slate-400 mt-1">Run a benchmark above and save it to build your workspace.</p>
+          <p className="text-sm font-semibold text-slate-700">No saved salary benchmarks yet</p>
+          <p className="mx-auto mt-1 max-w-lg text-xs leading-5 text-slate-500">
+            HR admins can paste market salary data above, compare it with an offer, then save the snapshot for future compensation reviews.
+          </p>
         </div>
       )}
     </div>

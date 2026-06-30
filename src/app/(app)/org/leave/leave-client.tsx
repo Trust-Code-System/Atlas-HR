@@ -896,8 +896,10 @@ export function LeaveClient({ leaveRequests, employees, employeeMap, isAdmin }: 
               <p className="font-semibold text-navy-700 mb-1">No leave requests</p>
               <p className="text-sm text-navy-400">
                 {filter === "all"
-                  ? "No leave requests have been submitted yet."
-                  : `No ${filter} leave requests.`}
+                  ? isAdmin
+                    ? "Employee time-off requests will appear here after staff submit leave from My Leave. HR can also create a request on behalf of an employee."
+                    : "Your time-off requests will appear here after you submit leave."
+                  : `No ${filter} leave requests. Change the filter or wait for employees to submit matching requests.`}
               </p>
             </div>
           )}

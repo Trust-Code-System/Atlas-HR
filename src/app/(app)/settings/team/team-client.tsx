@@ -8,6 +8,7 @@ interface Member {
   id: string;
   user_id: string;
   org_role: "admin" | "member";
+  roles: string[];
   joined_at: string;
 }
 
@@ -24,13 +25,26 @@ interface Props {
   currentUserId: string;
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  workspace_owner: "Workspace Owner",
+  hr_admin: "HR Admin",
+  hr_manager: "HR Manager",
+  employee: "Employee",
+  viewer: "Viewer",
+};
+
+function roleLabels(member: Member) {
+  const roles = Array.isArray(member.roles) && member.roles.length > 0
+    ? member.roles
+    : [member.org_role === "admin" ? "hr_admin" : "employee"];
+  return roles.map((role) => ROLE_LABELS[role] ?? role.replace(/_/g, " "));
+}
+
 function RoleToggle({
   member,
-  profile,
   isCurrentUser,
 }: {
   member: Member;
-  profile: Profile | undefined;
   isCurrentUser: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -105,13 +119,20 @@ export function TeamClient({ members, profileMap, currentUserId }: Props) {
                       {isCurrentUser && <span className="ml-1.5 text-xs text-navy-400">(you)</span>}
                     </p>
                     <p className="text-xs text-navy-400">{profile?.email}</p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {roleLabels(member).map((role) => (
+                        <span key={role} className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                          {role}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <p className="font-mono text-xs text-navy-400 hidden sm:block">
                     Joined {new Date(member.joined_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
-                  <RoleToggle member={member} profile={profile} isCurrentUser={isCurrentUser} />
+                  <RoleToggle member={member} isCurrentUser={isCurrentUser} />
                 </div>
               </div>
             );

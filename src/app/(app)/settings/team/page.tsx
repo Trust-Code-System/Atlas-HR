@@ -9,6 +9,29 @@ import Link from "next/link";
 
 export const metadata: Metadata = { title: "Team Members | Atlas HR" };
 
+const ROLE_GUIDE = [
+  {
+    name: "Workspace Owner",
+    description: "Full company control: settings, billing, team roles, all HR data, audit log, and restricted actions.",
+  },
+  {
+    name: "HR Admin",
+    description: "Runs HR operations across the company: employees, leave, documents, payroll, benefits, onboarding, and cases.",
+  },
+  {
+    name: "HR Manager",
+    description: "Manages day-to-day people workflows such as leave approvals, onboarding tasks, documents, and team requests.",
+  },
+  {
+    name: "Employee",
+    description: "Uses personal My pages only: own leave, payslips, documents, profile, benefits, and onboarding.",
+  },
+  {
+    name: "Viewer",
+    description: "Read-only access for people who need visibility without editing sensitive HR records.",
+  },
+];
+
 export default async function TeamSettingsPage() {
   const orgCtx = await getCurrentOrg();
   if (!orgCtx) redirect("/dashboard");
@@ -55,12 +78,27 @@ export default async function TeamSettingsPage() {
       <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4">
         <h2 className="text-sm font-semibold text-blue-950">Team members are workspace login accounts</h2>
         <p className="mt-1 text-sm text-blue-800">
-          Use this page to invite admins or HR teammates who can sign in to Atlas. Employee HR records live under{" "}
+          Use this page to invite owners, admins, HR teammates, or viewers who can sign in to Atlas. Each HR person should have their own account; they should not share one admin login. Employee HR records live under{" "}
           <Link href="/org/people" className="font-semibold underline underline-offset-2">
             People
           </Link>
           ; the My Portal pages only work after a login account is connected to an employee record.
         </p>
+      </div>
+
+      <div className="mb-6 rounded-2xl border border-navy-200 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-bold text-navy-950">Role guide</h2>
+        <p className="mt-1 text-sm text-navy-500">
+          These roles decide whether a person sees company control pages or only their own employee self-service pages.
+        </p>
+        <div className="mt-4 grid gap-3">
+          {ROLE_GUIDE.map((role) => (
+            <div key={role.name} className="rounded-xl border border-navy-100 bg-navy-50/70 px-4 py-3">
+              <p className="text-sm font-bold text-navy-900">{role.name}</p>
+              <p className="mt-1 text-sm leading-6 text-navy-500">{role.description}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <InviteForm />

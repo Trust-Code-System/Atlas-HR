@@ -647,13 +647,31 @@ export function AppSidebar({
 
       {/* Main nav */}
       <nav className="flex-1 px-2.5 py-3 overflow-y-auto space-y-4">
-        {isAdmin && (
+        {(isAdmin || isOrgAdmin) && (
           <div>
             {!collapsed && (
               <p className="text-[10px] font-bold uppercase tracking-[0.07em] text-blue-400 px-2.5 mb-1">Admin</p>
             )}
             <div className="space-y-0.5">
-              {navLink({
+              {isOrgAdmin && navLink({
+                href: "/setup",
+                label: "Setup Guide",
+                icon: (
+                  <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 14l2 2 4-4" />
+                  </svg>
+                ),
+              })}
+              {isOrgAdmin && navLink({
+                href: "/requests",
+                label: "HR Inbox",
+                icon: (
+                  <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0l-2.2 4.4A3 3 0 0115.1 19H8.9a3 3 0 01-2.7-1.6L4 13m16 0h-5l-1.5 2h-3L9 13H4" />
+                  </svg>
+                ),
+              })}
+              {isAdmin && navLink({
                 href: "/compliance",
                 label: "Compliance CMS",
                 icon: (
