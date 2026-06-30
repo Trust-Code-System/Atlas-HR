@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { streamChatText, aiProviderStatus } from "@/lib/ai/provider";
 import { SKILL_SYSTEM_PROMPTS } from "@/lib/ai/skills-catalog";
+import { STRONG_MODEL } from "@/lib/ai/model-router";
 
 export async function POST(req: NextRequest) {
   const orgCtx = await getCurrentOrg();
@@ -45,11 +46,15 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
 
   // Stream through the shared provider so skills get the Claude→OpenAI fallback.
+  // Skills are deliberate drafting actions (emails, minutes, JDs, policies), so
+  // use the strong model and a generous budget — the old 2048 cap truncated
+  // long minutes and documents mid-way.
   const aiStream = streamChatText({
     system: systemPrompt,
     anthropicMessages: [{ role: "user", content: prompt }],
     openaiMessages: [{ role: "user", content: prompt }],
-    maxTokens: 2048,
+    model: STRONG_MODEL,
+    maxTokens: 8192,
   });
 
   const stream = new ReadableStream({

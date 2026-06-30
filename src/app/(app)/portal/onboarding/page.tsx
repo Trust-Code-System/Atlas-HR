@@ -19,7 +19,7 @@ export default async function PortalOnboardingPage() {
             </svg>
           </div>
           <h2 className="text-base font-bold text-amber-900 mb-1">Account not linked</h2>
-          <p className="text-sm text-amber-700">Your user account isn't linked to an employee record yet. Ask your HR admin to link your account.</p>
+          <p className="text-sm text-amber-700">Your user account isn&apos;t linked to an employee record yet. Ask your HR admin to link your account.</p>
         </div>
       </div>
     );

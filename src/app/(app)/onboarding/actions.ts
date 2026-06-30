@@ -6,6 +6,13 @@ import { revalidatePath } from "next/cache";
 
 export type OnboardingActionResult = { error?: string; success?: boolean; id?: string } | null;
 
+function revalidateLifecycleViews(runId?: string) {
+  revalidatePath("/onboarding");
+  if (runId) revalidatePath(`/onboarding/${runId}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/manager");
+}
+
 export async function startRun(
   _prev: OnboardingActionResult,
   formData: FormData
@@ -84,7 +91,7 @@ export async function startRun(
     await supabase.from("lifecycle_tasks").insert(taskInserts);
   }
 
-  revalidatePath("/onboarding");
+  revalidateLifecycleViews(run.id);
   return { success: true, id: run.id };
 }
 
@@ -149,7 +156,7 @@ export async function completeTask(
       .eq("id", task.run_id);
   }
 
-  revalidatePath(`/onboarding/${task.run_id}`);
+  revalidateLifecycleViews(task.run_id);
   return { success: true };
 }
 

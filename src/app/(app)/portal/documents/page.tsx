@@ -49,6 +49,7 @@ export default async function PortalDocumentsPage() {
     .select("*")
     .eq("employee_id", employee.id)
     .order("created_at", { ascending: false });
+  const expiresSoonCutoff = new Date(new Date().getTime() + 30 * 86_400_000);
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto w-full">
@@ -88,7 +89,7 @@ export default async function PortalDocumentsPage() {
               const expiresSoon =
                 !isExpired &&
                 doc.expires_at &&
-                new Date(doc.expires_at) < new Date(Date.now() + 30 * 86_400_000);
+                new Date(doc.expires_at) < expiresSoonCutoff;
 
               return (
                 <div key={doc.id} className="flex items-start gap-4 px-5 py-4">

@@ -3,8 +3,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { revalidatePath } from "next/cache";
+import type { Database } from "@/types/database";
 
 export type RecruitingActionResult = { error?: string; success?: boolean; id?: string } | null;
+type JobApplicationInsert = Database["public"]["Tables"]["job_applications"]["Insert"];
+
+function revalidateRecruitingViews(jobId?: string) {
+  revalidatePath("/recruiting");
+  if (jobId) revalidatePath(`/recruiting/${jobId}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+}
+
+function revalidateHiringConversionViews(jobId: string) {
+  revalidateRecruitingViews(jobId);
+  revalidatePath("/org/people");
+  revalidatePath("/org/chart");
+  revalidatePath("/manager");
+}
 
 export async function createJob(
   _prev: RecruitingActionResult,
@@ -44,7 +60,7 @@ export async function createJob(
 
   if (error || !job) return { error: error?.message ?? "Failed to create job." };
 
-  revalidatePath("/recruiting");
+  revalidateRecruitingViews();
   return { success: true, id: job.id };
 }
 
@@ -72,8 +88,7 @@ export async function updateJobStatus(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/recruiting");
-  revalidatePath(`/recruiting/${jobId}`);
+  revalidateRecruitingViews(jobId);
   return { success: true };
 }
 
@@ -110,21 +125,22 @@ export async function addApplication(
 
   if (!job) return { error: "Job not found." };
 
-  const { error } = await supabase.from("job_applications").insert({
+  const application: JobApplicationInsert = {
     job_id,
     candidate_name: candidate_name.trim(),
     candidate_email: candidate_email?.trim() || null,
     candidate_phone: candidate_phone?.trim() || null,
     notes: notes?.trim() || null,
     source: (source as "linkedin" | "indeed" | "referral" | "careers_page" | "glassdoor" | "agency" | "direct" | "other") || null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     linkedin_url: linkedin_url?.trim() || null,
     stage: "applied",
-  } as any);
+  };
+
+  const { error } = await supabase.from("job_applications").insert(application);
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/recruiting/${job_id}`);
+  revalidateRecruitingViews(job_id);
   return { success: true };
 }
 
@@ -161,7 +177,7 @@ export async function updateApplicationNotes(
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/recruiting/${app.job_id}`);
+  revalidateRecruitingViews(app.job_id);
   return { success: true };
 }
 
@@ -198,7 +214,7 @@ export async function moveApplicationStage(
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/recruiting/${app.job_id}`);
+  revalidateRecruitingViews(app.job_id);
   return { success: true };
 }
 
@@ -259,8 +275,6 @@ export async function convertToEmployee(
 
   if (error || !employee) return { error: error?.message ?? "Failed to create employee record." };
 
-  revalidatePath("/recruiting");
-  revalidatePath(`/recruiting/${app.job_id}`);
-  revalidatePath("/org/people");
+  revalidateHiringConversionViews(app.job_id);
   return { success: true, id: employee.id };
 }

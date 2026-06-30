@@ -131,7 +131,7 @@ export function NotificationPanel({ initialNotifications }: { initialNotificatio
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-sm font-semibold text-navy-700">You're all caught up</p>
+                <p className="text-sm font-semibold text-navy-700">You&apos;re all caught up</p>
                 <p className="text-xs text-navy-400 mt-0.5">No pending items right now.</p>
               </div>
             ) : (

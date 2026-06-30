@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  // Keep pdfkit external on the server so it loads its bundled .afm font metrics
+  // from node_modules at runtime instead of being bundled (which breaks fonts).
+  serverExternalPackages: ["pdfkit"],
   // Only pull in the parts of these barrel-export packages that are actually
   // used, instead of the whole module — smaller bundles + faster compiles.
   experimental: {

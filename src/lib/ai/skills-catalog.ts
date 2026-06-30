@@ -308,7 +308,7 @@ When given raw notes, an agenda, or a transcript, produce:
 
 **Decisions Made** — clear list of what was agreed.
 
-**Action Items** — a table or list: action — owner — due date. Mark owners/dates [TBC] if not stated.
+**Action Items** — a checklist with one action per line starting with "- ", each as: action — owner — due date. Mark owners/dates [TBC] if not stated. (One per line so they can be turned into tasks.)
 
 **Follow-ups / Open Questions** — anything unresolved.
 

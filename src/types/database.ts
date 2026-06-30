@@ -1891,6 +1891,7 @@ export interface Database {
           stage: "applied" | "screening" | "interview" | "offer" | "hired" | "rejected";
           notes: string | null;
           cv_url: string | null;
+          linkedin_url: string | null;
           source: "linkedin" | "indeed" | "referral" | "careers_page" | "glassdoor" | "agency" | "direct" | "other" | null;
           applied_at: string;
           created_at: string;
@@ -1904,6 +1905,7 @@ export interface Database {
           stage?: "applied" | "screening" | "interview" | "offer" | "hired" | "rejected";
           notes?: string | null;
           cv_url?: string | null;
+          linkedin_url?: string | null;
           source?: "linkedin" | "indeed" | "referral" | "careers_page" | "glassdoor" | "agency" | "direct" | "other" | null;
           applied_at?: string;
           created_at?: string;
@@ -1917,6 +1919,7 @@ export interface Database {
           stage?: "applied" | "screening" | "interview" | "offer" | "hired" | "rejected";
           notes?: string | null;
           cv_url?: string | null;
+          linkedin_url?: string | null;
           source?: "linkedin" | "indeed" | "referral" | "careers_page" | "glassdoor" | "agency" | "direct" | "other" | null;
           applied_at?: string;
           created_at?: string;

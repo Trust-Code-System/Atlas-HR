@@ -19,7 +19,7 @@ export default function CountriesPage() {
             Country-aware HR operations for global and global-south teams.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-navy-200">
-            Each hub connects local guidance to templates, payroll checkpoints, termination workflows, required records, and "when to call counsel" notes.
+            Each hub connects local guidance to templates, payroll checkpoints, termination workflows, required records, and &quot;when to call counsel&quot; notes.
           </p>
         </div>
       </section>

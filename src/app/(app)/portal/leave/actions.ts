@@ -7,6 +7,15 @@ import { revalidatePath } from "next/cache";
 
 export type ActionResult = { error?: string; success?: boolean } | null;
 
+function revalidatePortalLeaveViews() {
+  revalidatePath("/portal/leave");
+  revalidatePath("/portal");
+  revalidatePath("/org/leave");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  revalidatePath("/manager");
+}
+
 export async function submitLeaveRequest(
   _prev: ActionResult,
   formData: FormData
@@ -37,8 +46,7 @@ export async function submitLeaveRequest(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/portal/leave");
-  revalidatePath("/portal");
+  revalidatePortalLeaveViews();
   return { success: true };
 }
 
@@ -66,7 +74,6 @@ export async function cancelLeaveRequest(requestId: string): Promise<ActionResul
 
   if (error) return { error: error.message };
 
-  revalidatePath("/portal/leave");
-  revalidatePath("/portal");
+  revalidatePortalLeaveViews();
   return { success: true };
 }

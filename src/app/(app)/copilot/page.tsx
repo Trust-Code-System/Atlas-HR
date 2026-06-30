@@ -10,7 +10,7 @@ import { LEGACY_MODE_CONTEXT } from "@/lib/ai/prompts/atlas-system-prompt";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Mode = "chat" | "draft" | "research" | "analyse";
+type Mode = "chat" | "draft" | "research" | "analyse" | "compare";
 
 interface Source {
   title: string;
@@ -84,11 +84,26 @@ const MODES: { id: Mode; label: string; desc: string; color: string; icon: React
       </svg>
     ),
   },
+  {
+    id: "compare",
+    label: "Compare",
+    desc: "Attach up to 5 files and compare them side by side",
+    color: "emerald",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 17V7m6 10V7M4 5h16M4 19h16" />
+      </svg>
+    ),
+  },
 ];
 
 // Mode context lives in the central prompt module so every Atlas AI surface
 // shares one source of truth (see @/lib/ai/prompts/atlas-system-prompt).
-const MODE_CONTEXT: Record<Mode, string> = LEGACY_MODE_CONTEXT;
+const MODE_CONTEXT: Record<Mode, string> = {
+  ...LEGACY_MODE_CONTEXT,
+  compare:
+    "The user is in Compare mode and has attached up to 5 files/documents to compare. Respond with: (1) a one-line description of each file, (2) a side-by-side comparison TABLE across the dimensions that matter most for these documents, (3) Key similarities, (4) Key differences, and (5) a clear Recommendation/Conclusion. Be specific and cite which file each point came from (by file name). If fewer than two files were provided, ask the user to attach 2–5 files to compare.",
+};
 
 const MODE_SUGGESTIONS: Record<Mode, string[]> = {
   chat: [
@@ -123,6 +138,14 @@ const MODE_SUGGESTIONS: Record<Mode, string[]> = {
     "Review this performance review form for potential bias [paste below]",
     "Identify compliance gaps in this data privacy policy [paste below]",
   ],
+  compare: [
+    "Compare these candidate CVs against each other [attach 2–5 files]",
+    "Compare these two employment contracts and flag the differences [attach files]",
+    "Compare these benefit plan documents side by side [attach files]",
+    "Compare these policy versions and summarise what changed [attach files]",
+    "Compare these job offers for total compensation and terms [attach files]",
+    "Compare these vendor proposals against our requirements [attach files]",
+  ],
 };
 
 const MODE_ACTIVE_STYLES: Record<Mode, string> = {
@@ -130,6 +153,7 @@ const MODE_ACTIVE_STYLES: Record<Mode, string> = {
   draft: "border-blue-600 text-blue-700",
   research: "border-violet-500 text-violet-700",
   analyse: "border-amber-500 text-amber-700",
+  compare: "border-emerald-500 text-emerald-700",
 };
 
 const MODE_BG: Record<Mode, string> = {
@@ -137,6 +161,7 @@ const MODE_BG: Record<Mode, string> = {
   draft: "bg-blue-50",
   research: "bg-violet-50",
   analyse: "bg-amber-50",
+  compare: "bg-emerald-50",
 };
 
 const MODE_ICON_BG: Record<Mode, string> = {
@@ -144,6 +169,7 @@ const MODE_ICON_BG: Record<Mode, string> = {
   draft: "bg-blue-600",
   research: "bg-violet-600",
   analyse: "bg-amber-500",
+  compare: "bg-emerald-600",
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -156,6 +182,10 @@ const SUPPORTED_TEXT_TYPES = new Set([
   "application/json",
   "application/xml",
   "text/xml",
+]);
+const SUPPORTED_OFFICE_TYPES = new Set([
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
 ]);
 const MAX_ATTACHMENTS = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -220,85 +250,47 @@ function downloadText(filename: string, content: string) {
   URL.revokeObjectURL(url);
 }
 
-function escapeHtml(text: string): string {
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function docTitleFrom(content: string): string {
+  const firstLine = content.split("\n").find((l) => l.trim()) ?? "";
+  return firstLine.replace(/^#+\s*/, "").replace(/[*_`]/g, "").slice(0, 60) || "atlas-document";
 }
 
-function inlineHtml(text: string): string {
-  return text.split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*|`[^`\n]+`)/).map((part) => {
-    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) return `<strong>${escapeHtml(part.slice(2, -2))}</strong>`;
-    if (part.startsWith("*") && part.endsWith("*") && part.length > 2 && !part.startsWith("**")) return `<em>${escapeHtml(part.slice(1, -1))}</em>`;
-    if (part.startsWith("`") && part.endsWith("`") && part.length > 2) return `<code style="font-family:Courier New,monospace;background:#f0f0f0;padding:1pt 3pt;">${escapeHtml(part.slice(1, -1))}</code>`;
-    return escapeHtml(part);
-  }).join("");
-}
-
-function markdownToDocHtml(markdown: string): string {
-  const lines = markdown.split("\n");
-  const parts: string[] = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-    if (line.startsWith("⚠️")) {
-      parts.push(`<p style="color:#d97706;border-left:3px solid #fbbf24;padding-left:8pt;font-style:italic;">${escapeHtml(line)}</p>`);
-      i++; continue;
-    }
-    if (line.trimStart().startsWith("```")) {
-      const codeLines: string[] = []; i++;
-      while (i < lines.length && !lines[i].trimStart().startsWith("```")) { codeLines.push(escapeHtml(lines[i])); i++; }
-      parts.push(`<pre style="background:#f0f0f0;padding:8pt;font-family:Courier New,monospace;font-size:10pt;">${codeLines.join("\n")}</pre>`);
-      i++; continue;
-    }
-    if (line.startsWith("# ")) { parts.push(`<h1>${inlineHtml(line.slice(2))}</h1>`); i++; continue; }
-    if (line.startsWith("## ")) { parts.push(`<h2>${inlineHtml(line.slice(3))}</h2>`); i++; continue; }
-    if (line.startsWith("### ")) { parts.push(`<h3>${inlineHtml(line.slice(4))}</h3>`); i++; continue; }
-    if (line.match(/^[-*_]{3,}$/)) { parts.push(`<hr style="border:none;border-top:1pt solid #ccc;">`); i++; continue; }
-    if (line.match(/^[-*+] /)) {
-      const items: string[] = [];
-      while (i < lines.length && lines[i].match(/^[-*+] /)) { items.push(`<li>${inlineHtml(lines[i].replace(/^[-*+] /, ""))}</li>`); i++; }
-      parts.push(`<ul style="margin:6pt 0;padding-left:18pt;">${items.join("")}</ul>`); continue;
-    }
-    if (line.match(/^\d+[.)]\s/)) {
-      const items: string[] = [];
-      while (i < lines.length && lines[i].match(/^\d+[.)]\s/)) { items.push(`<li>${inlineHtml(lines[i].replace(/^\d+[.)]\s/, ""))}</li>`); i++; }
-      parts.push(`<ol style="margin:6pt 0;padding-left:18pt;">${items.join("")}</ol>`); continue;
-    }
-    if (line.startsWith("> ")) {
-      const qLines: string[] = [];
-      while (i < lines.length && lines[i].startsWith("> ")) { qLines.push(inlineHtml(lines[i].slice(2))); i++; }
-      parts.push(`<blockquote style="border-left:3px solid #ccc;padding-left:8pt;color:#555;margin:6pt 0;">${qLines.map((l) => `<p>${l}</p>`).join("")}</blockquote>`); continue;
-    }
-    if (line.trim() === "") { i++; continue; }
-    const paraLines: string[] = [];
-    while (i < lines.length && lines[i].trim() !== "" && !lines[i].startsWith("#") && !lines[i].match(/^[-*+] /) && !lines[i].match(/^\d+[.)]\s/) && !lines[i].trimStart().startsWith("```") && !lines[i].startsWith("> ") && !lines[i].match(/^[-*_]{3,}$/) && !lines[i].startsWith("⚠️")) {
-      paraLines.push(lines[i]); i++;
-    }
-    if (paraLines.length > 0) {
-      parts.push(`<p style="margin-bottom:6pt;">${inlineHtml(paraLines.join(" "))}</p>`);
-    } else {
-      // Safety net: line starts with a marker we don't emit as a block (H4,
-      // "#tag", non-LEGAL-REVIEW "⚠️ …"). Emit as a paragraph and advance so
-      // the loop always progresses — otherwise this would hang on export.
-      parts.push(`<p style="margin-bottom:6pt;">${inlineHtml(line)}</p>`);
-      i++;
+/** True when the content contains a Markdown table (worth an Excel export). */
+function contentHasTable(content: string): boolean {
+  const lines = content.split("\n");
+  for (let i = 0; i < lines.length - 1; i++) {
+    if (lines[i].includes("|") && lines[i + 1].includes("-") && /^\s*\|?[\s:|-]+\|?\s*$/.test(lines[i + 1])) {
+      return true;
     }
   }
-  return parts.join("\n");
+  return false;
 }
 
-function downloadAsWord(title: string, content: string) {
-  const bodyHtml = markdownToDocHtml(content);
-  const safeTitle = escapeHtml(title);
-  const docContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"><title>${safeTitle}</title>
-<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
-<style>body{font-family:Calibri,sans-serif;font-size:11pt;line-height:1.5;margin:2cm;}h1{font-size:16pt;font-weight:bold;margin-top:18pt;}h2{font-size:13pt;font-weight:bold;margin-top:14pt;}h3{font-size:12pt;font-weight:bold;margin-top:10pt;}p{margin-bottom:6pt;}li{margin-bottom:3pt;}</style>
-</head><body>${bodyHtml}</body></html>`;
-  const blob = new Blob(["﻿", docContent], { type: "application/msword" });
+/** Count Markdown headings — multiple headings make a good slide deck. */
+function countHeadings(content: string): number {
+  return content.split("\n").filter((l) => /^#{1,4}\s/.test(l.trim())).length;
+}
+
+/**
+ * Generate a REAL Office file from a chat answer via the server, and download
+ * it. This gives Atlas AI the Microsoft-Copilot-style ability to produce a
+ * genuine .docx / .xlsx / .pptx deliverable, not just on-screen Markdown.
+ */
+type OfficeFormat = "docx" | "xlsx" | "pptx" | "pdf";
+
+async function generateOfficeFile(format: OfficeFormat, content: string): Promise<void> {
+  const title = docTitleFrom(content);
+  const res = await fetch("/api/ai/document", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ format, content, title }),
+  });
+  if (!res.ok) throw new Error("Document generation failed");
+  const blob = await res.blob();
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(title || "atlas-document").replace(/[^a-z0-9]/gi, "-").toLowerCase()}.doc`;
+  a.download = `${title.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || "atlas-document"}.${format}`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -328,7 +320,9 @@ function CopilotChat() {
   const [isThinkingActive, setIsThinkingActive] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
-  const [wordDownloaded, setWordDownloaded] = useState<string | null>(null);
+  // Office export feedback, keyed by `${messageId}:${format}`.
+  const [exportingKey, setExportingKey] = useState<string | null>(null);
+  const [exportedKey, setExportedKey] = useState<string | null>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -344,6 +338,9 @@ function CopilotChat() {
 
   // Tasks panel
   const [tasksPanel, setTasksPanel] = useState<{ id: string; tasks: string[] } | null>(null);
+
+  // Action-agent panel (propose → approve → execute real workspace actions)
+  const [actionsPanel, setActionsPanel] = useState<{ id: string } | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -470,8 +467,31 @@ function CopilotChat() {
           kind: "text",
           text,
         });
+      } else if (SUPPORTED_OFFICE_TYPES.has(file.type) || /\.(docx|pptx)$/i.test(file.name)) {
+        // Word/PowerPoint can't be read by the model directly — extract text on
+        // the server and attach that.
+        try {
+          const fd = new FormData();
+          fd.append("file", file);
+          const res = await fetch("/api/ai/extract", { method: "POST", body: fd });
+          const data = await res.json();
+          if (!res.ok || !data.text) {
+            setFileError(data.error ?? `Couldn't read ${file.name}.`);
+            continue;
+          }
+          next.push({
+            id: crypto.randomUUID(),
+            name: file.name,
+            mediaType: file.type || "text/plain",
+            size: file.size,
+            kind: "text",
+            text: data.text,
+          });
+        } catch {
+          setFileError(`Couldn't read ${file.name}.`);
+        }
       } else {
-        setFileError(`${file.name} is not supported yet. Use images, PDF, TXT, MD, CSV, JSON, or XML.`);
+        setFileError(`${file.name} is not supported yet. Use images, PDF, Word, PowerPoint, TXT, MD, CSV, JSON, or XML.`);
       }
     }
 
@@ -596,6 +616,20 @@ function CopilotChat() {
     await navigator.clipboard.writeText(content);
     setCopied(id);
     setTimeout(() => setCopied(null), 2000);
+  }
+
+  async function exportMessage(format: OfficeFormat, content: string, id: string) {
+    const key = `${id}:${format}`;
+    setExportingKey(key);
+    try {
+      await generateOfficeFile(format, content);
+      setExportedKey(key);
+      setTimeout(() => setExportedKey((k) => (k === key ? null : k)), 2000);
+    } catch {
+      setFileError("Couldn't generate that file. Please try again.");
+    } finally {
+      setExportingKey((k) => (k === key ? null : k));
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -897,33 +931,48 @@ function CopilotChat() {
                         )}
                       </button>
 
-                      {/* Word download */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const title = m.content.split("\n")[0].replace(/^#+\s*/, "").slice(0, 60) || "atlas-document";
-                          downloadAsWord(title, m.content);
-                          setWordDownloaded(m.id);
-                          setTimeout(() => setWordDownloaded(null), 2000);
-                        }}
-                        className="flex items-center gap-1 text-[10px] text-navy-400 hover:text-navy-600 transition-colors"
-                      >
-                        {wordDownloaded === m.id ? (
-                          <>
-                            <svg className="h-3 w-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span className="text-blue-600">Downloaded</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Word
-                          </>
-                        )}
-                      </button>
+                      {/* Real Office exports — Word always; Excel when there's a
+                          table; PowerPoint when the answer is structured. */}
+                      <ExportButton
+                        format="docx"
+                        label="Word"
+                        content={m.content}
+                        messageId={m.id}
+                        exportingKey={exportingKey}
+                        exportedKey={exportedKey}
+                        onExport={exportMessage}
+                      />
+                      <ExportButton
+                        format="pdf"
+                        label="PDF"
+                        content={m.content}
+                        messageId={m.id}
+                        exportingKey={exportingKey}
+                        exportedKey={exportedKey}
+                        onExport={exportMessage}
+                      />
+                      {contentHasTable(m.content) && (
+                        <ExportButton
+                          format="xlsx"
+                          label="Excel"
+                          content={m.content}
+                          messageId={m.id}
+                          exportingKey={exportingKey}
+                          exportedKey={exportedKey}
+                          onExport={exportMessage}
+                        />
+                      )}
+                      {countHeadings(m.content) >= 2 && (
+                        <ExportButton
+                          format="pptx"
+                          label="PowerPoint"
+                          content={m.content}
+                          messageId={m.id}
+                          exportingKey={exportingKey}
+                          exportedKey={exportedKey}
+                          onExport={exportMessage}
+                        />
+                      )}
 
                       {/* Create tasks */}
                       {extractTasks(m.content).length > 0 && (
@@ -945,12 +994,32 @@ function CopilotChat() {
                           Create tasks
                         </button>
                       )}
+
+                      {/* Prepare real workspace actions — proposed, never auto-run. */}
+                      <button
+                        type="button"
+                        onClick={() => setActionsPanel(actionsPanel?.id === m.id ? null : { id: m.id })}
+                        className={cn(
+                          "flex items-center gap-1 text-[10px] transition-colors",
+                          actionsPanel?.id === m.id ? "font-medium text-indigo-600" : "text-navy-400 hover:text-navy-600"
+                        )}
+                      >
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Actions
+                      </button>
                     </div>
                   )}
 
                   {/* Tasks panel */}
                   {tasksPanel?.id === m.id && (
                     <TasksPanel tasks={tasksPanel.tasks} onClose={() => setTasksPanel(null)} />
+                  )}
+
+                  {/* Action-agent panel */}
+                  {actionsPanel?.id === m.id && (
+                    <ActionsPanel content={m.content} onClose={() => setActionsPanel(null)} />
                   )}
                 </div>
               </div>
@@ -996,7 +1065,7 @@ function CopilotChat() {
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/png,image/jpeg,image/gif,image/webp,application/pdf,text/plain,text/markdown,text/csv,application/json,application/xml,.txt,.md,.csv,.json,.xml,.pdf"
+              accept="image/png,image/jpeg,image/gif,image/webp,application/pdf,text/plain,text/markdown,text/csv,application/json,application/xml,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,.txt,.md,.csv,.json,.xml,.pdf,.docx,.pptx"
               className="hidden"
               onChange={(e) => void handleFiles(e.target.files)}
             />
@@ -1025,6 +1094,7 @@ function CopilotChat() {
                 mode === "chat" ? "Ask anything about HR, employment law, or people management…" :
                 mode === "draft" ? "Describe the document you need — role, country, key details…" :
                 mode === "research" ? "What do you want to research? Topic, country, or question…" :
+                mode === "compare" ? "Attach 2–5 files, then tell me what to compare…" :
                 "Paste the HR document or text you'd like me to analyse…"
               }
               rows={1}
@@ -1056,7 +1126,7 @@ function CopilotChat() {
           </div>
           <p className="text-[10px] text-navy-400 mt-2 text-center">
             AI responses may not always be accurate. Verify important HR and legal advice with a qualified professional.
-            <span className="ml-2 text-navy-300">Images, PDFs, and text documents supported · Enter to send</span>
+            <span className="ml-2 text-navy-300">Images, PDF, Word, PowerPoint &amp; text supported · Enter to send</span>
           </p>
         </div>
       </div>
@@ -1099,6 +1169,54 @@ function CopilotChat() {
         </div>
       )}
     </div>
+  );
+}
+
+// ─── Office export button ───────────────────────────────────────────────────
+
+function ExportButton({
+  format,
+  label,
+  content,
+  messageId,
+  exportingKey,
+  exportedKey,
+  onExport,
+}: {
+  format: OfficeFormat;
+  label: string;
+  content: string;
+  messageId: string;
+  exportingKey: string | null;
+  exportedKey: string | null;
+  onExport: (format: OfficeFormat, content: string, id: string) => void;
+}) {
+  const key = `${messageId}:${format}`;
+  const busy = exportingKey === key;
+  const done = exportedKey === key;
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={() => onExport(format, content, messageId)}
+      className="flex items-center gap-1 text-[10px] text-navy-400 transition-colors hover:text-navy-600 disabled:opacity-50"
+    >
+      {busy ? (
+        <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      ) : done ? (
+        <svg className="h-3 w-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      )}
+      {done ? <span className="text-blue-600">Saved</span> : label}
+    </button>
   );
 }
 
@@ -1172,6 +1290,146 @@ function TasksPanel({ tasks, onClose }: { tasks: string[]; onClose: () => void }
   );
 }
 
+// ─── Action-agent panel ─────────────────────────────────────────────────────
+
+type ProposedAction =
+  | { type: "create_tasks"; summary: string; tasks: { title: string; description?: string; due_at?: string }[] }
+  | { type: "create_announcement"; summary: string; title: string; body: string };
+
+type RunStatus = "idle" | "running" | "done" | "error";
+
+function ActionsPanel({ content, onClose }: { content: string; onClose: () => void }) {
+  const [loading, setLoading] = useState(true);
+  const [actions, setActions] = useState<ProposedAction[]>([]);
+  const [note, setNote] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [run, setRun] = useState<Record<number, { status: RunStatus; detail?: string }>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/ai/agent/plan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ instruction: content }),
+        });
+        const data = await res.json();
+        if (cancelled) return;
+        if (!res.ok) setError(data.error ?? "Could not prepare actions.");
+        else {
+          setActions(data.actions ?? []);
+          setNote(data.note ?? null);
+        }
+      } catch {
+        if (!cancelled) setError("Could not prepare actions.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [content]);
+
+  async function approve(i: number) {
+    setRun((s) => ({ ...s, [i]: { status: "running" } }));
+    try {
+      const res = await fetch("/api/ai/agent/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: actions[i] }),
+      });
+      const data = await res.json();
+      if (!res.ok) setRun((s) => ({ ...s, [i]: { status: "error", detail: data.error ?? "Failed" } }));
+      else setRun((s) => ({ ...s, [i]: { status: "done", detail: data.detail ?? "Done" } }));
+    } catch {
+      setRun((s) => ({ ...s, [i]: { status: "error", detail: "Failed" } }));
+    }
+  }
+
+  return (
+    <div className="mt-1 w-full rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-xs font-semibold text-indigo-800">Suggested actions — you approve before anything runs</p>
+        <button type="button" onClick={onClose} aria-label="Close actions panel" className="text-navy-400 hover:text-navy-600">
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center gap-2 py-3 text-xs text-navy-500">
+          <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          Preparing actions…
+        </div>
+      ) : error ? (
+        <p className="py-2 text-xs text-red-600">{error}</p>
+      ) : actions.length === 0 ? (
+        <p className="py-2 text-xs text-navy-500">{note ?? "No actions to suggest for this response."}</p>
+      ) : (
+        <div className="space-y-2.5">
+          {actions.map((a, i) => {
+            const state = run[i]?.status ?? "idle";
+            return (
+              <div key={i} className="rounded-lg border border-indigo-100 bg-white p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-indigo-600">
+                      {a.type === "create_tasks" ? "Create workspace tasks" : "Post an announcement"}
+                    </p>
+                    <p className="mt-0.5 text-xs text-navy-700">{a.summary}</p>
+                    {a.type === "create_tasks" ? (
+                      <ul className="mt-1.5 space-y-0.5">
+                        {a.tasks.map((t, j) => (
+                          <li key={j} className="text-[11px] text-navy-600">
+                            • {t.title}
+                            {t.due_at ? <span className="text-navy-400"> — due {t.due_at}</span> : null}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="mt-1.5 rounded-md bg-navy-50 p-2">
+                        <p className="text-[11px] font-semibold text-navy-800">{a.title}</p>
+                        <p className="mt-0.5 line-clamp-3 text-[11px] text-navy-600">{a.body}</p>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => approve(i)}
+                    disabled={state === "running" || state === "done"}
+                    className={cn(
+                      "shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
+                      state === "done"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : state === "error"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50",
+                    )}
+                  >
+                    {state === "running" ? "Running…" : state === "done" ? "✓ Done" : state === "error" ? "Retry" : "Approve & run"}
+                  </button>
+                </div>
+                {run[i]?.detail && (
+                  <p className={cn("mt-1.5 text-[10px]", state === "error" ? "text-red-600" : "text-emerald-600")}>
+                    {run[i]?.detail}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+          <p className="text-[10px] text-navy-400">Atlas only proposes safe, reversible actions. Review each before approving.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Landing state ─────────────────────────────────────────────────────────────
 
 const MODE_GREETING: Record<Mode, string> = {
@@ -1179,6 +1437,7 @@ const MODE_GREETING: Record<Mode, string> = {
   draft: "What document do you need?",
   research: "What do you want to research?",
   analyse: "What would you like me to analyse?",
+  compare: "What would you like me to compare?",
 };
 
 const MODE_TAB_COLORS: Record<Mode, string> = {
@@ -1186,6 +1445,7 @@ const MODE_TAB_COLORS: Record<Mode, string> = {
   draft: "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30",
   research: "bg-violet-600 text-white shadow-sm shadow-violet-600/30",
   analyse: "bg-amber-500 text-white shadow-sm shadow-amber-500/30",
+  compare: "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30",
 };
 
 function Landing({

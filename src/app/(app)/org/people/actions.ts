@@ -19,6 +19,15 @@ type EmployeePlacementRow = {
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
+function revalidatePeopleViews(employeeId?: string) {
+  if (employeeId) revalidatePath(`/org/people/${employeeId}`);
+  revalidatePath("/org/people");
+  revalidatePath("/org/chart");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  revalidatePath("/manager");
+}
+
 function normalize(value: FormDataEntryValue | null) {
   const text = typeof value === "string" ? value.trim() : "";
   return text || null;
@@ -144,8 +153,7 @@ export async function createEmployee(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/org/people");
-  revalidatePath("/org/chart");
+  revalidatePeopleViews();
 
   void sendSlackNotification(orgData.org.id, {
     title: "New employee added",
@@ -225,9 +233,7 @@ export async function updateEmployee(
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/org/people/${employeeId}`);
-  revalidatePath("/org/people");
-  revalidatePath("/org/chart");
+  revalidatePeopleViews(employeeId);
   return { success: true };
 }
 
@@ -300,8 +306,7 @@ export async function bulkImportEmployees(rows: CsvRow[]): Promise<BulkImportRes
   }
 
   if (imported > 0) {
-    revalidatePath("/org/people");
-    revalidatePath("/org/chart");
+    revalidatePeopleViews();
 
     void sendSlackNotification(orgData.org.id, {
       title: "Bulk employee import complete",

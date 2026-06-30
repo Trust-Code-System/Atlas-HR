@@ -6,6 +6,14 @@ import { revalidatePath } from "next/cache";
 
 export type PerfActionResult = { error?: string; success?: boolean; id?: string } | null;
 
+function revalidatePerformanceViews(cycleId?: string) {
+  revalidatePath("/performance");
+  if (cycleId) revalidatePath(`/performance/${cycleId}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  revalidatePath("/manager");
+}
+
 export async function createPerformanceCycle(
   _prev: PerfActionResult,
   formData: FormData
@@ -58,7 +66,7 @@ export async function createPerformanceCycle(
     await supabase.from("performance_reviews").insert(reviews);
   }
 
-  revalidatePath("/performance");
+  revalidatePerformanceViews(cycle.id);
   return { success: true, id: cycle.id };
 }
 
@@ -112,7 +120,7 @@ export async function updateReview(
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/performance/${review.cycle_id}`);
+  revalidatePerformanceViews(review.cycle_id);
   return { success: true };
 }
 
@@ -138,7 +146,6 @@ export async function closeCycle(cycleId: string): Promise<PerfActionResult> {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/performance");
-  revalidatePath(`/performance/${cycleId}`);
+  revalidatePerformanceViews(cycleId);
   return { success: true };
 }

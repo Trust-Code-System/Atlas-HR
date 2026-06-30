@@ -5,7 +5,7 @@ import { NotificationPanel } from "./notification-panel";
 import type { AppNotification } from "./notification-panel";
 
 function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
+  const diff = new Date().getTime() - new Date(dateStr).getTime();
   const mins  = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days  = Math.floor(diff / 86400000);
@@ -16,10 +16,10 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
-export async function NotificationButton() {
+async function loadNotifications(): Promise<AppNotification[]> {
   try {
     const orgCtx = await getCurrentOrg();
-    if (!orgCtx) return <NotificationPanel initialNotifications={[]} />;
+    if (!orgCtx) return [];
 
     const supabase = await createClient();
     const notifications: AppNotification[] = [];
@@ -91,7 +91,9 @@ export async function NotificationButton() {
       // New applications in the last 7 days
       const openJobIds = (openJobsRes.data ?? []).map((j) => j.id);
       if (openJobIds.length > 0) {
-        const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+        const sevenDaysAgoDate = new Date();
+        sevenDaysAgoDate.setDate(sevenDaysAgoDate.getDate() - 7);
+        const sevenDaysAgo = sevenDaysAgoDate.toISOString();
         const { data: newApps } = await supabase
           .from("job_applications")
           .select("id, created_at")
@@ -182,8 +184,13 @@ export async function NotificationButton() {
     // Urgent items first, then preserve insertion order
     notifications.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
 
-    return <NotificationPanel initialNotifications={notifications} />;
+    return notifications;
   } catch {
-    return <NotificationPanel initialNotifications={[]} />;
+    return [];
   }
+}
+
+export async function NotificationButton() {
+  const notifications = await loadNotifications();
+  return <NotificationPanel initialNotifications={notifications} />;
 }

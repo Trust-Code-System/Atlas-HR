@@ -7,6 +7,15 @@ import { revalidatePath } from "next/cache";
 
 export type ActionResult = { error?: string; success?: boolean } | null;
 
+function revalidateLeaveViews() {
+  revalidatePath("/org/leave");
+  revalidatePath("/portal/leave");
+  revalidatePath("/portal");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  revalidatePath("/manager");
+}
+
 async function verifyLeaveRequestInOrg(
   supabase: Awaited<ReturnType<typeof createClient>>,
   requestId: string,
@@ -51,7 +60,7 @@ export async function approveLeaveRequest(requestId: string): Promise<ActionResu
 
   if (error) return { error: error.message };
 
-  revalidatePath("/org/leave");
+  revalidateLeaveViews();
   return { success: true };
 }
 
@@ -74,7 +83,7 @@ export async function rejectLeaveRequest(requestId: string): Promise<ActionResul
 
   if (error) return { error: error.message };
 
-  revalidatePath("/org/leave");
+  revalidateLeaveViews();
   return { success: true };
 }
 
@@ -117,6 +126,6 @@ export async function createLeaveRequest(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/org/leave");
+  revalidateLeaveViews();
   return { success: true };
 }

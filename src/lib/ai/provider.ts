@@ -48,6 +48,14 @@ export interface StreamChatOptions {
   maxTokens: number;
   /** Anthropic extended thinking (ignored by the OpenAI fallback). */
   thinking?: boolean;
+  /**
+   * Per-request Anthropic model override (e.g. escalate hard/high-risk requests
+   * to a stronger model). Falls back to the ANTHROPIC_MODEL env default.
+   * See `@/lib/ai/model-router`.
+   */
+  model?: string;
+  /** Token budget for extended thinking when enabled. Default 10000. */
+  thinkingBudgetTokens?: number;
 }
 
 /** A tool the model may call. Mirrors the Anthropic tool schema. */
@@ -71,13 +79,52 @@ export interface StreamChatWithToolsOptions extends StreamChatOptions {
   maxToolRounds?: number;
 }
 
+/** Classify an error as a transient/retryable provider blip vs. a hard failure. */
+function isTransientError(err: unknown): boolean {
+  const e = err as { status?: number; message?: string } | undefined;
+  const status = e?.status;
+  if (status === 408 || status === 409 || status === 429 || (typeof status === "number" && status >= 500)) {
+    return true;
+  }
+  const msg = (e?.message ?? "").toLowerCase();
+  return /overloaded|rate.?limit|timeout|timed out|econnreset|etimedout|enotfound|fetch failed|socket hang up|network|temporar/.test(
+    msg,
+  );
+}
+
+/**
+ * Runs a streaming generator factory with a small retry budget. Retries only
+ * when the error is transient AND nothing has been emitted yet — so a partially
+ * streamed answer is never duplicated. Backs off between attempts.
+ */
+async function* withRetry(
+  factory: () => AsyncGenerator<string>,
+  attempts = 3,
+): AsyncGenerator<string> {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    let yielded = false;
+    try {
+      for await (const text of factory()) {
+        yielded = true;
+        yield text;
+      }
+      return;
+    } catch (err) {
+      if (yielded || attempt === attempts - 1 || !isTransientError(err)) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 400 * 2 ** attempt));
+    }
+  }
+}
+
 async function* streamAnthropic(opts: StreamChatOptions): AsyncGenerator<string> {
   const stream = anthropicClient().messages.stream({
-    model: ANTHROPIC_MODEL,
+    model: opts.model || ANTHROPIC_MODEL,
     max_tokens: opts.maxTokens,
     system: opts.system,
     messages: opts.anthropicMessages,
-    ...(opts.thinking ? { thinking: { type: "enabled", budget_tokens: 10000 } } : {}),
+    ...(opts.thinking
+      ? { thinking: { type: "enabled", budget_tokens: opts.thinkingBudgetTokens ?? 10000 } }
+      : {}),
   });
   for await (const chunk of stream) {
     if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
@@ -113,14 +160,14 @@ export async function* streamChatText(opts: StreamChatOptions): AsyncGenerator<s
   if (status.anthropic) {
     let yielded = false;
     try {
-      for await (const text of streamAnthropic(opts)) {
+      for await (const text of withRetry(() => streamAnthropic(opts))) {
         yielded = true;
         yield text;
       }
       return;
     } catch (err) {
       if (yielded || !status.openai) throw err;
-      // Claude failed before emitting anything — fall through to OpenAI.
+      // Claude failed (after retries) before emitting anything — fall to OpenAI.
     }
   }
 
@@ -140,7 +187,7 @@ async function* streamAnthropicWithTools(opts: StreamChatWithToolsOptions): Asyn
   for (let round = 0; round < maxRounds; round++) {
     const isLastRound = round === maxRounds - 1;
     const stream = anthropicClient().messages.stream({
-      model: ANTHROPIC_MODEL,
+      model: opts.model || ANTHROPIC_MODEL,
       max_tokens: opts.maxTokens,
       system: opts.system,
       messages,
@@ -148,7 +195,9 @@ async function* streamAnthropicWithTools(opts: StreamChatWithToolsOptions): Asyn
       // On the final allowed round, forbid further tool calls so the model must
       // answer from what it already has.
       ...(isLastRound ? { tool_choice: { type: "none" as const } } : {}),
-      ...(opts.thinking ? { thinking: { type: "enabled" as const, budget_tokens: 10000 } } : {}),
+      ...(opts.thinking
+        ? { thinking: { type: "enabled" as const, budget_tokens: opts.thinkingBudgetTokens ?? 10000 } }
+        : {}),
     });
 
     for await (const chunk of stream) {
@@ -197,14 +246,14 @@ export async function* streamChatWithTools(opts: StreamChatWithToolsOptions): As
   if (status.anthropic) {
     let yielded = false;
     try {
-      for await (const text of streamAnthropicWithTools(opts)) {
+      for await (const text of withRetry(() => streamAnthropicWithTools(opts))) {
         yielded = true;
         yield text;
       }
       return;
     } catch (err) {
       if (yielded || !status.openai) throw err;
-      // Claude failed before emitting anything — fall back to plain OpenAI.
+      // Claude failed (after retries) before emitting anything — fall to OpenAI.
     }
   }
 

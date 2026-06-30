@@ -6,6 +6,13 @@ import { revalidatePath } from "next/cache";
 
 export type PayrollActionResult = { error?: string; success?: boolean; id?: string } | null;
 
+function revalidatePayrollViews(runId?: string) {
+  revalidatePath("/payroll");
+  if (runId) revalidatePath(`/payroll/${runId}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+}
+
 export async function createPayrollRun(
   _prev: PayrollActionResult,
   formData: FormData
@@ -76,7 +83,7 @@ export async function createPayrollRun(
       .eq("id", run.id);
   }
 
-  revalidatePath("/payroll");
+  revalidatePayrollViews(run.id);
   return { success: true, id: run.id };
 }
 
@@ -103,8 +110,7 @@ export async function approvePayrollRun(runId: string): Promise<PayrollActionRes
 
   if (error) return { error: error.message };
 
-  revalidatePath("/payroll");
-  revalidatePath(`/payroll/${runId}`);
+  revalidatePayrollViews(runId);
   return { success: true };
 }
 
@@ -135,7 +141,6 @@ export async function markPayrollRunPaid(runId: string): Promise<PayrollActionRe
 
   if (error) return { error: error.message };
 
-  revalidatePath("/payroll");
-  revalidatePath(`/payroll/${runId}`);
+  revalidatePayrollViews(runId);
   return { success: true };
 }

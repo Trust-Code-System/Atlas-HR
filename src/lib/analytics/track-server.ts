@@ -22,6 +22,10 @@ type ServerEventMap = {
     risk_level?: string;
     needs_approval?: boolean;
     sensitive_data?: boolean;
+    // Smart model routing (see @/lib/ai/model-router)
+    routed_model?: string;
+    routed_escalated?: boolean;
+    routed_reason?: string;
   };
   copilot_message_received: {
     conversation_id: string | null;

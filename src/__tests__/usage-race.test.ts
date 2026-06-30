@@ -43,7 +43,7 @@ async function createTestFreeUser(): Promise<string> {
 
   if (error || !data.user) throw error ?? new Error("User creation failed");
 
-  const { error: profileError } = await (admin as any).from("profiles").upsert({
+  const { error: profileError } = await admin.from("profiles").upsert({
     id: data.user.id,
     email,
     full_name: "Usage Race Test User",
@@ -58,8 +58,8 @@ async function createTestFreeUser(): Promise<string> {
 async function cleanupTestUser(userId: string | undefined) {
   if (!userId || !process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   const admin = createAdminClient();
-  await (admin as any).from("usage_tracking").delete().eq("user_id", userId);
-  await (admin as any).from("profiles").delete().eq("id", userId);
+  await admin.from("usage_tracking").delete().eq("user_id", userId);
+  await admin.from("profiles").delete().eq("id", userId);
   await admin.auth.admin.deleteUser(userId);
 }
 
@@ -142,7 +142,7 @@ describe("Usage tracking under concurrency", () => {
 
   test("pro user with Infinity limit allows all concurrent requests", async () => {
     const admin = createAdminClient();
-    await (admin as any).from("profiles").update({ role: "pro" }).eq("id", testUserId);
+    await admin.from("profiles").update({ role: "pro" }).eq("id", testUserId);
 
     const results = await Promise.all(
       Array.from({ length: 100 }, () =>

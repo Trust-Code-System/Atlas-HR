@@ -215,8 +215,8 @@ export const PLAN_CAPABILITIES = {
 } as const;
 
 // ─── TEST MODE ───────────────────────────────────────────────────────────────
-// Set to false to re-enable payment gating.
-const TEST_MODE = true;
+// Enable only in isolated demo/test environments; production must enforce plan limits.
+const TEST_MODE = process.env.ATLAS_TEST_MODE === "true";
 
 export function getLimits(role: UserRole): RoleLimits {
   if (TEST_MODE) return LIMITS.enterprise;

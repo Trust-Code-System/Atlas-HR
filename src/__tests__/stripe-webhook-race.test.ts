@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import crypto from "node:crypto";
+import type { NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { POST } from "@/app/api/webhooks/stripe/route";
@@ -98,7 +99,7 @@ async function createStripeTestUser() {
   if (error || !data.user) throw error ?? new Error("Stripe race test user creation failed");
 
   testUserIds.add(data.user.id);
-  const { error: profileError } = await (admin as any).from("profiles").upsert({
+  const { error: profileError } = await admin.from("profiles").upsert({
     id: data.user.id,
     email,
     full_name: "Stripe Race Test User",
@@ -154,7 +155,7 @@ function generateMockSubscriptionCreatedEvent(userId: string): Stripe.Event {
             },
           ],
         },
-      } as any,
+      } as unknown as Stripe.Subscription,
     },
   } as Stripe.Event;
 }
@@ -181,12 +182,12 @@ function signPayload(payload: string, secret: string): string {
 async function cleanupTestData() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
   const admin = createAdminClient();
-  await (admin as any).from("stripe_webhook_events").delete().like("id", `${TEST_EVENT_PREFIX}%`);
-  await (admin as any).from("subscriptions").delete().like("stripe_subscription_id", `${TEST_SUB_PREFIX}%`);
+  await admin.from("stripe_webhook_events").delete().like("id", `${TEST_EVENT_PREFIX}%`);
+  await admin.from("subscriptions").delete().like("stripe_subscription_id", `${TEST_SUB_PREFIX}%`);
 
   for (const userId of testUserIds) {
-    await (admin as any).from("usage_tracking").delete().eq("user_id", userId);
-    await (admin as any).from("profiles").delete().eq("id", userId);
+    await admin.from("usage_tracking").delete().eq("user_id", userId);
+    await admin.from("profiles").delete().eq("id", userId);
     await admin.auth.admin.deleteUser(userId);
   }
 
@@ -208,7 +209,7 @@ describe("Stripe webhook idempotency under concurrency", () => {
     const event = generateMockSubscriptionCreatedEvent(userId);
 
     const responses = await Promise.all(
-      Array.from({ length: 20 }, () => POST(requestForEvent(event) as any))
+      Array.from({ length: 20 }, () => POST(requestForEvent(event) as unknown as NextRequest))
     );
     const bodies = await Promise.all(responses.map((response) => response.json()));
 
@@ -228,7 +229,7 @@ describe("Stripe webhook idempotency under concurrency", () => {
     expect(deduped.length).toBe(19);
 
     const admin = createAdminClient();
-    const { data: eventRows } = await (admin as any)
+    const { data: eventRows } = await admin
       .from("stripe_webhook_events")
       .select("id, processed_at")
       .eq("id", event.id);
@@ -236,10 +237,10 @@ describe("Stripe webhook idempotency under concurrency", () => {
     expect(eventRows?.length).toBe(1);
     expect(eventRows?.[0]?.processed_at).not.toBeNull();
 
-    const { data: subRows } = await (admin as any)
+    const { data: subRows } = await admin
       .from("subscriptions")
       .select("id, stripe_subscription_id")
-      .eq("stripe_subscription_id", (event.data.object as any).id);
+      .eq("stripe_subscription_id", (event.data.object as Stripe.Subscription).id);
 
     expect(subRows?.length).toBe(1);
   });
@@ -257,8 +258,8 @@ describe("Stripe webhook idempotency under concurrency", () => {
     const userId = await createStripeTestUser();
     const uniqueEvents = Array.from({ length: 50 }, () => generateMockSubscriptionCreatedEvent(userId));
     const allRequests = uniqueEvents.flatMap((event) => [
-      POST(requestForEvent(event) as any),
-      POST(requestForEvent(event) as any),
+      POST(requestForEvent(event) as unknown as NextRequest),
+      POST(requestForEvent(event) as unknown as NextRequest),
     ]);
 
     const responses = await Promise.all(allRequests);
@@ -280,12 +281,12 @@ describe("Stripe webhook idempotency under concurrency", () => {
     expect(deduped.length).toBe(50);
 
     const admin = createAdminClient();
-    const { data: eventRows } = await (admin as any)
+    const { data: eventRows } = await admin
       .from("stripe_webhook_events")
       .select("id")
       .like("id", `${TEST_EVENT_PREFIX}%`);
 
-    const { data: subRows } = await (admin as any)
+    const { data: subRows } = await admin
       .from("subscriptions")
       .select("id")
       .like("stripe_subscription_id", `${TEST_SUB_PREFIX}%`);

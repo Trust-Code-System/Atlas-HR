@@ -7,6 +7,13 @@ import { getTimeEmployeeForUser } from "./employee-lookup";
 
 export type TimeActionResult = { error?: string; success?: boolean } | null;
 
+function revalidateTimeViews() {
+  revalidatePath("/time");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  revalidatePath("/manager");
+}
+
 export async function logHours(
   _prev: TimeActionResult,
   formData: FormData
@@ -47,7 +54,7 @@ export async function logHours(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/time");
+  revalidateTimeViews();
   return { success: true };
 }
 
@@ -79,7 +86,7 @@ export async function submitWeek(weekStart: string): Promise<TimeActionResult> {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/time");
+  revalidateTimeViews();
   return { success: true };
 }
 
@@ -116,6 +123,6 @@ export async function approveEntry(entryId: string): Promise<TimeActionResult> {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/time");
+  revalidateTimeViews();
   return { success: true };
 }

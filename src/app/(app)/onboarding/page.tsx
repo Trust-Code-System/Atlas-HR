@@ -168,7 +168,7 @@ export default async function OnboardingPage() {
               </svg>
             </div>
             <h3 className="text-base font-bold text-navy-900 mb-1">No onboarding runs yet</h3>
-            <p className="text-sm text-navy-500 mb-6 max-w-xs mx-auto">Start a run to track a new employee's onboarding journey.</p>
+            <p className="text-sm text-navy-500 mb-6 max-w-xs mx-auto">Start a run to track a new employee&apos;s onboarding journey.</p>
             {orgCtx.isAdmin && (
               <Link href="/onboarding/new"
                 className="inline-flex items-center gap-2 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm shadow-sm hover:shadow-md transition-all">

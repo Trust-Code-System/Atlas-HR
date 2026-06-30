@@ -13,12 +13,16 @@ import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { getOrgAiContext } from "@/lib/ai/org-ai-context";
 import { searchOrgKnowledge, buildGroundingFragment, type KbSource } from "@/lib/ai/kb/retrieve";
 import { HR_TOOLS, makeHrToolRunner, type HrToolContext } from "@/lib/ai/tools/hr-tools";
+import { WEB_TOOLS, WEB_TOOL_NAMES, makeWebToolRunner } from "@/lib/ai/tools/web-tools";
+import { isWebSearchConfigured } from "@/lib/ai/web-search";
 import {
   ATLAS_BASE_SYSTEM_PROMPT,
   ATLAS_EMPLOYEE_SYSTEM_PROMPT,
   buildModeContext,
 } from "@/lib/ai/prompts/atlas-system-prompt";
 import { classifyRequest } from "@/lib/ai/intent";
+import { routeModel } from "@/lib/ai/model-router";
+import { canViewSalaryData, canDo } from "@/lib/auth/permissions";
 
 // The agentic tool loop can run several model rounds plus tool calls and
 // "deep thinking", which easily exceeds Vercel's short default function
@@ -191,6 +195,19 @@ async function handlePost(req: NextRequest) {
     finalSystem += buildModeContext(intent.mode);
   }
 
+  // Smart routing: pick the model, extended-thinking, and output-token budget
+  // for THIS request based on its detected difficulty/risk. Everyday questions
+  // stay fast and cheap; hard, high-risk, document-heavy, or long requests are
+  // escalated to a stronger model and/or given thinking + a larger budget. This
+  // also fixes the old fixed 2048-token cap that silently truncated documents.
+  const route = routeModel({
+    intent,
+    userRequestedThinking: thinking === true,
+    messageLength: userQuery.length,
+    hasAttachments: Boolean(lastUserMessage?.attachments?.length),
+    isEmployeePortal,
+  });
+
   if (relevantArticles.length > 0) {
     const refs = relevantArticles
       .map((a) => `- "${a.title}" (${a.category.replace(/-/g, " ")}): ${a.excerpt}`)
@@ -207,12 +224,24 @@ async function handlePost(req: NextRequest) {
   // RLS-scoped). Captured here so the stream call below can attach the runner.
   let toolOrgId: string | null = null;
   let toolIsAdmin = false;
+  // Column-level gates for the compensation/performance tools. RLS protects
+  // rows; these protect sensitive columns the model must not aggregate without
+  // permission. Computed once here and passed into the tool runner.
+  let toolCanViewComp = false;
+  let toolCanViewPerf = false;
   if (user) {
     try {
       const orgCtx = await getCurrentOrg();
       if (orgCtx) {
         toolOrgId = orgCtx.org.id;
         toolIsAdmin = orgCtx.isAdmin;
+        const [compAllowed, perfManage, analyticsAllowed] = await Promise.all([
+          canViewSalaryData(orgCtx.org.id),
+          canDo(orgCtx.org.id, "canManagePerformance"),
+          canDo(orgCtx.org.id, "canViewAnalytics"),
+        ]);
+        toolCanViewComp = compAllowed;
+        toolCanViewPerf = orgCtx.isAdmin || perfManage || analyticsAllowed;
         const hits = await searchOrgKnowledge(supabase, orgCtx.org.id, userQuery, 6);
         const { systemFragment, sources } = buildGroundingFragment(hits);
         if (systemFragment) {
@@ -293,36 +322,57 @@ async function handlePost(req: NextRequest) {
       risk_level: intent.riskLevel,
       needs_approval: intent.needsApproval,
       sensitive_data: intent.sensitiveDataInvolved,
+      routed_model: route.model,
+      routed_escalated: route.escalated,
+      routed_reason: route.reason,
     });
   }
 
-  const useThinking = thinking === true;
+  const useThinking = route.thinking;
   const copilotStart = Date.now();
+
+  // Tell the model it can ground answers in the live web when a provider is set.
+  if (toolOrgId !== null && isWebSearchConfigured()) {
+    finalSystem +=
+      "\n\n--- Web grounding ---\nYou can call `web_search` for live external facts (current employment law, statutory rates, salary benchmarks, regulatory changes, HR news). Use it when the answer isn't in the workspace's own data or your knowledge may be out of date, prefer official sources for legal figures, and cite the source URLs you relied on.";
+  }
 
   const baseStreamOpts = {
     system: finalSystem,
     anthropicMessages: toAnthropicMessages(messages) as StreamChatOptions["anthropicMessages"],
     openaiMessages: messages.map((m) => ({ role: m.role, content: m.content })),
-    maxTokens: useThinking ? 16000 : 2048,
-    thinking: useThinking,
+    model: route.model,
+    maxTokens: route.maxTokens,
+    thinking: route.thinking,
+    thinkingBudgetTokens: route.thinkingBudgetTokens,
   };
 
   // When the user belongs to an org, give the assistant live HR data tools.
   // Tools run on the request's RLS-scoped client, so results are automatically
   // limited to what this user may see (admins → whole org, managers → their
-  // reports, employees → their own record).
-  const aiStream =
-    toolOrgId !== null
-      ? streamChatWithTools({
-          ...baseStreamOpts,
-          tools: HR_TOOLS,
-          runTool: makeHrToolRunner({
-            supabase,
-            orgId: toolOrgId,
-            isAdmin: toolIsAdmin,
-          } satisfies HrToolContext),
-        })
-      : streamChatText(baseStreamOpts);
+  // reports, employees → their own record). When a web-search provider is
+  // configured, also give it live web grounding (cited external facts).
+  let aiStream: AsyncGenerator<string>;
+  if (toolOrgId !== null) {
+    const hrRun = makeHrToolRunner({
+      supabase,
+      orgId: toolOrgId,
+      isAdmin: toolIsAdmin,
+      canViewCompensation: toolCanViewComp,
+      canViewPerformance: toolCanViewPerf,
+    } satisfies HrToolContext);
+    const webEnabled = isWebSearchConfigured();
+    const webRun = webEnabled ? makeWebToolRunner() : null;
+    const tools = webEnabled ? [...HR_TOOLS, ...WEB_TOOLS] : HR_TOOLS;
+    aiStream = streamChatWithTools({
+      ...baseStreamOpts,
+      tools,
+      runTool: (name, input) =>
+        webRun && WEB_TOOL_NAMES.has(name) ? webRun(name, input) : hrRun(name, input),
+    });
+  } else {
+    aiStream = streamChatText(baseStreamOpts);
+  }
   const encoder = new TextEncoder();
 
   const readableStream = new ReadableStream({

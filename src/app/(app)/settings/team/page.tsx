@@ -1,19 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { SettingsTabs } from "../settings-tabs";
 import { TeamClient } from "./team-client";
 import { InviteForm } from "./invite-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Team Members | Atlas HR" };
-
-const NAV = [
-  { href: "/settings",           label: "Profile",      icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
-  { href: "/settings/org",       label: "Organisation", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" },
-  { href: "/settings/team",      label: "Team",         icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
-  { href: "/settings/audit-log", label: "Audit log",    icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
-];
 
 export default async function TeamSettingsPage() {
   const orgCtx = await getCurrentOrg();
@@ -56,22 +49,7 @@ export default async function TeamSettingsPage() {
       </div>
 
       {/* Nav tabs */}
-      <div className="flex items-center gap-1 mb-6 bg-navy-50 rounded-xl p-1 w-fit border border-navy-200">
-        {NAV.map((item) => {
-          const isActive = item.href === "/settings/team";
-          return (
-            <Link key={item.href} href={item.href}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive ? "bg-white text-navy-900 shadow-sm border border-navy-200" : "text-navy-500 hover:text-navy-800 hover:bg-white/60"
-              }`}>
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-              </svg>
-              {item.label}
-            </Link>
-          );
-        })}
-      </div>
+      <SettingsTabs />
 
       <InviteForm />
 
