@@ -1,7 +1,7 @@
 "use client";
 
 import Link, { useLinkStatus } from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import { AtlasLogo, AtlasLogoMark } from "@/components/atlas-logo";
@@ -523,7 +523,9 @@ function NavIcon({ icon, active }: { icon: React.ReactNode; active: boolean }) {
 
 export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string; isOrgAdmin?: boolean }) {
   const pathname = usePathname();
+  const router = useRouter();
   const isAdmin = userRole === "admin" || userRole === "moderator";
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("sidebar-collapsed") === "true";
@@ -536,11 +538,6 @@ export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string
     return () => window.removeEventListener("sidebar-open", handleOpen);
   }, []);
 
-  // Close mobile drawer on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   function toggle() {
     setCollapsed((prev) => {
       const next = !prev;
@@ -550,17 +547,28 @@ export function AppSidebar({ userRole, isOrgAdmin = false }: { userRole?: string
   }
 
   function isActive(href: string) {
-    if (href === "/dashboard" || href === "/portal") return pathname === href;
-    return pathname.startsWith(href);
+    const activePath = pendingHref && pendingHref !== pathname ? pendingHref : pathname;
+    if (href === "/dashboard" || href === "/portal") return activePath === href;
+    return activePath.startsWith(href);
   }
 
   function navLink(item: { href: string; label: string; icon: React.ReactNode }) {
     const active = isActive(item.href);
+    const prepareRoute = () => router.prefetch(item.href);
     return (
       <Link
         key={item.href}
         href={item.href}
+        prefetch
+        aria-current={active ? "page" : undefined}
         title={collapsed ? item.label : undefined}
+        onMouseEnter={prepareRoute}
+        onFocus={prepareRoute}
+        onPointerDown={prepareRoute}
+        onClick={() => {
+          if (pathname !== item.href) setPendingHref(item.href);
+          setMobileOpen(false);
+        }}
         className={cn(
           "flex items-center rounded-[10px] text-[13px] font-medium transition-all",
           collapsed ? "justify-center px-0 py-[9px]" : "gap-2.5 px-2.5 py-[7px]",
