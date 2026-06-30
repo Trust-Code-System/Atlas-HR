@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AtlasLogo } from "@/components/atlas-logo";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +21,39 @@ const navLinks = [
 export function PublicHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeHash, setActiveHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setActiveHash(window.location.hash);
+
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    window.addEventListener("popstate", syncHash);
+
+    return () => {
+      window.removeEventListener("hashchange", syncHash);
+      window.removeEventListener("popstate", syncHash);
+    };
+  }, [pathname]);
+
+  function isActive(linkHref: string) {
+    const [linkPath, linkHash] = linkHref.split("#");
+
+    if (linkHash) {
+      return pathname === linkPath && activeHash === `#${linkHash}`;
+    }
+
+    if (linkHref === "/") {
+      return pathname === "/" && activeHash === "";
+    }
+
+    return pathname === linkHref;
+  }
+
+  function handleNavClick(linkHref: string) {
+    const [, linkHash] = linkHref.split("#");
+    setActiveHash(linkHash ? `#${linkHash}` : "");
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-navy-900/95 backdrop-blur-md">
@@ -40,9 +73,10 @@ export function PublicHeader() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => handleNavClick(link.href)}
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  pathname === link.href
+                  isActive(link.href)
                     ? "text-white bg-white/10"
                     : "text-navy-300 hover:text-white hover:bg-white/5"
                 )}
@@ -94,10 +128,13 @@ export function PublicHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setMenuOpen(false)}
+                onClick={() => {
+                  handleNavClick(link.href);
+                  setMenuOpen(false);
+                }}
                 className={cn(
                   "block px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  pathname === link.href
+                  isActive(link.href)
                     ? "text-white bg-white/10"
                     : "text-navy-300 hover:text-white hover:bg-white/5"
                 )}

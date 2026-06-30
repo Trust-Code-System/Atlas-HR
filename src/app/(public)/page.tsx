@@ -58,9 +58,33 @@ const features = [
 ];
 
 const corridorCards = [
-  { code: "UK·NG", title: "London to Lagos", body: "For UK companies managing Nigerian engineering, operations, and support teams.", href: "/countries/nigeria", from: "from-amber-500", to: "to-orange-600" },
-  { code: "US·IN", title: "US to India", body: "For US teams hiring distributed product, finance, and technical talent across Indian states.", href: "/countries/india", from: "from-blue-500", to: "to-blue-700" },
-  { code: "US", title: "Remote US teams", body: "For multi-state employers who need final-pay, leave, handbook, and payroll controls.", href: "/countries/us", from: "from-sky-400", to: "to-blue-500" },
+  {
+    code: "UK-NG",
+    title: "London to Lagos",
+    body: "For UK companies managing Nigerian engineering, operations, and support teams.",
+    href: "/countries/nigeria",
+    flags: [
+      { src: "/logos/flags/gb.svg", alt: "United Kingdom flag" },
+      { src: "/logos/flags/ng.svg", alt: "Nigeria flag" },
+    ],
+  },
+  {
+    code: "US-IN",
+    title: "US to India",
+    body: "For US teams hiring distributed product, finance, and technical talent across Indian states.",
+    href: "/countries/india",
+    flags: [
+      { src: "/logos/flags/us.svg", alt: "United States flag" },
+      { src: "/logos/flags/in.svg", alt: "India flag" },
+    ],
+  },
+  {
+    code: "US",
+    title: "Remote US teams",
+    body: "For multi-state employers who need final-pay, leave, handbook, and payroll controls.",
+    href: "/countries/us",
+    flags: [{ src: "/logos/flags/us.svg", alt: "United States flag" }],
+  },
 ];
 
 const platformMoves = [
@@ -90,6 +114,48 @@ function HeroBlobs() {
   );
 }
 
+function CorridorLogo({
+  code,
+  flags,
+}: {
+  code: string;
+  flags: Array<{ src: string; alt: string }>;
+}) {
+  return (
+    <div
+      aria-label={`${code} corridor logo`}
+      className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 shadow-lg shadow-black/20 ring-1 ring-white/10"
+    >
+      {flags.length === 1 ? (
+        <Image
+          src={flags[0].src}
+          alt={flags[0].alt}
+          width={32}
+          height={24}
+          className="h-6 w-8 rounded-md object-cover shadow-sm ring-1 ring-white/30"
+        />
+      ) : (
+        <div className="relative h-8 w-9">
+          <Image
+            src={flags[0].src}
+            alt={flags[0].alt}
+            width={30}
+            height={22}
+            className="absolute left-0 top-0 h-[22px] w-[30px] rounded-md object-cover shadow-sm ring-1 ring-white/30"
+          />
+          <Image
+            src={flags[1].src}
+            alt={flags[1].alt}
+            width={30}
+            height={22}
+            className="absolute bottom-0 right-0 h-[22px] w-[30px] rounded-md object-cover shadow-md ring-2 ring-navy-950"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
@@ -97,7 +163,7 @@ export default function HomePage() {
     <div className="bg-white text-navy-900 overflow-x-hidden">
 
       {/* ══ HERO ══════════════════════════════════════════════════════════════ */}
-      <section className="relative isolate overflow-hidden py-20 lg:py-28">
+      <section className="relative isolate overflow-hidden pt-10 pb-16 lg:pt-12 lg:pb-20">
         {/* Background layers */}
         <div className="absolute inset-0 -z-10">
           <HeroBlobs />
@@ -110,7 +176,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_480px] lg:px-8">
           {/* Left — copy */}
           <div className="max-w-2xl">
-            <h1 className="mt-7 text-[52px] font-extrabold leading-[1.08] tracking-tight text-navy-950 text-shadow-hero sm:text-[64px] lg:text-[72px]">
+            <h1 className="text-[52px] font-extrabold leading-[1.08] tracking-tight text-navy-950 text-shadow-hero sm:text-[64px] lg:text-[72px]">
               HR for teams
               <br />
               that{" "}
@@ -299,7 +365,7 @@ export default function HomePage() {
       </section>
 
       {/* ══ CALCULATOR ════════════════════════════════════════════════════════ */}
-      <section id="global-hiring-calculator" className="relative overflow-hidden bg-navy-950 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section id="global-hiring-calculator" className="relative scroll-mt-2 overflow-hidden bg-navy-950 px-4 pt-12 pb-16 sm:px-6 lg:px-8 lg:pt-14 lg:pb-20">
         {/* Background overlays */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(59,130,246,0.2),transparent)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
@@ -432,9 +498,7 @@ export default function HomePage() {
                   className="group relative overflow-hidden rounded-2xl border border-white/15 bg-white/8 backdrop-blur-md p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-white/12 hover:border-white/25 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-all"
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`shrink-0 h-10 w-10 rounded-xl bg-linear-to-br ${card.from} ${card.to} flex items-center justify-center shadow-lg`}>
-                      <span className="text-[10px] font-bold tracking-wide text-white">{card.code}</span>
-                    </div>
+                    <CorridorLogo code={card.code} flags={card.flags} />
                     <div>
                       <h3 className="text-base font-bold text-white group-hover:text-blue-300 transition-colors">{card.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-navy-300">{card.body}</p>

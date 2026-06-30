@@ -620,7 +620,7 @@ function CopilotChat() {
   return (
     <div className="flex flex-col h-full bg-[#f8fafc]">
       {/* ── Header ── */}
-      <div className="relative overflow-hidden shrink-0 bg-linear-to-br from-navy-950 via-navy-900 to-navy-800 px-6 pt-4 pb-0 shadow-md">
+      <div className="relative z-20 shrink-0 overflow-visible bg-linear-to-br from-navy-950 via-navy-900 to-navy-800 px-6 pt-4 pb-0 shadow-md">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.15),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.1),transparent_60%)]" />
         <div className="relative flex items-center justify-between mb-4">
@@ -676,8 +676,8 @@ function CopilotChat() {
 
               {historyOpen && (
                 <>
-                  <div className="fixed inset-0 z-30" onClick={() => setHistoryOpen(false)} />
-                  <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-80 max-h-[70vh] overflow-y-auto rounded-2xl border border-navy-200 bg-white shadow-2xl">
+                  <div className="fixed inset-0 z-40" onClick={() => setHistoryOpen(false)} />
+                  <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-80 max-h-[70vh] overflow-y-auto rounded-2xl border border-navy-200 bg-white shadow-2xl">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-navy-100 sticky top-0 bg-white">
                       <p className="text-sm font-bold text-navy-900">Conversations</p>
                       <button type="button" onClick={newChat} className="flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-900">
