@@ -1,6 +1,7 @@
 "use client";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Image from "next/image";
 import { useState, useTransition, useRef, useEffect } from "react";
 import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import {
@@ -72,7 +73,7 @@ function IconM365() {
   return <svg viewBox="0 0 24 24" className="h-5 w-5" fill="white"><path d="M11.5 2.25L2.25 6v12l9.25 3.75L21.75 18V6L11.5 2.25zM11 4.5v15L4 17V7l7-2.5zm1.5 0L18.5 7v10l-6 2.5v-15z" /></svg>;
 }
 
-const BRAND_LOGOS: Record<string, React.ReactNode> = {
+const LEGACY_BRAND_LOGOS: Record<string, React.ReactNode> = {
   slack: <IconSlack />, teams: <IconTeams />, zoom: <IconZoom />,
   "google-meet": <IconGoogleG />, quickbooks: <IconQuickBooks />,
   xero: <IconXero />, sage: <IconSage />, stripe: <IconStripe />,
@@ -84,6 +85,68 @@ const BRAND_LOGOS: Record<string, React.ReactNode> = {
   "slack-bot": <IconSlack />, "teams-bot": <IconTeams />,
   "chrome-ext": <IconChrome />, "ios-app": <IconApple />, "android-app": <IconAndroid />,
 };
+
+const BRAND_LOGO_FILES: Record<string, string> = {
+  slack: "slack.png",
+  teams: "teams.png",
+  zoom: "zoom.svg",
+  "google-meet": "google-meet.svg",
+  quickbooks: "quickbooks.svg",
+  xero: "xero.svg",
+  sage: "sage.svg",
+  stripe: "stripe.svg",
+  linkedin: "linkedin.png",
+  greenhouse: "greenhouse.svg",
+  indeed: "indeed.svg",
+  workable: "workable.png",
+  "google-workspace": "google-workspace.png",
+  "microsoft-365": "microsoft-365.png",
+  notion: "notion.svg",
+  jira: "jira.svg",
+  okta: "okta.svg",
+  "google-sso": "google-sso.svg",
+  "azure-ad": "azure-ad.png",
+  "slack-bot": "slack-bot.png",
+  "teams-bot": "teams-bot.png",
+  "chrome-ext": "chrome-ext.svg",
+  "ios-app": "ios-app.svg",
+  "android-app": "android-app.svg",
+  "email-digest": "email-digest.svg",
+  "calendar-sync": "calendar-sync.svg",
+  "widget-embed": "widget-embed.svg",
+};
+
+function BrandBadge({
+  id,
+  color,
+  initials,
+}: {
+  id: string;
+  color: string;
+  initials: string;
+}) {
+  const logoFile = BRAND_LOGO_FILES[id];
+
+  if (logoFile) {
+    return (
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm">
+        <Image
+          src={`/logos/integrations/${logoFile}`}
+          alt=""
+          width={28}
+          height={28}
+          className="h-7 w-7 object-contain"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${color}`}>
+      {LEGACY_BRAND_LOGOS[id] ?? <span className="text-sm font-bold text-white">{initials}</span>}
+    </div>
+  );
+}
 
 // ─── Config field definitions ─────────────────────────────────────────────────
 
@@ -359,9 +422,7 @@ function ConnectorsTab({ connected, isAdmin, onConfigure }: { connected: Set<str
               <div key={c.id} className={`bg-white rounded-2xl border p-5 flex flex-col transition-all ${isConn ? "border-blue-200 shadow-sm" : "border-navy-200 hover:border-navy-300 hover:shadow-sm"}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-xl ${c.color} flex items-center justify-center shrink-0`}>
-                      {BRAND_LOGOS[c.id] ?? <span className="text-white font-bold text-sm">{c.initials}</span>}
-                    </div>
+                    <BrandBadge id={c.id} color={c.color} initials={c.initials} />
                     <div><h3 className="font-semibold text-navy-900 text-sm leading-tight">{c.name}</h3><span className="text-xs text-navy-400">{c.category}</span></div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
@@ -485,7 +546,7 @@ function PluginsTab({ installed, isAdmin, onConfigure }: { installed: Set<string
               <div key={p.id} className={`bg-white rounded-2xl border p-5 flex flex-col transition-all ${isInst ? "border-blue-200 shadow-sm" : "border-navy-200 hover:border-navy-300 hover:shadow-sm"}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-xl ${p.color} flex items-center justify-center shrink-0`}>{BRAND_LOGOS[p.id] ?? <span className="text-white font-bold text-sm">{p.initials}</span>}</div>
+                    <BrandBadge id={p.id} color={p.color} initials={p.initials} />
                     <div><h3 className="font-semibold text-navy-900 text-sm leading-tight">{p.name}</h3><span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${typeColor}`}>{p.type}</span></div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
@@ -551,9 +612,7 @@ function ConfigModal({ item, type, isConnected, onClose, onConnected, onDisconne
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center gap-3 mb-5">
-          <div className={`h-10 w-10 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
-            {BRAND_LOGOS[item.id] ?? <span className="text-white font-bold text-sm">{item.initials}</span>}
-          </div>
+          <BrandBadge id={item.id} color={item.color} initials={item.initials} />
           <div>
             <h2 className="text-base font-bold text-navy-900">{item.name}</h2>
             <p className="text-xs text-navy-500">{isConnected ? "Currently connected" : "Not connected"}</p>

@@ -145,3 +145,57 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-navy-400);
 }
+
+/* App page heading panels */
+:where(.rounded-\[24px\].bg-linear-to-br.from-navy-950.via-navy-900.to-navy-800.shadow-xl) {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  background:
+    linear-gradient(115deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0) 32%),
+    linear-gradient(140deg, #020617 0%, #0b1636 45%, #172a52 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -22px 46px rgba(2, 6, 23, 0.46),
+    0 2px 0 rgba(255, 255, 255, 0.08),
+    0 22px 46px -18px rgba(15, 23, 42, 0.62);
+}
+
+:where(.rounded-\[24px\].bg-linear-to-br.from-navy-950.via-navy-900.to-navy-800.shadow-xl)::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  border-radius: 23px;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 26%, rgba(255, 255, 255, 0) 56%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0 1px, rgba(255, 255, 255, 0) 1px 18px);
+  opacity: 0.78;
+}
+
+:where(.rounded-\[24px\].bg-linear-to-br.from-navy-950.via-navy-900.to-navy-800.shadow-xl)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 34%, rgba(2, 6, 23, 0.24) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(125, 211, 252, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0.82;
+}
+
+:where(.rounded-\[24px\].bg-linear-to-br.from-navy-950.via-navy-900.to-navy-800.shadow-xl) > * {
+  position: relative;
+  z-index: 1;
+}
+
+:where(.rounded-\[24px\].bg-linear-to-br.from-navy-950.via-navy-900.to-navy-800.shadow-xl) :where(.rounded-2xl.bg-white\/10) {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.07));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -10px 18px rgba(2, 6, 23, 0.2),
+    0 12px 24px rgba(2, 6, 23, 0.26);
+}
