@@ -1,26 +1,21 @@
 import { getMyEmployee } from "@/lib/portal/get-my-employee";
+import { getCurrentOrg } from "@/lib/org/get-current-org";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import type { LifecycleRun, LifecycleTask } from "@/types/database";
 import { OnboardingPortalClient } from "./onboarding-portal-client";
+import { AccountLinkNotice } from "../account-link-notice";
 
 export const metadata: Metadata = { title: "My Onboarding | Atlas HR" };
 
 export default async function PortalOnboardingPage() {
   const employee = await getMyEmployee();
+  const orgData = await getCurrentOrg();
 
   if (!employee) {
     return (
       <div className="p-6 lg:p-8 max-w-2xl mx-auto w-full">
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 text-center">
-          <div className="mx-auto h-12 w-12 rounded-2xl bg-amber-100 flex items-center justify-center mb-3">
-            <svg className="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            </svg>
-          </div>
-          <h2 className="text-base font-bold text-amber-900 mb-1">Account not linked</h2>
-          <p className="text-sm text-amber-700">Your user account isn&apos;t linked to an employee record yet. Ask your HR admin to link your account.</p>
-        </div>
+        <AccountLinkNotice isAdmin={orgData?.isAdmin ?? false} orgName={orgData?.org.name ?? "this workspace"} />
       </div>
     );
   }

@@ -5,6 +5,7 @@ import { SettingsTabs } from "../settings-tabs";
 import { TeamClient } from "./team-client";
 import { InviteForm } from "./invite-form";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = { title: "Team Members | Atlas HR" };
 
@@ -50,6 +51,17 @@ export default async function TeamSettingsPage() {
 
       {/* Nav tabs */}
       <SettingsTabs />
+
+      <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4">
+        <h2 className="text-sm font-semibold text-blue-950">Team members are workspace login accounts</h2>
+        <p className="mt-1 text-sm text-blue-800">
+          Use this page to invite admins or HR teammates who can sign in to Atlas. Employee HR records live under{" "}
+          <Link href="/org/people" className="font-semibold underline underline-offset-2">
+            People
+          </Link>
+          ; the My Portal pages only work after a login account is connected to an employee record.
+        </p>
+      </div>
 
       <InviteForm />
 

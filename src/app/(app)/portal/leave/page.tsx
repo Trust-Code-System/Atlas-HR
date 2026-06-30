@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LeavePortalClient } from "./leave-portal-client";
 import type { Metadata } from "next";
+import { AccountLinkNotice } from "../account-link-notice";
 
 export const metadata: Metadata = { title: "My Leave | Atlas HR" };
 
@@ -24,8 +25,8 @@ export default async function PortalLeavePage() {
   if (!employee) {
     return (
       <div className="p-6 lg:p-8 max-w-3xl mx-auto w-full">
-        <div className="rounded-[18px] border border-amber-200 bg-amber-50 p-6 text-center mt-8">
-          <p className="text-sm text-amber-700">Your account is not linked to an employee record. Ask your HR admin to link your profile.</p>
+        <div className="mt-8">
+          <AccountLinkNotice isAdmin={orgData.isAdmin} orgName={orgData.org.name} />
         </div>
       </div>
     );
