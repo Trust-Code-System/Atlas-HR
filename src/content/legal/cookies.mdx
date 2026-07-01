@@ -23,9 +23,9 @@ Strictly necessary cookies support authentication, CSRF protection, routing, sec
 
 | Cookie or storage | Purpose | Duration |
 | --- | --- | --- |
-| Supabase auth cookies | Keep users signed in | Session or configured auth duration |
+| Authentication cookies | Keep users signed in | Session or configured auth duration |
 | atlas-current-org | Remember selected organisation | 30 days |
-| Stripe checkout state | Complete payment flow | Set by Stripe |
+| Checkout state | Complete payment flow | Set by payment processor |
 
 ## Functional Cookies
 
@@ -33,7 +33,7 @@ Functional storage remembers preferences such as theme, accent colour, sidebar s
 
 ## Analytics Cookies
 
-Analytics cookies, such as PostHog identifiers, are only used after consent where required. Analytics help us understand page views, feature usage, and product reliability.
+Analytics cookies are only used after consent where required. Analytics help us understand page views, feature usage, and product reliability.
 
 ## Marketing Cookies
 
@@ -41,7 +41,7 @@ Atlas HR does not currently use marketing cookies. If this changes, marketing co
 
 ## Third-Party Cookies
 
-Stripe may set cookies during checkout or portal sessions. Other infrastructure providers may process technical logs as described in the Privacy Policy.
+Payment providers may set cookies during checkout or portal sessions. Other infrastructure providers may process technical logs as described in the Privacy Policy.
 
 ## Your Choices
 

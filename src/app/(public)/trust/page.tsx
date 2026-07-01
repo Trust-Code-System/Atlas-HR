@@ -28,7 +28,7 @@ const trustPillars = [
 ];
 
 const controls = [
-  "Authentication through Supabase Auth",
+  "Managed authentication controls",
   "Role-based workspace access",
   "Row-level security policies for org data",
   "Audit logs for admin-sensitive activity",
@@ -46,23 +46,33 @@ const roadmap = [
   "Incident status and breach communication runbook",
 ];
 
-// Current subprocessors, drawn from the actual production stack. Keep this list
-// accurate and dated — procurement reviewers check it against network activity.
-const subprocessors = [
-  { name: "Supabase", purpose: "Authentication, application database, and file storage", region: "EU / US" },
-  { name: "Vercel", purpose: "Application hosting and content delivery (CDN)", region: "Global edge" },
-  { name: "Anthropic", purpose: "AI assistance — Atlas AI primary model", region: "US" },
-  { name: "OpenAI", purpose: "AI assistance — fallback model", region: "US" },
-  { name: "Stripe", purpose: "Subscription billing and payments", region: "US / EU" },
-  { name: "Resend", purpose: "Transactional and notification email delivery", region: "US / EU" },
-  { name: "PostHog", purpose: "Consent-gated product analytics", region: "EU" },
+const providerAssurances = [
+  "Vetted providers support hosting, authentication, payments, email, analytics, and AI workflows.",
+  "Contractual safeguards, confidentiality duties, and access controls apply where providers process customer data.",
+  "Detailed provider, region, and transfer information is available to customers during procurement review.",
 ];
 
 const dataFacts = [
-  { label: "Data residency", value: "Primary application data is hosted with Supabase and Vercel. Region-specific hosting can be arranged for enterprise engagements." },
-  { label: "Encryption", value: "Data is encrypted in transit (TLS). Sensitive integration secrets are encrypted at rest, and organisation data is governed by row-level security." },
-  { label: "Retention", value: "Workspace data is retained for the life of the account. Customers can request export or deletion; data is deleted or returned on termination per the DPA." },
-  { label: "Breach notification", value: "On a personal-data breach affecting Customer Data, Atlas HR notifies affected customers without undue delay, with the information needed to meet their own obligations." },
+  {
+    label: "Data residency",
+    value:
+      "Primary application data is hosted with managed cloud infrastructure. Region-specific hosting can be arranged for enterprise engagements.",
+  },
+  {
+    label: "Encryption",
+    value:
+      "Data is encrypted in transit (TLS). Sensitive integration secrets are encrypted at rest, and organisation data is governed by row-level security.",
+  },
+  {
+    label: "Retention",
+    value:
+      "Workspace data is retained for the life of the account. Customers can request export or deletion; data is deleted or returned on termination per the DPA.",
+  },
+  {
+    label: "Breach notification",
+    value:
+      "On a personal-data breach affecting Customer Data, Atlas HR notifies affected customers without undue delay, with the information needed to meet their own obligations.",
+  },
 ];
 
 export default function TrustPage() {
@@ -175,36 +185,24 @@ export default function TrustPage() {
         </div>
       </section>
 
-      {/* ── Subprocessors & data handling ── */}
       <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Subprocessors</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-navy-950">Who helps us run Atlas HR.</h2>
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Data protection</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-navy-950">How Atlas HR protects customer data.</h2>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
-            We engage a limited set of subprocessors under data-protection terms consistent with the GDPR.
-            This list is current as of the date below; customers are notified of material changes. A Data
-            Processing Agreement (DPA) is available on request.
+            Atlas HR uses a limited set of vetted infrastructure, payments, email,
+            analytics, and AI service providers under data-protection terms consistent
+            with the GDPR. We do not publish the exact provider register publicly.
+            Customers and procurement reviewers can request the current subprocessor
+            list, regions, and transfer details under a DPA or appropriate review process.
           </p>
 
-          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-navy-900">
-                <tr>
-                  <th scope="col" className="px-4 py-3 font-bold">Subprocessor</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Purpose</th>
-                  <th scope="col" className="px-4 py-3 font-bold">Region</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {subprocessors.map((s) => (
-                  <tr key={s.name} className="bg-white">
-                    <td className="px-4 py-3 font-semibold text-navy-900">{s.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{s.purpose}</td>
-                    <td className="px-4 py-3 text-slate-600">{s.region}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {providerAssurances.map((item) => (
+              <div key={item} className="rounded-2xl border border-slate-200 bg-white p-5 text-sm font-semibold leading-6 text-navy-800 shadow-sm">
+                {item}
+              </div>
+            ))}
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -214,7 +212,7 @@ export default function TrustPage() {
             >
               Request a DPA
             </Link>
-            <span className="text-xs text-slate-400">List current as of July 2026.</span>
+            <span className="text-xs text-slate-400">Provider register available to customers on request.</span>
           </div>
 
           <div className="mt-12 grid gap-5 sm:grid-cols-2">

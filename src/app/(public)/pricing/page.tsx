@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "What payment methods do you accept?",
-    a: "We accept all major credit and debit cards via Stripe. Enterprise customers can pay by invoice.",
+    a: "We accept major credit and debit cards through a secure payment processor. Enterprise customers can pay by invoice.",
   },
   {
     q: "How does the free plan work?",

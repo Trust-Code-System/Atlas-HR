@@ -2,7 +2,7 @@
 title: "Understanding Our Security Practices"
 slug: "understanding-our-security-practices"
 category: "privacy"
-excerpt: "How Atlas HR protects your data — Supabase and PostgreSQL with row-level security, encryption at rest and in transit, our SOC 2 Type II roadmap, and the EU data hosting option."
+excerpt: "How Atlas HR protects your data with managed infrastructure, row-level security, encryption in transit, our SOC 2 roadmap, and regional hosting options."
 publishedAt: "2026-05-11"
 updatedAt: "2026-05-11"
 relatedArticles: ["how-to-export-my-data", "how-to-delete-my-account"]
@@ -12,7 +12,7 @@ Security is foundational to what we do. You're trusting us with sensitive HR dat
 
 ## Our infrastructure
 
-Atlas HR runs on **Supabase**, which uses **PostgreSQL** as its database. Here's what that means for your data:
+Atlas HR runs on managed cloud infrastructure with a relational database and strict access controls. Here's what that means for your data:
 
 **Row-level security (RLS):** Every database query is filtered by user identity at the database level. This means even if there were a bug in the application code, it's architecturally impossible for one user to access another user's data. Your data is isolated from other organisations' data at the database row level.
 
@@ -35,8 +35,8 @@ If you see "https://" and a padlock icon in your browser's address bar when usin
 
 When you use Atlas Copilot or any AI document generator:
 
-- The content of your messages and documents is sent to Anthropic's Claude API for processing.
-- Anthropic processes this data under their API terms, which include data protection commitments.
+- The content of your messages and documents may be processed by vetted AI infrastructure providers to generate the requested output.
+- AI infrastructure providers process this data under contractual terms that include data protection commitments.
 - Your data is **not used to train AI models** under the API tier we use.
 - Copilot conversations are stored in your account and only visible to you.
 
@@ -66,8 +66,8 @@ If we ever become aware of a security incident affecting your data:
 
 ## Reporting a security issue
 
-If you discover a potential security vulnerability in Atlas HR, please contact us at security@atlashr.app. We take all reports seriously and respond within one business day. We don't have a formal bug bounty programme yet, but we acknowledge and credit responsible disclosures.
+If you discover a potential security vulnerability in Atlas HR, please contact us at security@atlashr.xyz. We take all reports seriously and respond within one business day. We don't have a formal bug bounty programme yet, but we acknowledge and credit responsible disclosures.
 
 ## Still need help?
 
-[Contact support →](/help/contact) for general security questions, or email security@atlashr.app for security-specific concerns.
+[Contact support →](/help/contact) for general security questions, or email security@atlashr.xyz for security-specific concerns.
