@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 const slides = [
-  { src: "/landing/collage/lagos-team.webp", label: "Lagos, Nigeria", sub: "Nigeria engineering and operations hubs" },
-  { src: "/landing/collage/india-team.webp", label: "India", sub: "India distributed product and finance teams" },
-  { src: "/landing/collage/us-team.webp", label: "United States", sub: "US multi-state remote workforces" },
-  { src: "/landing/collage/london-team.webp", label: "London, UK", sub: "UK cross-border hiring corridors" },
+  { src: "/landing/collage/lagos-landmark.webp", label: "Lagos, Nigeria", sub: "Lekki-Ikoyi Link Bridge" },
+  { src: "/landing/collage/india-landmark.webp", label: "India", sub: "Taj Mahal, Agra" },
+  { src: "/landing/collage/us-landmark.webp", label: "United States", sub: "New York City skyline" },
+  { src: "/landing/collage/london-landmark.webp", label: "London, UK", sub: "Big Ben and Westminster" },
 ];
 
 export function CorridorSlideshow() {
