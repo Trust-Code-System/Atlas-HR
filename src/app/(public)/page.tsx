@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import { GlobalHiringCalculator } from "./global-hiring-calculator";
 import { CorridorSlideshow } from "@/components/landing/corridor-slideshow";
+import { HeroSandbox } from "./hero-sandbox";
 
 export const metadata: Metadata = {
   title: "Global HR, Compliance, Payroll, and People Operations Software",
@@ -11,19 +11,88 @@ export const metadata: Metadata = {
     "Atlas HR helps global teams hire, onboard, pay, manage, and protect employees across Nigeria, India, the UK, and the US with AI-powered compliance workflows.",
 };
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Structured data (SEO) ──────────────────────────────────────────────────
+// JSON-LD for the homepage. Supports the programmatic-SEO strategy: gives search
+// engines an Organization + SoftwareApplication entity and an FAQ block that can
+// earn rich results for the compliance questions Atlas answers.
 
-const stats = [
-  { value: "4", label: "Country hubs" },
-  { value: "10+", label: "AI workflows" },
-  { value: "40+", label: "Templates & tools" },
-  { value: "2026", label: "HR resource engine" },
+// Public var read directly — avoids pulling full server-env validation into the
+// homepage render path (see root layout note).
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+const faqEntries = [
+  {
+    q: "What is the standard probation period in India?",
+    a: "Probation in India is primarily contract- and state-rule driven, typically three to six months. Atlas checks the state, role type, notice language, and PF/ESI exposure, then generates a compliant offer pack and confirmation workflow.",
+  },
+  {
+    q: "Can I hire employees in Nigeria, India, the UK, and the US from one platform?",
+    a: "Yes. Atlas HR provides country-aware hiring, contracts, payroll workflows, and compliance alerts for Nigeria, India, the United Kingdom, and the United States from a single workspace.",
+  },
+  {
+    q: "How much does it cost to employ someone in another country?",
+    a: "Use the Atlas global hiring calculator to model employer cost, statutory load, benefits, and compliance checkpoints per country before you hire, then continue straight into contracts and onboarding.",
+  },
+  {
+    q: "Is Atlas HR secure and compliant?",
+    a: "Atlas HR is built with GDPR controls and is SOC 2-ready, with visible AI data boundaries, audit logs, and a public Trust Center so security and privacy can be reviewed before procurement.",
+  },
 ];
 
-const aiAnswerLines = [
-  "Probation is usually contract and state-rule driven in India.",
-  "Atlas checks the state, role type, notice language, PF/ESI exposure, and confirmation workflow.",
-  "Next action: generate the India offer pack and onboarding checklist.",
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "Atlas HR",
+      url: SITE_URL,
+      description:
+        "Global HR, compliance, and payroll software for teams hiring across Nigeria, India, the UK, and the US.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "Atlas HR",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Atlas HR",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: SITE_URL,
+      description:
+        "Cross-border HR platform with country-aware documents, compliance alerts, payroll workflows, and Atlas AI.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        description: "Free to start — no credit card required.",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqEntries.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+// Honest value/trust signals rather than vanity feature counts. Replace with
+// real customer logos / testimonials / "N companies" the moment those exist —
+// social proof converts HR buyers far better than product-fact numbers.
+const stats = [
+  { value: "4", label: "Country hubs — NG · IN · UK · US" },
+  { value: "40+", label: "Templates, tools & calculators" },
+  { value: "Free", label: "To start — no card required" },
+  { value: "GDPR", label: "Controls · SOC2-ready" },
 ];
 
 const automationSteps = [
@@ -161,6 +230,11 @@ function CorridorLogo({
 export default function HomePage() {
   return (
     <div className="bg-white text-navy-900 overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        // Structured data is static/trusted content built above — safe to inline.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
 
       {/* ══ HERO ══════════════════════════════════════════════════════════════ */}
       <section className="relative isolate overflow-hidden pt-10 pb-16 lg:pt-12 lg:pb-20">
@@ -176,6 +250,10 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_480px] lg:px-8">
           {/* Left — copy */}
           <div className="max-w-2xl">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+              Early access — building with our first design-partner teams
+            </div>
             <h1 className="text-[52px] font-extrabold leading-[1.08] tracking-tight text-navy-950 text-shadow-hero sm:text-[64px] lg:text-[72px]">
               HR for teams
               <br />
@@ -232,65 +310,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right — AI demo card */}
-          <div className="relative">
-            {/* Glow layer */}
-            <div className="absolute -inset-6 rounded-[40px] bg-linear-to-br from-blue-400/20 via-blue-500/15 to-blue-600/10 blur-3xl" />
-            {/* Floating top-right accent */}
-            <div className="absolute -top-6 -right-6 h-24 w-24 rounded-3xl bg-linear-to-br from-blue-400 to-blue-600 opacity-20 rotate-12 blur-sm" />
-
-            <div className="relative rounded-[28px] border border-slate-200/80 bg-white/80 p-6 shadow-2xl shadow-blue-900/10 backdrop-blur-xl">
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-5">
-                <div className="relative h-11 w-11 rounded-2xl bg-linear-to-br from-blue-500 via-blue-600 to-navy-800 flex items-center justify-center shadow-lg shadow-blue-600/30">
-                  <div className="absolute inset-0 rounded-2xl bg-white/10" />
-                  <AtlasAiMark className="h-[22px] w-[22px] text-white relative z-10" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-navy-900">AI Compliance Sandbox</p>
-                  <p className="text-xs text-slate-400">Public product-led preview</p>
-                </div>
-                <div className="ml-auto flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[11px] font-semibold text-emerald-600">Live</span>
-                </div>
-              </div>
-
-              {/* Question bubble */}
-              <div className="rounded-2xl bg-linear-to-br from-slate-50 to-blue-50/50 border border-blue-100/60 p-4 mb-4">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-2">Visitor asks</p>
-                <p className="text-sm font-medium text-navy-800">What is the standard probation period in India?</p>
-              </div>
-
-              {/* AI responses */}
-              <div className="space-y-2.5 mb-5">
-                {aiAnswerLines.map((line, i) => (
-                  <div
-                    key={i}
-                    className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 px-3.5 py-3 text-sm leading-relaxed text-slate-700"
-                  >
-                    <span className="shrink-0 mt-0.5 h-4 w-4 rounded-full bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                      <svg className="h-2.5 w-2.5 text-white" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3" />
-                      </svg>
-                    </span>
-                    {line}
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <Link
-                href="/sign-up?intent=generate-india-contract"
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-navy-950 px-4 py-3.5 text-sm font-bold text-white hover:bg-navy-800 transition-colors"
-              >
-                <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Generate the contract in Atlas
-              </Link>
-            </div>
-          </div>
+          {/* Right — real, anonymous AI mini-sandbox */}
+          <HeroSandbox />
         </div>
       </section>
 
@@ -299,13 +320,15 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Country coverage</p>
           {[
-            { code: "NG", label: "Nigeria" },
-            { code: "IN", label: "India" },
-            { code: "GB", label: "United Kingdom" },
-            { code: "US", label: "United States" },
+            { flag: "/logos/flags/ng.svg", label: "Nigeria" },
+            { flag: "/logos/flags/in.svg", label: "India" },
+            { flag: "/logos/flags/gb.svg", label: "United Kingdom" },
+            { flag: "/logos/flags/us.svg", label: "United States" },
           ].map((c) => (
             <div key={c.label} className="flex items-center gap-2 text-sm font-semibold text-navy-700">
-              <span className="inline-flex h-5 w-7 items-center justify-center rounded bg-navy-100 text-[10px] font-bold tracking-wide text-navy-500">{c.code}</span>
+              <span className="inline-flex h-5 w-7 items-center justify-center overflow-hidden rounded bg-white shadow-sm ring-1 ring-slate-200">
+                <Image src={c.flag} alt={`${c.label} flag`} width={28} height={20} className="h-full w-full object-cover" />
+              </span>
               {c.label}
             </div>
           ))}

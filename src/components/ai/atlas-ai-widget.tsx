@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AtlasAiMark } from "@/components/atlas-ai-mark";
 import { MarkdownContent } from "@/components/ai/markdown-content";
+import { ActionsPanel, type ProposedAction } from "@/components/ai/actions-panel";
 import { cn } from "@/lib/utils";
 
 interface WidgetSkill {
@@ -17,6 +18,7 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  actions?: ProposedAction[];
 }
 
 interface Props {
@@ -36,6 +38,8 @@ export function AtlasAiWidget({ enabledSkills }: Props) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [conversations, setConversations] = useState<{ id: string; title: string; updated_at: string }[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  // Inline action proposals the user has dismissed (keyed by assistant msg id).
+  const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -128,6 +132,8 @@ export function AtlasAiWidget({ enabledSkills }: Props) {
           const event = JSON.parse(line.slice(6));
           if (event.type === "chunk") {
             setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + event.text } : m)));
+          } else if (event.type === "actions") {
+            setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, actions: event.actions } : m)));
           } else if (event.type === "done" && event.conversationId) {
             setConversationId(event.conversationId);
           }
@@ -362,37 +368,49 @@ export function AtlasAiWidget({ enabledSkills }: Props) {
               ) : (
                 <div className="space-y-4">
                   {messages.map((m) => (
-                    <div key={m.id} className={cn("flex gap-2", m.role === "user" ? "flex-row-reverse" : "flex-row")}>
-                      <div
-                        className={cn(
-                          "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] font-bold",
-                          m.role === "user"
-                            ? "bg-navy-800 text-white"
-                            : "bg-gradient-to-br from-blue-600 to-cyan-500 text-white",
-                        )}
-                      >
-                        {m.role === "user" ? "YOU" : <AtlasAiMark className="h-3.5 w-3.5" />}
+                    <div key={m.id}>
+                      <div className={cn("flex gap-2", m.role === "user" ? "flex-row-reverse" : "flex-row")}>
+                        <div
+                          className={cn(
+                            "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] font-bold",
+                            m.role === "user"
+                              ? "bg-navy-800 text-white"
+                              : "bg-gradient-to-br from-blue-600 to-cyan-500 text-white",
+                          )}
+                        >
+                          {m.role === "user" ? "YOU" : <AtlasAiMark className="h-3.5 w-3.5" />}
+                        </div>
+                        <div
+                          className={cn(
+                            "max-w-[85%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed",
+                            m.role === "user"
+                              ? "rounded-tr-sm bg-navy-900 text-white"
+                              : "rounded-tl-sm border border-navy-200 bg-white text-navy-700",
+                          )}
+                        >
+                          {m.role === "assistant" && !m.content ? (
+                            <div className="flex gap-1 py-1">
+                              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:0ms]" />
+                              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:150ms]" />
+                              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:300ms]" />
+                            </div>
+                          ) : m.role === "user" ? (
+                            <span className="whitespace-pre-wrap">{m.content}</span>
+                          ) : (
+                            <MarkdownContent text={m.content} />
+                          )}
+                        </div>
                       </div>
-                      <div
-                        className={cn(
-                          "max-w-[85%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed",
-                          m.role === "user"
-                            ? "rounded-tr-sm bg-navy-900 text-white"
-                            : "rounded-tl-sm border border-navy-200 bg-white text-navy-700",
-                        )}
-                      >
-                        {m.role === "assistant" && !m.content ? (
-                          <div className="flex gap-1 py-1">
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:0ms]" />
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:150ms]" />
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy-300 [animation-delay:300ms]" />
-                          </div>
-                        ) : m.role === "user" ? (
-                          <span className="whitespace-pre-wrap">{m.content}</span>
-                        ) : (
-                          <MarkdownContent text={m.content} />
-                        )}
-                      </div>
+
+                      {/* Inline action proposals pushed by Atlas — shown automatically. */}
+                      {m.role === "assistant" && m.actions && m.actions.length > 0 && !dismissedActions.has(m.id) && (
+                        <div className="mt-1.5 pl-8">
+                          <ActionsPanel
+                            initialActions={m.actions}
+                            onClose={() => setDismissedActions((prev) => new Set(prev).add(m.id))}
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
                   <div ref={bottomRef} />

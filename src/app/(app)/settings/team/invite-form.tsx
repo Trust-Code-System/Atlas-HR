@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { inviteMember } from "../org/actions";
 
 const ROLE_OPTIONS = [
@@ -18,6 +19,7 @@ const ROLE_OPTIONS = [
 
 export function InviteForm() {
   const [state, formAction, pending] = useActionState(inviteMember, null);
+  const [role, setRole] = useState("hr_manager");
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -34,7 +36,12 @@ export function InviteForm() {
         </p>
       </div>
 
-      <form ref={formRef} action={formAction} className="flex flex-col sm:flex-row gap-3 sm:items-end">
+      <form
+        ref={formRef}
+        action={formAction}
+        onReset={() => setRole("hr_manager")}
+        className="flex flex-col sm:flex-row gap-3 sm:items-end"
+      >
         <div className="flex-1 space-y-1.5">
           <Label htmlFor="invite-email" required>Work email</Label>
           <Input
@@ -46,18 +53,16 @@ export function InviteForm() {
             required
           />
         </div>
-        <div className="space-y-1.5 sm:w-56">
+        <div className="space-y-1.5 sm:w-72">
           <Label htmlFor="invite-role">Role</Label>
-          <select
+          <Select
             id="invite-role"
             name="role"
-            defaultValue="hr_manager"
-            className="w-full h-10 rounded-xl border border-navy-200 bg-white px-3 text-sm text-navy-800 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-          >
-            {ROLE_OPTIONS.map((r) => (
-              <option key={r.value} value={r.value}>{r.label}</option>
-            ))}
-          </select>
+            value={role}
+            onChange={setRole}
+            options={ROLE_OPTIONS}
+            menuClassName="border-navy-200 shadow-xl shadow-navy-900/10"
+          />
         </div>
         <Button type="submit" loading={pending} className="sm:w-auto">
           Send invite

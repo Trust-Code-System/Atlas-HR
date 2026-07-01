@@ -3,7 +3,7 @@ import { AtlasLogo } from "@/components/atlas-logo";
 
 const footerLinks = {
   Product: [
-    { label: "Features", href: "/" },
+    { label: "Features", href: "/features" },
     { label: "Pricing", href: "/pricing" },
     { label: "Atlas AI", href: "/sign-up" },
     { label: "Workflows", href: "/workflows" },
@@ -22,16 +22,14 @@ const footerLinks = {
     { label: "Nigeria compliance", href: "/compare/nigeria-hr-compliance" },
   ],
   Company: [
-    { label: "About", href: "/" },
-    { label: "Atlas vs SHRM", href: "/compare/atlas-hr-vs-shrm-templates" },
-    { label: "Atlas vs Workable", href: "/compare/atlas-hr-vs-workable-templates" },
-    { label: "Contact", href: "mailto:sales@atlashr.com" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ],
   Legal: [
     { label: "Trust Center", href: "/trust" },
-    { label: "Privacy Policy", href: "/trust" },
-    { label: "Terms of Service", href: "/trust" },
-    { label: "GDPR", href: "/trust" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "GDPR", href: "/gdpr" },
   ],
 };
 

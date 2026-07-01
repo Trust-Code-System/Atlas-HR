@@ -23,6 +23,7 @@ import {
 import { classifyRequest } from "@/lib/ai/intent";
 import { routeModel } from "@/lib/ai/model-router";
 import { canViewSalaryData, canDo } from "@/lib/auth/permissions";
+import { planAgentActions, looksActionable } from "@/lib/ai/agent/plan-actions";
 
 // The agentic tool loop can run several model rounds plus tool calls and
 // "deep thinking", which easily exceeds Vercel's short default function
@@ -276,7 +277,17 @@ async function handlePost(req: NextRequest) {
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       req.headers.get("x-real-ip") ??
       "unknown";
-    const rl = await checkRateLimit(`copilot:${ip}`, 10, 86400);
+    // Two-tier limit for unauthenticated traffic (the public hero sandbox):
+    // a short burst cap blocks rapid scripted abuse, and a daily cap bounds
+    // total LLM cost per visitor before they must sign up.
+    const burst = await checkRateLimit(`copilot:burst:${ip}`, 4, 60);
+    if (!burst.allowed) {
+      return new Response(
+        JSON.stringify({ error: "rate_limited", reason: "You're sending questions too fast — please wait a moment and try again." }),
+        { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60" } }
+      );
+    }
+    const rl = await checkRateLimit(`copilot:${ip}`, 8, 86400);
     if (!rl.allowed) {
       return new Response(
         JSON.stringify({ error: "limit_reached", reason: "Sign up for free to continue chatting with Atlas.", upgrade_url: "/sign-up" }),
@@ -420,6 +431,29 @@ async function handlePost(req: NextRequest) {
           total_time_ms: Date.now() - copilotStart,
           thinking_enabled: useThinking,
         });
+      }
+
+      // Atlas can DO things, not just answer. When the user asked for something
+      // actionable, plan concrete workspace actions and stream them so the UI
+      // can offer them inline for one-click approval. Employees stay read-only.
+      // Nothing is executed here — the user still approves each action, which
+      // runs through the guarded /api/ai/agent/execute endpoint.
+      if (toolOrgId !== null && !isEmployeePortal && looksActionable(userQuery)) {
+        try {
+          const plan = await planAgentActions(
+            { supabase, orgId: toolOrgId, isAdmin: toolIsAdmin },
+            userQuery,
+          );
+          if (plan.actions.length > 0) {
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ type: "actions", actions: plan.actions, labels: plan.labels })}\n\n`,
+              ),
+            );
+          }
+        } catch {
+          // Non-fatal — the answer still stands without proposed actions.
+        }
       }
 
       if (user && conversationId && fullText) {
