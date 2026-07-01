@@ -131,9 +131,23 @@ function SignUpWizard() {
   }
 
   return (
-    <div className="w-full max-w-lg">
-      {/* Progress */}
-      <div className="flex items-center justify-center gap-0 mb-8">
+    <div className="w-full max-w-[580px]">
+      <div className="mb-5 rounded-3xl border border-navy-200/80 bg-white/80 px-5 py-4 shadow-lg shadow-blue-950/5 backdrop-blur">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-700">
+              Workspace setup
+            </p>
+            <p className="mt-1 text-sm text-navy-500">
+              Create your account, company profile, and first priorities.
+            </p>
+          </div>
+          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100 sm:inline-flex">
+            Free forever
+          </span>
+        </div>
+
+        <div className="flex items-center justify-center gap-0">
         {steps.map((s, i) => (
           <div key={s.number} className="flex items-center">
             <div className="flex flex-col items-center gap-1">
@@ -141,14 +155,14 @@ function SignUpWizard() {
                 className={cn(
                   "h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
                   step > s.number
-                    ? "bg-blue-600 border-blue-600 text-white"
+                    ? "border-blue-600 bg-blue-600 text-white shadow-sm shadow-blue-600/30"
                     : step === s.number
-                    ? "bg-white border-blue-600 text-blue-600"
-                    : "bg-white border-navy-200 text-navy-400"
+                    ? "border-blue-600 bg-white text-blue-600 shadow-sm"
+                    : "border-navy-200 bg-white text-navy-400"
                 )}
               >
                 {step > s.number ? (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
@@ -167,7 +181,7 @@ function SignUpWizard() {
             {i < steps.length - 1 && (
               <div
                 className={cn(
-                  "h-0.5 w-16 mx-2 mb-5 transition-colors",
+                  "mx-2 mb-5 h-0.5 w-12 transition-colors sm:w-16",
                   step > s.number ? "bg-blue-600" : "bg-navy-200"
                 )}
               />
@@ -175,17 +189,21 @@ function SignUpWizard() {
           </div>
         ))}
       </div>
+      </div>
 
-      <div className="bg-white rounded-2xl border border-navy-200 shadow-md p-8">
+      <div className="rounded-3xl border border-navy-200/80 bg-white/95 p-6 shadow-2xl shadow-blue-950/10 backdrop-blur sm:p-8">
         {/* Step 1: Account */}
         {step === 1 && (
           <>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-navy-900">Create your account</h1>
-              <p className="text-navy-500 text-sm mt-1">
+              <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-blue-700 ring-1 ring-blue-100">
+                Step 1 of {steps.length}
+              </span>
+              <h1 className="mt-4 text-3xl font-bold tracking-tight text-navy-950">Create your account</h1>
+              <p className="mt-2 text-sm leading-6 text-navy-500">
                 {isInvited
                   ? "You've been invited to join a workspace on Atlas HR."
-                  : "Get started with Atlas HR — free forever."}
+                  : "Get started with Atlas HR - free forever."}
               </p>
             </div>
 
@@ -198,6 +216,7 @@ function SignUpWizard() {
                   onChange={(e) => persist({ full_name: e.target.value })}
                   placeholder="Jane Smith"
                   autoComplete="name"
+                  className="h-12 rounded-2xl"
                 />
               </div>
               <div className="space-y-1.5">
@@ -210,7 +229,7 @@ function SignUpWizard() {
                   placeholder="jane@company.com"
                   autoComplete="email"
                   readOnly={isInvited && Boolean(inviteEmail)}
-                  className={isInvited && inviteEmail ? "bg-navy-50 text-navy-500" : undefined}
+                  className={cn("h-12 rounded-2xl", isInvited && inviteEmail && "bg-navy-50 text-navy-500")}
                 />
                 {isInvited && inviteEmail && (
                   <p className="text-xs text-navy-400">This is the address your invitation was sent to.</p>
@@ -225,12 +244,13 @@ function SignUpWizard() {
                   onChange={(e) => persist({ password: e.target.value })}
                   placeholder="Min. 8 characters"
                   autoComplete="new-password"
+                  className="h-12 rounded-2xl"
                 />
               </div>
             </div>
 
             <Button
-              className="w-full mt-6"
+              className="mt-6 h-12 w-full rounded-2xl"
               size="lg"
               onClick={() => {
                 if (!form.full_name || !form.email || !form.password) {
@@ -245,14 +265,14 @@ function SignUpWizard() {
                 setStep(isInvited ? 3 : 2);
               }}
             >
-              Continue →
+              Continue
             </Button>
 
             {error && (
-              <p className="mt-3 text-sm text-error text-center">{error}</p>
+              <p className="mt-3 rounded-2xl border border-red-200 bg-red-50 p-3 text-center text-sm text-error">{error}</p>
             )}
 
-            <p className="mt-4 text-center text-sm text-navy-500">
+            <p className="mt-4 rounded-2xl bg-navy-50 px-4 py-3 text-center text-sm text-navy-500">
               Already have an account?{" "}
               <Link
                 href={isInvited ? `/sign-in?invite=${inviteToken}` : "/sign-in"}
@@ -268,8 +288,11 @@ function SignUpWizard() {
         {step === 2 && !isInvited && (
           <>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-navy-900">About you &amp; your company</h1>
-              <p className="text-navy-500 text-sm mt-1">
+              <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-blue-700 ring-1 ring-blue-100">
+                Step 2 of {steps.length}
+              </span>
+              <h1 className="mt-4 text-3xl font-bold tracking-tight text-navy-950">About you and your company</h1>
+              <p className="mt-2 text-sm leading-6 text-navy-500">
                 You&apos;ll be the workspace admin and can invite your team after signup.
               </p>
             </div>
@@ -281,7 +304,7 @@ function SignUpWizard() {
                   id="role"
                   value={form.role}
                   onChange={(value) => persist({ role: value })}
-                  placeholder="Select your role…"
+                  placeholder="Select your role..."
                   options={HR_ROLES.map((r) => ({ value: r, label: r }))}
                 />
                 <p className="text-xs text-navy-400">
@@ -295,6 +318,7 @@ function SignUpWizard() {
                   value={form.company_name}
                   onChange={(e) => persist({ company_name: e.target.value })}
                   placeholder="Acme Corp"
+                  className="h-12 rounded-2xl"
                 />
                 <p className="text-xs text-navy-400">
                   This creates your workspace at{" "}
@@ -309,7 +333,7 @@ function SignUpWizard() {
                   id="industry"
                   value={form.industry}
                   onChange={(value) => persist({ industry: value })}
-                  placeholder="Select industry…"
+                  placeholder="Select industry..."
                   options={INDUSTRIES.map((i) => ({
                     value: i.slug,
                     label: i.label,
@@ -322,7 +346,7 @@ function SignUpWizard() {
                   id="company_size"
                   value={form.company_size}
                   onChange={(value) => persist({ company_size: value })}
-                  placeholder="Select size…"
+                  placeholder="Select size..."
                   options={COMPANY_SIZES.map((s) => ({
                     value: s,
                     label: `${s} employees`,
@@ -332,18 +356,17 @@ function SignUpWizard() {
             </div>
 
             {error && (
-              <p className="mt-4 text-sm text-error bg-red-50 border border-red-200 rounded-xl p-3">
+              <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-error">
                 {error}
               </p>
             )}
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" size="lg" className="flex-1" onClick={() => setStep(1)}>
-                ← Back
+              <Button variant="outline" size="lg" className="h-12 flex-1 rounded-2xl" onClick={() => setStep(1)}>
+                Back
               </Button>
               <Button
                 size="lg"
-                className="flex-1"
                 onClick={() => {
                   if (!form.role) {
                     setError("Please select your role.");
@@ -356,8 +379,9 @@ function SignUpWizard() {
                   setError("");
                   setStep(3);
                 }}
+                className="h-12 flex-1 rounded-2xl"
               >
-                Continue →
+                Continue
               </Button>
             </div>
           </>
@@ -367,8 +391,11 @@ function SignUpWizard() {
         {step === 3 && (
           <>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-navy-900">What brings you here?</h1>
-              <p className="text-navy-500 text-sm mt-1">Select all that apply. We&apos;ll tailor your experience.</p>
+              <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-blue-700 ring-1 ring-blue-100">
+                Final step
+              </span>
+              <h1 className="mt-4 text-3xl font-bold tracking-tight text-navy-950">What brings you here?</h1>
+              <p className="mt-2 text-sm leading-6 text-navy-500">Select all that apply. We&apos;ll tailor your experience.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -386,10 +413,10 @@ function SignUpWizard() {
                       })
                     }
                     className={cn(
-                      "text-left px-3 py-2.5 rounded-xl border-2 text-xs font-medium transition-all",
+                      "min-h-12 rounded-2xl border-2 px-3 py-2.5 text-left text-xs font-semibold transition-all",
                       selected
-                        ? "border-blue-600 bg-blue-50 text-blue-700"
-                        : "border-navy-200 bg-white text-navy-600 hover:border-navy-300"
+                        ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
+                        : "border-navy-200 bg-white text-navy-600 hover:border-navy-300 hover:bg-navy-50"
                     )}
                   >
                     {goal}
@@ -399,16 +426,16 @@ function SignUpWizard() {
             </div>
 
             {error && (
-              <p className="mt-4 text-sm text-error bg-red-50 border border-red-200 rounded-xl p-3">
+              <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-error">
                 {error}
               </p>
             )}
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" size="lg" className="flex-1" onClick={() => setStep(isInvited ? 1 : 2)}>
-                ← Back
+              <Button variant="outline" size="lg" className="h-12 flex-1 rounded-2xl" onClick={() => setStep(isInvited ? 1 : 2)}>
+                Back
               </Button>
-              <Button size="lg" className="flex-1" loading={loading} onClick={handleSubmit}>
+              <Button size="lg" className="h-12 flex-1 rounded-2xl" loading={loading} onClick={handleSubmit}>
                 {isInvited ? "Join workspace" : "Create account"}
               </Button>
             </div>
@@ -424,7 +451,7 @@ function SignUpWizard() {
         )}
       </div>
 
-      <p className="mt-4 text-center text-xs text-navy-400">
+      <p className="mt-4 px-4 text-center text-xs leading-5 text-navy-400">
         By signing up, you agree to our{" "}
         <Link href="/terms" className="underline hover:text-navy-600">Terms</Link> and{" "}
         <Link href="/privacy" className="underline hover:text-navy-600">Privacy Policy</Link>.

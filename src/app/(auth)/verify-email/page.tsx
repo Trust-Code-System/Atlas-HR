@@ -5,7 +5,7 @@ export default function VerifyEmailPage() {
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl border border-navy-200 shadow-md p-8 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 mx-auto mb-6">
-          <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg aria-hidden="true" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
@@ -29,7 +29,7 @@ export default function VerifyEmailPage() {
           href="/sign-in"
           className="text-sm text-blue-600 font-semibold hover:text-blue-700 transition-colors"
         >
-          Back to sign in →
+          Back to sign in
         </Link>
       </div>
     </div>
