@@ -69,7 +69,7 @@ export function OrgForm() {
           <p className="text-xs text-navy-500">
             Your workspace URL will be:{" "}
             <span className="font-mono font-medium text-navy-700">
-              atlashr.com/<span className="text-blue-600">{slug}</span>
+              atlashr.xyz/<span className="text-blue-600">{slug}</span>
             </span>
           </p>
         </div>

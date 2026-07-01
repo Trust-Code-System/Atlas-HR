@@ -234,8 +234,9 @@ describe("Stripe webhook idempotency under concurrency", () => {
       .select("id, processed_at")
       .eq("id", event.id);
 
+    const [eventRow] = (eventRows ?? []) as Array<{ processed_at: string | null }>;
     expect(eventRows?.length).toBe(1);
-    expect(eventRows?.[0]?.processed_at).not.toBeNull();
+    expect(eventRow?.processed_at).not.toBeNull();
 
     const { data: subRows } = await admin
       .from("subscriptions")

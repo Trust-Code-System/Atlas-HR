@@ -30,6 +30,9 @@ const footerLinks = {
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "GDPR", href: "/gdpr" },
+    { label: "Cookie Policy", href: "/legal/cookies" },
+    { label: "DPA", href: "/legal/dpa" },
+    { label: "Acceptable Use", href: "/legal/acceptable-use" },
   ],
 };
 
@@ -74,11 +77,11 @@ export function PublicFooter() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-navy-500 text-sm">
+          <p className="text-navy-400 text-sm">
             © {new Date().getFullYear()} Atlas HR. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-navy-500 text-sm">Built for HR teams worldwide</span>
+            <span className="text-navy-400 text-sm">Built for HR teams worldwide</span>
           </div>
         </div>
       </div>

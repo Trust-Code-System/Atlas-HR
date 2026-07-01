@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "How Atlas HR collects, uses, stores, and protects personal data across our platform and website.",
 };
 
-const CONTACT_EMAIL = "hello@trustcodesystem.tech";
+const CONTACT_EMAIL = "privacy@atlashr.xyz";
 const LAST_UPDATED = "July 1, 2026";
 
 const sections = [
@@ -109,11 +109,6 @@ export default function PrivacyPage() {
 
       <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-4xl space-y-10">
-          <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-800">
-            This document is a general template and does not constitute legal
-            advice. Please have it reviewed by qualified counsel before relying
-            on it for your business.
-          </p>
           {sections.map((section) => (
             <div key={section.heading}>
               <h2 className="text-2xl font-bold tracking-tight text-navy-950">

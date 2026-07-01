@@ -10,7 +10,7 @@ export default function ExampleEmail() {
       <Paragraph>
         This template verifies that the shared React Email components render correctly.
       </Paragraph>
-      <Button href="https://atlashr.com/dashboard">Open Atlas HR</Button>
+      <Button href="https://atlashr.xyz/dashboard">Open Atlas HR</Button>
     </Layout>
   );
 }

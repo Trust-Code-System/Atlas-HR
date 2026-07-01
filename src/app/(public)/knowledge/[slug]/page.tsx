@@ -17,6 +17,9 @@ import {
 } from "@/lib/trust-data";
 import { getTemplate } from "@/lib/templates-data";
 
+// Public var read directly (avoids pulling server-env validation into render).
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export async function generateStaticParams() {
   const articles = getAllArticles();
   return articles.map((a) => ({ slug: a.slug }));
@@ -29,6 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${article.title} | Atlas HR`,
     description: article.excerpt,
+    alternates: { canonical: `/knowledge/${slug}` },
   };
 }
 
@@ -45,8 +49,44 @@ export default async function KnowledgeArticlePage({ params }: { params: Promise
     .slice(0, 3);
   const needsLegalReview = LEGAL_REVIEW_CATEGORIES.has(article.category);
 
+  // Structured data (SEO / E-E-A-T): Article with author + reviewer + dates,
+  // plus a breadcrumb trail. Static/trusted content — safe to inline.
+  const canonical = `${SITE_URL}/knowledge/${slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": `${canonical}#article`,
+        headline: article.title,
+        description: article.excerpt,
+        datePublished: article.publishedAt,
+        dateModified: article.updatedAt,
+        inLanguage: "en",
+        mainEntityOfPage: canonical,
+        author: { "@type": "Organization", name: article.author },
+        ...(article.reviewedBy
+          ? { reviewedBy: { "@type": "Person", name: article.reviewedBy } }
+          : {}),
+        publisher: { "@type": "Organization", name: "Atlas HR", url: SITE_URL },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Knowledge", item: `${SITE_URL}/knowledge` },
+          { "@type": "ListItem", position: 3, name: article.title, item: canonical },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="bg-slate-50 text-navy-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="bg-navy-900 px-4 py-12 text-white sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">

@@ -29,10 +29,37 @@ const PREVIEW_CONTEXT =
 
 type Phase = "idle" | "streaming" | "done" | "limit" | "error";
 
+type SandboxSource =
+  | {
+      kind: "article";
+      title: string;
+      slug: string;
+      category?: string;
+      publishedAt?: string;
+    }
+  | {
+      kind: "document";
+      title: string;
+      docId: string;
+    };
+
+function formatSourceDate(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
 export function HeroSandbox() {
   const [question, setQuestion] = useState("");
   const [asked, setAsked] = useState<string | null>(null);
   const [answer, setAnswer] = useState("");
+  const [sources, setSources] = useState<SandboxSource[]>([]);
+  const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [limitReason, setLimitReason] = useState<string | null>(null);
   const inFlight = useRef(false);
@@ -43,6 +70,8 @@ export function HeroSandbox() {
     inFlight.current = true;
     setAsked(q);
     setAnswer("");
+    setSources([]);
+    setGeneratedAt(null);
     setLimitReason(null);
     setPhase("streaming");
 
@@ -85,6 +114,9 @@ export function HeroSandbox() {
             if (event.type === "chunk") {
               got += event.text;
               setAnswer(got);
+            } else if (event.type === "sources" && Array.isArray(event.sources)) {
+              setSources(event.sources);
+              setGeneratedAt(event.generatedAt ?? new Date().toISOString());
             }
           } catch {
             /* skip malformed */
@@ -125,7 +157,7 @@ export function HeroSandbox() {
           </div>
           <div>
             <p className="text-sm font-bold text-navy-900">AI Compliance Sandbox</p>
-            <p className="text-xs text-slate-400">Ask a real HR question — free, no sign-up</p>
+            <p className="text-xs text-slate-500">Ask a real HR question — free, no sign-up</p>
           </div>
           <div className="ml-auto flex items-center gap-1">
             <span className={`h-2 w-2 rounded-full bg-emerald-400 ${busy ? "animate-pulse" : ""}`} />
@@ -150,6 +182,7 @@ export function HeroSandbox() {
                 rows={2}
                 maxLength={2000}
                 placeholder={SAMPLE_QUESTION}
+                aria-label="Ask Atlas an HR or compliance question"
                 className="min-h-[44px] flex-1 resize-none bg-transparent px-1 text-sm font-medium text-navy-800 placeholder:text-slate-400 focus:outline-none"
               />
               <button
@@ -158,7 +191,7 @@ export function HeroSandbox() {
                 className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-700 text-white shadow-md shadow-blue-500/25 transition-opacity disabled:opacity-40"
                 aria-label="Ask Atlas"
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </button>
@@ -189,7 +222,7 @@ export function HeroSandbox() {
                   className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 px-3.5 py-3 text-sm leading-relaxed text-slate-700"
                 >
                   <span className="shrink-0 mt-0.5 h-4 w-4 rounded-full bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                    <svg className="h-2.5 w-2.5 text-white" fill="currentColor" viewBox="0 0 8 8">
+                    <svg aria-hidden="true" className="h-2.5 w-2.5 text-white" fill="currentColor" viewBox="0 0 8 8">
                       <circle cx="4" cy="4" r="3" />
                     </svg>
                   </span>
@@ -209,7 +242,37 @@ export function HeroSandbox() {
           ) : (
             <div className="rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm leading-relaxed text-slate-700">
               {answer ? (
-                <AiMarkdown text={answer} />
+                <>
+                  <AiMarkdown text={answer} />
+                  <div className="mt-3 border-t border-slate-200 pt-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                      {generatedAt ? `Generated ${formatSourceDate(generatedAt)}` : "Generated answer"}
+                    </p>
+                    {sources.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {sources.map((source) =>
+                          source.kind === "article" ? (
+                            <Link
+                              key={`${source.kind}-${source.slug}`}
+                              href={`/knowledge/${source.slug}`}
+                              className="rounded-full border border-blue-100 bg-white px-2.5 py-1 text-[11px] font-semibold text-blue-700 hover:border-blue-200 hover:text-blue-800"
+                            >
+                              {source.title}
+                              {source.publishedAt ? ` · ${formatSourceDate(source.publishedAt)}` : ""}
+                            </Link>
+                          ) : (
+                            <span
+                              key={`${source.kind}-${source.docId}`}
+                              className="rounded-full border border-emerald-100 bg-white px-2.5 py-1 text-[11px] font-semibold text-emerald-700"
+                            >
+                              {source.title}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
               ) : (
                 <span className="inline-flex items-center gap-1 text-slate-400">
                   <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.2s]" />
@@ -221,12 +284,21 @@ export function HeroSandbox() {
           )}
         </div>
 
+        {/* Disclaimer — AI output is assistive, not legal advice */}
+        <p className="mb-3 text-[11px] leading-4 text-slate-500">
+          Atlas AI can be incomplete or out of date and is not legal advice — verify before acting.{" "}
+          <Link href="/countries" className="font-semibold text-blue-600 hover:text-blue-700">
+            See official sources by country
+          </Link>
+          .
+        </p>
+
         {/* CTA */}
         <Link
           href={phase === "limit" ? "/sign-up" : contractHref}
           className="flex w-full items-center justify-center gap-2 rounded-2xl bg-navy-950 px-4 py-3.5 text-sm font-bold text-white hover:bg-navy-800 transition-colors"
         >
-          <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           {phase === "limit" ? "Sign up free to keep going" : "Continue this in Atlas"}

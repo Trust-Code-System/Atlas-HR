@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TOOLS_CONFIG } from "@/lib/tools-config";
 import { PublicHeroBg } from "@/components/landing/public-hero-bg";
+import { PublicToolPreview } from "./public-tool-preview";
 
 export const metadata = {
   title: "HR Tools and Calculators | Atlas HR",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default function ToolsPage() {
   const categories = [...new Set(TOOLS_CONFIG.map((tool) => tool.category))];
+  const previewToolSlugs = new Set(["job-description-generator", "offer-letter"]);
 
   return (
     <div className="text-navy-900">
@@ -27,12 +29,17 @@ export default function ToolsPage() {
             <Link href="/sign-up" className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500">
               Use tools in Atlas
             </Link>
+            <Link href="#free-tool-preview" className="rounded-xl border border-white/15 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10">
+              Try free previews
+            </Link>
             <Link href="/templates" className="rounded-xl border border-white/15 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10">
               Browse templates
             </Link>
           </div>
         </div>
       </section>
+
+      <PublicToolPreview />
 
       <section className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl space-y-10">
@@ -50,8 +57,11 @@ export default function ToolsPage() {
                     </div>
                     <h3 className="text-base font-bold text-navy-900">{tool.name}</h3>
                     <p className="mt-2 text-sm leading-6 text-slate-600">{tool.description}</p>
-                    <Link href="/sign-up" className="mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-900">
-                      Open in Atlas
+                    <Link
+                      href={previewToolSlugs.has(tool.slug) ? "#free-tool-preview" : "/sign-up"}
+                      className="mt-5 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-900"
+                    >
+                      {previewToolSlugs.has(tool.slug) ? "Use free preview" : "Open in Atlas"}
                     </Link>
                   </article>
                 ))}

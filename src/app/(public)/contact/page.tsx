@@ -5,10 +5,10 @@ import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 export const metadata: Metadata = {
   title: "Contact | Atlas HR",
   description:
-    "Get in touch with the Atlas HR team. Email us at hello@atlashr.com for sales, support, partnerships, or general questions.",
+    "Get in touch with the Atlas HR team. Email us at hello@atlashr.xyz for sales, support, partnerships, or general questions.",
 };
 
-const CONTACT_EMAIL = "hello@atlashr.com";
+const CONTACT_EMAIL = "hello@atlashr.xyz";
 
 const reasons = [
   {

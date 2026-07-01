@@ -14,8 +14,8 @@ const faqs = [
     a: "Yes, you can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle.",
   },
   {
-    q: "Is there a free trial for paid plans?",
-    a: "Yes — all paid plans come with a 14-day free trial. No credit card required.",
+    q: "How do I try Pro?",
+    a: "Every account starts on the Free plan — free forever, no credit card. You can upgrade to Pro whenever you're ready, and switch or cancel at any time.",
   },
   {
     q: "What payment methods do you accept?",

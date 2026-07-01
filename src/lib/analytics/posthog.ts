@@ -6,6 +6,23 @@ import type { consentLevel } from "@/lib/consent";
 type ConsentLevel = ReturnType<typeof consentLevel>;
 
 let initialized = false;
+let loaded = false;
+let analyticsGranted = false;
+let pendingPageviewUrl: string | undefined;
+let lastPageviewUrl: string | undefined;
+
+function sendPageview(url?: string) {
+  if (url && url === lastPageviewUrl) return;
+  posthog.capture("$pageview", url ? { $current_url: url } : undefined);
+  lastPageviewUrl = url;
+}
+
+function flushPendingPageview() {
+  if (!loaded || !analyticsGranted || !pendingPageviewUrl) return;
+  const url = pendingPageviewUrl;
+  pendingPageviewUrl = undefined;
+  sendPageview(url);
+}
 
 export function initAnalytics(consentLevel: ConsentLevel) {
   if (initialized) return;
@@ -22,31 +39,38 @@ export function initAnalytics(consentLevel: ConsentLevel) {
     capture_pageleave: true,
     persistence: "localStorage+cookie",
     autocapture: false,        // explicit events only — implicit is noise
+    advanced_disable_flags: true,
     session_recording: {
       maskAllInputs: true,
       maskTextSelector: "[data-private]",
     },
     loaded: (ph) => {
+      loaded = true;
       if (process.env.NODE_ENV === "development") ph.debug();
+      window.setTimeout(flushPendingPageview, 0);
     },
   });
 
   initialized = true;
 }
 
-export function grantAnalytics() {
+export function grantAnalytics(initialPageviewUrl?: string) {
+  if (initialPageviewUrl) pendingPageviewUrl = initialPageviewUrl;
+  analyticsGranted = true;
   if (!initialized) {
     initAnalytics("analytics");
-    posthog.opt_in_capturing();
-  } else {
-    posthog.opt_in_capturing();
   }
+  flushPendingPageview();
 }
 
 export function denyAnalytics() {
   if (!initialized) return;
   posthog.opt_out_capturing();
   initialized = false;
+  loaded = false;
+  analyticsGranted = false;
+  pendingPageviewUrl = undefined;
+  lastPageviewUrl = undefined;
   // Clear PostHog cookies so consent is fully respected
   if (typeof document !== "undefined") {
     document.cookie.split(";").forEach((cookie) => {
@@ -60,7 +84,12 @@ export function denyAnalytics() {
 
 export function capturePageview(url?: string) {
   if (!initialized) return;
-  posthog.capture("$pageview", url ? { $current_url: url } : undefined);
+  if (!loaded) {
+    pendingPageviewUrl = url;
+    return;
+  }
+  if (!analyticsGranted) return;
+  sendPageview(url);
 }
 
 export function isAnalyticsReady() {

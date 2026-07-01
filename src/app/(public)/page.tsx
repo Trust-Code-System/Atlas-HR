@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { GlobalHiringCalculator } from "./global-hiring-calculator";
+import { GlobalHiringCalculatorLazy } from "./calculator-lazy";
 import { CorridorSlideshow } from "@/components/landing/corridor-slideshow";
 import { HeroSandbox } from "./hero-sandbox";
 
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Global HR, Compliance, Payroll, and People Operations Software",
   description:
     "Atlas HR helps global teams hire, onboard, pay, manage, and protect employees across Nigeria, India, the UK, and the US with AI-powered compliance workflows.",
+  alternates: { canonical: "/" },
 };
 
 // ─── Structured data (SEO) ──────────────────────────────────────────────────
@@ -35,7 +36,7 @@ const faqEntries = [
   },
   {
     q: "Is Atlas HR secure and compliant?",
-    a: "Atlas HR is built with GDPR controls and is SOC 2-ready, with visible AI data boundaries, audit logs, and a public Trust Center so security and privacy can be reviewed before procurement.",
+    a: "Atlas HR is built with GDPR controls and is working toward SOC 2, with visible AI data boundaries, audit logs, and a public Trust Center so security and privacy can be reviewed before procurement.",
   },
 ];
 
@@ -92,7 +93,7 @@ const stats = [
   { value: "4", label: "Country hubs — NG · IN · UK · US" },
   { value: "40+", label: "Templates, tools & calculators" },
   { value: "Free", label: "To start — no card required" },
-  { value: "GDPR", label: "Controls · SOC2-ready" },
+  { value: "GDPR", label: "Controls · SOC 2 in progress" },
 ];
 
 const automationSteps = [
@@ -250,6 +251,9 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_480px] lg:px-8">
           {/* Left — copy */}
           <div className="max-w-2xl">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700">
+              The cross-border HR platform for US &amp; UK teams hiring in India and Africa
+            </p>
             <h1 className="text-[52px] font-extrabold leading-[1.08] tracking-tight text-navy-950 text-shadow-hero sm:text-[64px] lg:text-[72px]">
               HR for teams
               <br />
@@ -258,7 +262,7 @@ export default function HomePage() {
                 <span className="bg-linear-to-r from-navy-900 via-blue-700 to-blue-500 bg-clip-text text-transparent">
                   cross borders.
                 </span>
-                <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 300 8" fill="none" preserveAspectRatio="none">
+                <svg aria-hidden="true" className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 300 8" fill="none" preserveAspectRatio="none">
                   <path d="M0 7 C75 1, 225 1, 300 7" stroke="url(#underline-grad)" strokeWidth="3" strokeLinecap="round" />
                   <defs>
                     <linearGradient id="underline-grad" x1="0" y1="0" x2="1" y2="0">
@@ -283,15 +287,18 @@ export default function HomePage() {
                 className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-blue-600 to-blue-700 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/25 hover:from-blue-500 hover:to-blue-600 transition-all duration-200"
               >
                 Start free — no card needed
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </Link>
               <Link
                 href="#global-hiring-calculator"
-                className="inline-flex items-center gap-2 rounded-2xl border border-navy-200 bg-white px-7 py-3.5 text-sm font-bold text-navy-800 shadow-sm hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-2xl px-4 py-3.5 text-sm font-semibold text-navy-600 hover:text-blue-700 transition-colors"
               >
                 Try the hiring calculator
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
               </Link>
             </div>
 
@@ -314,7 +321,7 @@ export default function HomePage() {
       {/* ══ TRUST BAR ═════════════════════════════════════════════════════════ */}
       <section className="border-y border-slate-100 bg-slate-50/70 px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Country coverage</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">Country coverage</p>
           {[
             { flag: "/logos/flags/ng.svg", label: "Nigeria" },
             { flag: "/logos/flags/in.svg", label: "India" },
@@ -329,11 +336,11 @@ export default function HomePage() {
             </div>
           ))}
           <div className="h-5 w-px bg-slate-200 hidden sm:block" />
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-400">
-            <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+            <svg aria-hidden="true" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            SOC2 ready · GDPR controls
+            SOC 2 in progress · GDPR controls
           </div>
         </div>
       </section>
@@ -342,7 +349,7 @@ export default function HomePage() {
       <section id="plg-tools" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">Product-led growth</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">Try Atlas before you book a demo</p>
             <h2 className="text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
               Feel the value{" "}
               <span className="bg-linear-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
@@ -365,7 +372,7 @@ export default function HomePage() {
                 <div className={`absolute inset-x-0 top-0 h-1 rounded-t-[24px] bg-linear-to-r ${f.from} ${f.to}`} />
                 {/* Icon */}
                 <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br ${f.from} ${f.to} shadow-lg`}>
-                  <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <svg aria-hidden="true" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={f.icon} />
                   </svg>
                 </div>
@@ -373,7 +380,7 @@ export default function HomePage() {
                 <p className="text-sm leading-relaxed text-slate-600">{f.body}</p>
                 <div className="mt-5 flex items-center gap-1 text-xs font-semibold text-blue-600 group-hover:gap-2 transition-all">
                   Explore
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </div>
@@ -389,7 +396,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(59,130,246,0.2),transparent)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-        <div className="mx-auto max-w-7xl">
+        <div className="relative z-10 mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div className="max-w-2xl">
               <p className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-3">Interactive cost & risk calculator</p>
@@ -406,12 +413,12 @@ export default function HomePage() {
               className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors backdrop-blur"
             >
               Browse all country hubs
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
           </div>
-          <GlobalHiringCalculator />
+          <GlobalHiringCalculatorLazy />
         </div>
       </section>
 
@@ -433,7 +440,7 @@ export default function HomePage() {
               <Link href="/workflows/termination" className="inline-flex items-center gap-2 rounded-2xl bg-navy-950 px-5 py-3 text-sm font-semibold text-white hover:bg-navy-800 transition-colors">
                 View termination workflow
               </Link>
-              <Link href="/integrations" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-navy-800 hover:border-blue-300 hover:text-blue-700 transition-colors">
+              <Link href="/sign-up?intent=integrations" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-navy-800 hover:border-blue-300 hover:text-blue-700 transition-colors">
                 See integrations
               </Link>
             </div>
@@ -443,7 +450,7 @@ export default function HomePage() {
           <div className="relative">
             <div className="absolute -inset-4 rounded-[32px] bg-linear-to-br from-blue-50 to-blue-100/50 -z-10" />
             <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-lg">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4">Automated termination workflow</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-600 mb-4">Automated termination workflow</p>
               <div className="space-y-3">
                 {automationSteps.map((step, index) => (
                   <div key={step.title} className="relative">
@@ -453,17 +460,17 @@ export default function HomePage() {
                           ? "bg-linear-to-br from-rose-500 to-orange-600 shadow-md shadow-rose-500/25"
                           : "bg-linear-to-br from-blue-500 to-blue-700 shadow-md shadow-blue-500/25"
                       } text-white`}>
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
                         </svg>
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-navy-900 leading-snug">{step.title}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">{step.type}</p>
+                        <p className="text-[11px] text-slate-600 mt-0.5">{step.type}</p>
                       </div>
                       <span className={`hidden shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold sm:inline-flex ${
                         index === 0
-                          ? "bg-rose-50 text-rose-600"
+                          ? "bg-rose-50 text-rose-700"
                           : "bg-blue-50 text-blue-600"
                       }`}>
                         {index === 0 ? "Trigger" : "Auto"}
@@ -473,7 +480,7 @@ export default function HomePage() {
                 ))}
               </div>
               <div className="mt-4 flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3">
-                <svg className="h-4 w-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg aria-hidden="true" className="h-4 w-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <p className="text-xs font-semibold text-emerald-700">Audit trail complete · All tasks closed · Documents archived</p>
@@ -489,7 +496,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_100%_50%,rgba(30,64,175,0.12),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_60%_at_0%_50%,rgba(59,130,246,0.1),transparent)]" />
 
-        <div className="mx-auto max-w-7xl grid gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div className="relative z-10 mx-auto max-w-7xl grid gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           {/* Slideshow */}
           <div className="relative">
             <div className="absolute -inset-3 rounded-[32px] bg-linear-to-br from-blue-500/20 to-blue-700/10 blur-2xl" />
@@ -497,7 +504,7 @@ export default function HomePage() {
           </div>
 
           <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-3">Cross-border corridor niche</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-3">Built for US &amp; UK teams hiring in India and Africa</p>
             <h2 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl leading-tight">
               Hire in any country.
               <br />
@@ -519,7 +526,7 @@ export default function HomePage() {
                       <h3 className="text-base font-bold text-white group-hover:text-blue-300 transition-colors">{card.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-navy-300">{card.body}</p>
                     </div>
-                    <svg className="h-4 w-4 text-slate-600 ml-auto shrink-0 group-hover:text-blue-400 transition-colors mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg aria-hidden="true" className="h-4 w-4 text-slate-600 ml-auto shrink-0 group-hover:text-blue-400 transition-colors mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
@@ -534,7 +541,7 @@ export default function HomePage() {
       <section id="resource-center" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-7xl grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div className="lg:sticky lg:top-24">
-            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">Programmatic SEO</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">Country guides that turn into workflows</p>
             <h2 className="text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl leading-tight">
               Turn every country
               <br />
@@ -545,7 +552,7 @@ export default function HomePage() {
             </p>
             <Link href="/knowledge" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
               Browse the knowledge base
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -567,7 +574,7 @@ export default function HomePage() {
                     <h3 className="text-base font-bold text-navy-950 group-hover:text-blue-700 transition-colors">{resource.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-slate-600">{resource.body}</p>
                   </div>
-                  <svg className="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg aria-hidden="true" className="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </div>
@@ -584,7 +591,7 @@ export default function HomePage() {
 
         <div className="mx-auto max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">Global platform strategy</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">One system for global HR operations</p>
             <h2 className="text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
               Complex HR made{" "}
               <span className="bg-linear-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
@@ -603,7 +610,7 @@ export default function HomePage() {
                 className="group rounded-[20px] border border-white bg-white/80 p-6 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 backdrop-blur"
               >
                 <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br ${move.from} ${move.to} shadow-md text-white`}>
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.9}>
+                  <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.9}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={move.icon} />
                   </svg>
                 </div>
@@ -624,7 +631,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_100%_100%,rgba(30,64,175,0.12),transparent)]" />
             <div className="relative">
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/10">
-                <svg className="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <svg aria-hidden="true" className="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -636,9 +643,9 @@ export default function HomePage() {
                 HR buyers need proof that employee data, AI prompts, document outputs, audit logs, and regional privacy requirements are treated as core product concerns.
               </p>
               <div className="mt-5 grid grid-cols-2 gap-3">
-                {["SOC2 readiness", "GDPR controls", "AI data usage policy", "Audit logs"].map((item) => (
+                {["SOC 2 in progress", "GDPR controls", "AI data usage policy", "Audit logs"].map((item) => (
                   <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm font-semibold text-white">
-                    <svg className="h-3.5 w-3.5 text-blue-400 shrink-0" fill="currentColor" viewBox="0 0 8 8">
+                    <svg aria-hidden="true" className="h-3.5 w-3.5 text-blue-400 shrink-0" fill="currentColor" viewBox="0 0 8 8">
                       <circle cx="4" cy="4" r="3" />
                     </svg>
                     {item}
@@ -647,7 +654,7 @@ export default function HomePage() {
               </div>
               <Link href="/trust" className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-navy-950 hover:bg-blue-50 transition-colors">
                 Open Trust Center
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </Link>
@@ -657,7 +664,7 @@ export default function HomePage() {
           {/* Predictive AI card */}
           <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-sm">
             <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-500/25">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+              <svg aria-hidden="true" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
@@ -672,7 +679,7 @@ export default function HomePage() {
               <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
                 <div className="flex items-start gap-3">
                   <div className="shrink-0 h-6 w-6 rounded-full bg-rose-500 flex items-center justify-center">
-                    <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg aria-hidden="true" className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01" />
                     </svg>
                   </div>
@@ -685,7 +692,7 @@ export default function HomePage() {
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
                 <div className="flex items-start gap-3">
                   <div className="shrink-0 h-6 w-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg aria-hidden="true" className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -722,7 +729,7 @@ export default function HomePage() {
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-sm font-bold text-blue-700 hover:bg-blue-50 shadow-xl shadow-black/20 transition-all hover:-translate-y-0.5"
             >
               Start free — no card needed
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>

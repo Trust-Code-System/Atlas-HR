@@ -397,6 +397,7 @@ async function handlePost(req: NextRequest) {
         title: a.title,
         slug: a.slug,
         category: a.category,
+        publishedAt: a.publishedAt,
       }));
       const documentSources = docSources.map((d) => ({
         kind: "document" as const,
@@ -406,7 +407,13 @@ async function handlePost(req: NextRequest) {
       const allSources = [...articleSources, ...documentSources];
       if (allSources.length > 0) {
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "sources", sources: allSources })}\n\n`)
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "sources",
+              generatedAt: new Date().toISOString(),
+              sources: allSources,
+            })}\n\n`
+          )
         );
       }
 

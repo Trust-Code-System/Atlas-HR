@@ -144,6 +144,7 @@ export function GlobalHiringCalculator() {
             <Label htmlFor="calculator-country">Hiring country</Label>
             <Select
               id="calculator-country"
+              aria-label="Hiring country"
               value={country}
               options={countryOptions}
               onChange={(value) => {
@@ -157,6 +158,7 @@ export function GlobalHiringCalculator() {
             <Label htmlFor="calculator-role">Role</Label>
             <Select
               id="calculator-role"
+              aria-label="Role"
               value={role}
               options={roleOptions}
               onChange={(value) => setRole(value as RoleKey)}
@@ -166,6 +168,7 @@ export function GlobalHiringCalculator() {
             <Label htmlFor="calculator-engagement">Engagement model</Label>
             <Select
               id="calculator-engagement"
+              aria-label="Engagement model"
               value={engagement}
               options={engagementOptions}
               onChange={(value) => setEngagement(value as EngagementKey)}
@@ -196,7 +199,7 @@ export function GlobalHiringCalculator() {
 
         <div className="mt-5 rounded-xl bg-slate-50 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Lead magnet preview
+            Save your country hiring checklist
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-700">
             Save this estimate, generate a country-specific checklist, and continue into
@@ -211,7 +214,20 @@ export function GlobalHiringCalculator() {
               aria-label="Work email"
             />
             <Link
-              href={`/sign-up?intent=global-hiring&country=${country}&email=${encodeURIComponent(email)}`}
+              href={`/sign-up?intent=global-hiring&country=${country}`}
+              onClick={() => {
+                // Prefill signup with the email via first-party storage — keeps
+                // PII out of the URL/referrer. Signup reads this same key.
+                const value = email.trim();
+                if (!value) return;
+                try {
+                  const key = "atlas-signup-wizard";
+                  const prev = JSON.parse(localStorage.getItem(key) ?? "{}");
+                  localStorage.setItem(key, JSON.stringify({ ...prev, email: value }));
+                } catch {
+                  /* storage unavailable — proceed without prefill */
+                }
+              }}
               className="inline-flex h-10 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-500"
             >
               Save checklist

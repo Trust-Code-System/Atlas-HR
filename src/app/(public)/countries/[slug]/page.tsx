@@ -9,6 +9,9 @@ import { COUNTRY_MDX_COMPONENTS } from "@/components/mdx/country-mdx-components"
 import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 import type { TocHeading } from "@/lib/mdx";
 
+// Public var read directly (avoids pulling server-env validation into render).
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 // Map app slugs (nigeria/india/uk/us) to MDX file slugs
 const MDX_SLUG_MAP: Record<string, string> = {
   nigeria: "nigeria",
@@ -63,6 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${country.name} HR Country Hub | Atlas HR`,
     description: country.summary,
+    alternates: { canonical: `/countries/${slug}` },
   };
 }
 
@@ -83,8 +87,24 @@ export default async function CountryPage({ params }: { params: Promise<{ slug: 
 
   const regulators = COUNTRY_REGULATORS[slug] ?? [];
 
+  // Breadcrumb structured data (SEO). Static/trusted content — safe to inline.
+  const canonical = `${SITE_URL}/countries/${slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Countries", item: `${SITE_URL}/countries` },
+      { "@type": "ListItem", position: 3, name: `${country.name} HR Country Hub`, item: canonical },
+    ],
+  };
+
   return (
     <div className="bg-slate-50 text-navy-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
         <PublicHeroBg />

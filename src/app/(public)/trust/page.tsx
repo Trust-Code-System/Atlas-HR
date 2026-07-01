@@ -39,12 +39,30 @@ const controls = [
 ];
 
 const roadmap = [
-  "Published subprocessor register with regions and purposes",
   "SOC 2 readiness evidence pack",
   "Customer-facing data export and deletion request workflow",
   "AI prompt/data retention disclosure by feature",
   "Security questionnaire download for procurement",
   "Incident status and breach communication runbook",
+];
+
+// Current subprocessors, drawn from the actual production stack. Keep this list
+// accurate and dated — procurement reviewers check it against network activity.
+const subprocessors = [
+  { name: "Supabase", purpose: "Authentication, application database, and file storage", region: "EU / US" },
+  { name: "Vercel", purpose: "Application hosting and content delivery (CDN)", region: "Global edge" },
+  { name: "Anthropic", purpose: "AI assistance — Atlas AI primary model", region: "US" },
+  { name: "OpenAI", purpose: "AI assistance — fallback model", region: "US" },
+  { name: "Stripe", purpose: "Subscription billing and payments", region: "US / EU" },
+  { name: "Resend", purpose: "Transactional and notification email delivery", region: "US / EU" },
+  { name: "PostHog", purpose: "Consent-gated product analytics", region: "EU" },
+];
+
+const dataFacts = [
+  { label: "Data residency", value: "Primary application data is hosted with Supabase and Vercel. Region-specific hosting can be arranged for enterprise engagements." },
+  { label: "Encryption", value: "Data is encrypted in transit (TLS). Sensitive integration secrets are encrypted at rest, and organisation data is governed by row-level security." },
+  { label: "Retention", value: "Workspace data is retained for the life of the account. Customers can request export or deletion; data is deleted or returned on termination per the DPA." },
+  { label: "Breach notification", value: "On a personal-data breach affecting Customer Data, Atlas HR notifies affected customers without undue delay, with the information needed to meet their own obligations." },
 ];
 
 export default function TrustPage() {
@@ -73,7 +91,7 @@ export default function TrustPage() {
                 Start a secure workspace
               </Link>
               <Link
-                href="mailto:security@atlashr.com"
+                href="mailto:security@atlashr.xyz"
                 className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
               >
                 Contact security
@@ -153,6 +171,59 @@ export default function TrustPage() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Subprocessors & data handling ── */}
+      <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Subprocessors</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-navy-950">Who helps us run Atlas HR.</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+            We engage a limited set of subprocessors under data-protection terms consistent with the GDPR.
+            This list is current as of the date below; customers are notified of material changes. A Data
+            Processing Agreement (DPA) is available on request.
+          </p>
+
+          <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-navy-900">
+                <tr>
+                  <th scope="col" className="px-4 py-3 font-bold">Subprocessor</th>
+                  <th scope="col" className="px-4 py-3 font-bold">Purpose</th>
+                  <th scope="col" className="px-4 py-3 font-bold">Region</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {subprocessors.map((s) => (
+                  <tr key={s.name} className="bg-white">
+                    <td className="px-4 py-3 font-semibold text-navy-900">{s.name}</td>
+                    <td className="px-4 py-3 text-slate-600">{s.purpose}</td>
+                    <td className="px-4 py-3 text-slate-600">{s.region}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              href="mailto:legal@atlashr.xyz?subject=DPA%20request"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500"
+            >
+              Request a DPA
+            </Link>
+            <span className="text-xs text-slate-400">List current as of July 2026.</span>
+          </div>
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2">
+            {dataFacts.map((f) => (
+              <div key={f.label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-blue-700">{f.label}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{f.value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

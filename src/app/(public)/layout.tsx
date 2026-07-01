@@ -1,5 +1,6 @@
 import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
+import { SiteAnalytics } from "@/components/analytics/site-analytics";
 
 export default function PublicLayout({
   children,
@@ -11,6 +12,7 @@ export default function PublicLayout({
       <PublicHeader />
       <main className="flex-1 bg-public-content">{children}</main>
       <PublicFooter />
+      <SiteAnalytics />
     </div>
   );
 }

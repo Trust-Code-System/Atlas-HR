@@ -299,7 +299,7 @@ function SignUpWizard() {
                 <p className="text-xs text-navy-400">
                   This creates your workspace at{" "}
                   <span className="font-mono text-navy-500">
-                    atlashr.com/{slugify(form.company_name.trim()) || "your-company"}
+                    atlashr.xyz/{slugify(form.company_name.trim()) || "your-company"}
                   </span>
                 </p>
               </div>
@@ -426,8 +426,8 @@ function SignUpWizard() {
 
       <p className="mt-4 text-center text-xs text-navy-400">
         By signing up, you agree to our{" "}
-        <Link href="/" className="underline hover:text-navy-600">Terms</Link> and{" "}
-        <Link href="/" className="underline hover:text-navy-600">Privacy Policy</Link>.
+        <Link href="/terms" className="underline hover:text-navy-600">Terms</Link> and{" "}
+        <Link href="/privacy" className="underline hover:text-navy-600">Privacy Policy</Link>.
       </p>
     </div>
   );

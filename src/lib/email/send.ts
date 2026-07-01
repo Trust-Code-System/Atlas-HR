@@ -124,7 +124,7 @@ export async function sendEmail(args: {
   const headers: Record<string, string> = {};
   if (args.unsubscribeUrl) {
     headers["List-Unsubscribe"] =
-      `<${args.unsubscribeUrl}>, <mailto:unsubscribe@atlashr.com?subject=Unsubscribe>`;
+      `<${args.unsubscribeUrl}>, <mailto:unsubscribe@atlashr.xyz?subject=Unsubscribe>`;
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
   }
 

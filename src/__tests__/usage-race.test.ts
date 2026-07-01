@@ -142,7 +142,7 @@ describe("Usage tracking under concurrency", () => {
 
   test("pro user with Infinity limit allows all concurrent requests", async () => {
     const admin = createAdminClient();
-    await admin.from("profiles").update({ role: "pro" }).eq("id", testUserId);
+    await admin.from("profiles").update({ role: "pro" }).eq("id", testUserId!);
 
     const results = await Promise.all(
       Array.from({ length: 100 }, () =>

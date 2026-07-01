@@ -39,7 +39,7 @@ export function SupportTicketAlert({
         </Paragraph>
         <Paragraph>{body}</Paragraph>
       </Card>
-      <Button href={`https://atlashr.com/admin/tickets?id=${ticketId}`}>
+      <Button href={`https://atlashr.xyz/admin/tickets?id=${ticketId}`}>
         View ticket in admin
       </Button>
     </Layout>

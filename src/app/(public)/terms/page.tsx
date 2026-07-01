@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "The terms and conditions that govern your use of the Atlas HR website and platform.",
 };
 
-const CONTACT_EMAIL = "hello@trustcodesystem.tech";
+const CONTACT_EMAIL = "legal@atlashr.xyz";
 const LAST_UPDATED = "July 1, 2026";
 
 const sections = [
@@ -86,7 +86,7 @@ const sections = [
   {
     heading: "13. Governing law",
     paragraphs: [
-      "These Terms are governed by the laws of the jurisdiction in which Atlas HR is established, without regard to conflict-of-laws principles, except where mandatory local law applies.",
+      "These Terms are governed by the laws of the Federal Republic of Nigeria, without regard to conflict-of-laws principles, except where mandatory local law applies.",
     ],
   },
   {
@@ -115,11 +115,6 @@ export default function TermsPage() {
 
       <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-4xl space-y-10">
-          <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-800">
-            This document is a general template and does not constitute legal
-            advice. Please have it reviewed by qualified counsel before relying
-            on it for your business.
-          </p>
           {sections.map((section) => (
             <div key={section.heading}>
               <h2 className="text-2xl font-bold tracking-tight text-navy-950">

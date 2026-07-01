@@ -50,7 +50,7 @@ const plans: Plan[] = [
     description: "For growing HR teams that need more power.",
     highlight: true,
     badge: "Most popular",
-    cta: "Start Pro trial",
+    cta: "Get started",
     ctaHref: "/sign-up",
     features: [
       "Unlimited AI document generations",
@@ -71,15 +71,15 @@ const plans: Plan[] = [
     description: "For large organisations with complex needs.",
     highlight: false,
     cta: "Contact sales",
-    ctaHref: "mailto:sales@atlashr.com",
+    ctaHref: "mailto:sales@atlashr.xyz",
     features: [
       "Everything in Pro",
       "Custom branding",
       "SSO / SAML integration",
       "Dedicated account manager",
       "Custom integrations",
-      "SLA guarantee",
-      "On-premise option",
+      "SLA available",
+      "Custom deployment options",
       "Custom data retention",
     ],
     unavailable: [],
@@ -133,7 +133,7 @@ export function PricingPlans() {
               className={cn(
                 "relative flex flex-col rounded-2xl border p-8",
                 plan.highlight
-                  ? "border-blue-600 bg-white shadow-xl shadow-green-50 ring-2 ring-blue-600"
+                  ? "border-blue-600 bg-white shadow-xl shadow-blue-100 ring-2 ring-blue-600"
                   : "border-navy-200 bg-white shadow-sm"
               )}
             >

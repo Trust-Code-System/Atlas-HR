@@ -58,7 +58,7 @@ export function Layout({
         >
           <Section style={{ padding: "32px 40px 24px", borderBottom: "1px solid #E2E8F0" }}>
             <Img
-              src="https://atlashr.com/logo-email.png"
+              src="https://atlashr.xyz/logo-email.png"
               width="120"
               height="32"
               alt="Atlas HR"
@@ -84,15 +84,15 @@ export function Layout({
               Atlas HR - Lagos, Nigeria
             </Text>
             <Text style={{ fontSize: 12, color: "#64748B", margin: "8px 0 0" }}>
-              <Link href="https://atlashr.com" style={{ color: "#2563EB" }}>
-                atlashr.com
+              <Link href="https://atlashr.xyz" style={{ color: "#2563EB" }}>
+                atlashr.xyz
               </Link>
               {" - "}
-              <Link href="https://atlashr.com/privacy" style={{ color: "#2563EB" }}>
+              <Link href="https://atlashr.xyz/privacy" style={{ color: "#2563EB" }}>
                 Privacy
               </Link>
               {" - "}
-              <Link href="https://atlashr.com/terms" style={{ color: "#2563EB" }}>
+              <Link href="https://atlashr.xyz/terms" style={{ color: "#2563EB" }}>
                 Terms
               </Link>
             </Text>

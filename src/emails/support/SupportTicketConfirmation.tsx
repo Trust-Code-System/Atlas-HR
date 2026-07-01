@@ -35,7 +35,7 @@ export function SupportTicketConfirmation({
       <Paragraph>
         While you wait, you may find an answer in our Help Center or Knowledge Hub.
       </Paragraph>
-      <Button href="https://atlashr.com/help">Visit Help Center</Button>
+      <Button href="https://atlashr.xyz/help">Visit Help Center</Button>
     </Layout>
   );
 }
