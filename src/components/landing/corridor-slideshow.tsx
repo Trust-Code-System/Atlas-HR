@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 const slides = [
-  { src: "/landing/collage/lagos.png",    label: "Lagos, Nigeria",  sub: "🇳🇬 Engineering & operations hubs" },
-  { src: "/landing/collage/taj-india.png",label: "India",           sub: "🇮🇳 Distributed product & finance teams" },
-  { src: "/landing/collage/new-york.png", label: "United States",   sub: "🇺🇸 Multi-state remote workforces" },
-  { src: "/landing/collage/london.png",   label: "London, UK",      sub: "🇬🇧 Cross-border hiring corridors" },
+  { src: "/landing/collage/lagos-team.webp", label: "Lagos, Nigeria", sub: "Nigeria engineering and operations hubs" },
+  { src: "/landing/collage/india-team.webp", label: "India", sub: "India distributed product and finance teams" },
+  { src: "/landing/collage/us-team.webp", label: "United States", sub: "US multi-state remote workforces" },
+  { src: "/landing/collage/london-team.webp", label: "London, UK", sub: "UK cross-border hiring corridors" },
 ];
 
 export function CorridorSlideshow() {
@@ -29,7 +29,6 @@ export function CorridorSlideshow() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Slides */}
       {slides.map((slide, i) => (
         <div
           key={slide.src}
@@ -42,16 +41,14 @@ export function CorridorSlideshow() {
             alt={slide.label}
             fill
             sizes="(min-width: 1024px) 46vw, 100vw"
-            className="object-cover"
+            className="object-cover object-center"
             priority={i === 0}
           />
         </div>
       ))}
 
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-linear-to-tr from-navy-950/70 via-navy-950/20 to-transparent pointer-events-none" />
 
-      {/* Prev / Next */}
       <button
         type="button"
         onClick={prev}
@@ -73,13 +70,11 @@ export function CorridorSlideshow() {
         </svg>
       </button>
 
-      {/* Caption */}
-      <div className="absolute bottom-4 left-4 rounded-2xl border border-white/20 bg-black/40 backdrop-blur-md px-4 py-2.5 transition-all duration-500">
+      <div className="absolute bottom-4 left-4 max-w-[calc(100%-6rem)] rounded-2xl border border-white/20 bg-black/40 px-4 py-2.5 backdrop-blur-md transition-all duration-500">
         <p className="text-xs font-bold text-white leading-snug">{slides[current].label}</p>
-        <p className="text-[11px] text-white/65 mt-0.5">{slides[current].sub}</p>
+        <p className="mt-0.5 truncate text-[11px] text-white/65">{slides[current].sub}</p>
       </div>
 
-      {/* Dot indicators */}
       <div className="absolute bottom-4 right-4 flex items-center gap-1.5">
         {slides.map((_, i) => (
           <button

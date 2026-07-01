@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { COMPARISON_PAGES, getComparisonPage } from "@/lib/public-resource-data";
+import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 
 export function generateStaticParams() {
   return COMPARISON_PAGES.map((comparison) => ({ slug: comparison.slug }));
@@ -37,8 +38,9 @@ export default async function ComparePage({ params }: { params: Promise<{ slug: 
   return (
     <div className="bg-slate-50 text-navy-900">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <section className="bg-navy-900 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+        <PublicHeroBg />
+        <div className="relative mx-auto max-w-7xl">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-300">Comparison</p>
           <h1 className="mt-3 max-w-4xl text-4xl font-bold sm:text-5xl">{comparison.title}</h1>
           <p className="mt-5 max-w-3xl text-base leading-7 text-navy-200">{comparison.summary}</p>

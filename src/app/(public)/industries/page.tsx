@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { INDUSTRY_HUBS } from "@/lib/public-resource-data";
+import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 
 export const metadata = {
   title: "HR Industry Guides | Atlas HR",
@@ -10,8 +11,9 @@ export const metadata = {
 export default function IndustriesPage() {
   return (
     <div className="bg-slate-50 text-navy-900">
-      <section className="bg-navy-900 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+        <PublicHeroBg />
+        <div className="relative mx-auto max-w-7xl">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-300">Industry guides</p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold sm:text-5xl">
             HR playbooks shaped around how each workforce actually operates.

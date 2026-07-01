@@ -6,6 +6,7 @@ import { TOOLS_CONFIG } from "@/lib/tools-config";
 import { COUNTRY_HUBS, getCountryHub } from "@/lib/public-resource-data";
 import { getCountryGuide } from "@/lib/mdx";
 import { COUNTRY_MDX_COMPONENTS } from "@/components/mdx/country-mdx-components";
+import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 import type { TocHeading } from "@/lib/mdx";
 
 // Map app slugs (nigeria/india/uk/us) to MDX file slugs
@@ -85,8 +86,9 @@ export default async function CountryPage({ params }: { params: Promise<{ slug: 
   return (
     <div className="bg-slate-50 text-navy-900">
       {/* ── Hero ── */}
-      <section className="bg-navy-900 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+        <PublicHeroBg />
+        <div className="relative mx-auto max-w-7xl">
           <Link href="/countries" className="text-sm font-semibold text-blue-300 hover:text-blue-100 transition-colors">
             ← Countries
           </Link>

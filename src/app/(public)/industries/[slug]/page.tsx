@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { TEMPLATES } from "@/lib/templates-data";
 import { TOOLS_CONFIG } from "@/lib/tools-config";
 import { INDUSTRY_HUBS, getIndustryHub } from "@/lib/public-resource-data";
+import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 
 export function generateStaticParams() {
   return INDUSTRY_HUBS.map((industry) => ({ slug: industry.slug }));
@@ -32,8 +33,9 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="bg-slate-50 text-navy-900">
-      <section className="bg-navy-900 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+        <PublicHeroBg />
+        <div className="relative mx-auto max-w-7xl">
           <Link href="/industries" className="text-sm font-semibold text-blue-300 hover:text-blue-100">Industries</Link>
           <h1 className="mt-4 max-w-4xl text-4xl font-bold sm:text-5xl">{industry.name} HR guide</h1>
           <p className="mt-5 max-w-3xl text-base leading-7 text-navy-200">{industry.summary}</p>

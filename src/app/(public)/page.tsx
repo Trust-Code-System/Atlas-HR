@@ -250,10 +250,6 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_480px] lg:px-8">
           {/* Left — copy */}
           <div className="max-w-2xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-blue-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-              Early access — building with our first design-partner teams
-            </div>
             <h1 className="text-[52px] font-extrabold leading-[1.08] tracking-tight text-navy-950 text-shadow-hero sm:text-[64px] lg:text-[72px]">
               HR for teams
               <br />

@@ -1,6 +1,7 @@
 import { getUser } from "@/lib/auth/get-user";
 import { getPublishedComplianceUpdates } from "@/lib/compliance-data";
 import { ComplianceClient } from "./compliance-client";
+import { PublicHeroBg } from "@/components/landing/public-hero-bg";
 
 export const metadata = {
   title: "HR Compliance Change Tracker | Atlas HR",
@@ -19,8 +20,9 @@ export default async function ComplianceUpdatesPage() {
 
   return (
     <div className="bg-slate-50 text-navy-900">
-      <section className="bg-navy-900 px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden bg-navy-950 px-4 py-16 text-white sm:px-6 lg:px-8">
+        <PublicHeroBg />
+        <div className="relative mx-auto max-w-7xl">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-300">
             Compliance change tracker
           </p>
