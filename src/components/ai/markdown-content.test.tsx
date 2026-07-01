@@ -38,3 +38,25 @@ describe("markdown renderers terminate on pathological input", () => {
     expect(html).toContain("Legal Review Recommended");
   });
 });
+
+// The hero AI sandbox streams tables (e.g. a daily-routine checklist). Without
+// table parsing these rendered as a run-on "| Time | Task | |---|---| ..." line.
+const TABLE_MD = [
+  "| Time | Task |",
+  "|------|------|",
+  "| Morning | Review attendance |",
+  "| Afternoon | Respond to HR tickets |",
+].join("\n");
+
+describe("AiMarkdown renders GitHub-style tables", () => {
+  it("emits a <table> with header and body cells instead of raw pipes", () => {
+    const html = renderToStaticMarkup(<AiMarkdown text={TABLE_MD} />);
+    expect(html).toContain("<table");
+    expect(html).toContain("<th");
+    expect(html).toContain("Time");
+    expect(html).toContain("Review attendance");
+    expect(html).toContain("Respond to HR tickets");
+    // The separator row must be consumed, not rendered as text.
+    expect(html).not.toContain("|------|");
+  });
+});

@@ -451,9 +451,6 @@ export default function HomePage() {
               <div className="space-y-3">
                 {automationSteps.map((step, index) => (
                   <div key={step.title} className="relative">
-                    {index < automationSteps.length - 1 && (
-                      <div className="absolute left-5 top-[52px] h-[calc(100%-8px)] w-0.5 bg-linear-to-b from-blue-200 to-transparent" />
-                    )}
                     <div className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-3.5">
                       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                         index === 0

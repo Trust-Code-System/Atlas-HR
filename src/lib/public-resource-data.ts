@@ -541,26 +541,6 @@ export const WORKFLOW_BUNDLES: WorkflowBundle[] = [
 
 export const COMPARISON_PAGES: ComparisonPage[] = [
   {
-    slug: "atlas-hr-vs-shrm-templates",
-    title: "Atlas HR vs SHRM templates",
-    summary:
-      "SHRM is an authority hub. Atlas HR should win when teams want country-aware templates connected to documents, workflows, employee records, and AI drafting.",
-    competitorStrengths: ["Brand authority", "Large HR resource library", "Certification ecosystem", "US compliance depth"],
-    atlasAdvantages: ["Country variants for templates", "AI drafting and saved documents", "Workflow bundles", "HRIS context and employee files"],
-    gapsToClose: ["More legal reviewer proof", "More regulatory citations", "More US state-level depth"],
-    cta: "Use Atlas when you need the template, the workflow, and the employee record in one place.",
-  },
-  {
-    slug: "atlas-hr-vs-workable-templates",
-    title: "Atlas HR vs Workable templates",
-    summary:
-      "Workable is strong for recruiting resources. Atlas HR should extend beyond hiring into contracts, onboarding, performance, payroll, discipline, and country-aware HR operations.",
-    competitorStrengths: ["Large recruiting template library", "Job descriptions", "Interview kits", "Hiring process guidance"],
-    atlasAdvantages: ["Recruiting plus employee lifecycle", "Country-specific HR documents", "Payroll, performance, leave, and discipline workflows", "Copilot for HR follow-through"],
-    gapsToClose: ["More role-specific job descriptions", "More interview question banks", "More ATS integrations"],
-    cta: "Use Atlas when hiring needs to flow into onboarding, documents, compliance, and employee management.",
-  },
-  {
     slug: "nigeria-hr-compliance",
     title: "Atlas HR for Nigeria HR compliance",
     summary:

@@ -61,6 +61,42 @@ export function AiMarkdown({ text }: { text: string }) {
       i++; continue;
     }
 
+    // GitHub-style tables: a header row followed by a |---|---| separator row.
+    // Checked before the hr / paragraph rules so pipe rows aren't swallowed into
+    // a run-on paragraph.
+    if (line.includes("|") && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
+      const header = splitTableRow(line);
+      i += 2; // consume header + separator
+      const rows: string[][] = [];
+      while (i < lines.length && lines[i].trim() !== "" && lines[i].includes("|")) {
+        rows.push(splitTableRow(lines[i]));
+        i++;
+      }
+      elements.push(
+        <div key={nextKey()} className="my-3 overflow-x-auto rounded-xl border border-navy-100">
+          <table className="w-full border-collapse text-left text-xs">
+            <thead>
+              <tr className="border-b border-navy-200 bg-navy-50/60">
+                {header.map((cell) => (
+                  <th key={nextKey()} className="px-3 py-2 font-semibold text-navy-800 align-top">{inline(cell)}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={nextKey()} className="border-b border-navy-100 last:border-0 align-top">
+                  {header.map((_, c) => (
+                    <td key={nextKey()} className="px-3 py-2 text-navy-700">{inline(row[c] ?? "")}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      continue;
+    }
+
     if (line.match(/^[-*_]{3,}$/)) { elements.push(<hr key={nextKey()} className="border-navy-200 my-4" />); i++; continue; }
 
     if (line.match(/^[-*+] /)) {
@@ -108,7 +144,8 @@ export function AiMarkdown({ text }: { text: string }) {
       !lines[i].trimStart().startsWith("```") &&
       !lines[i].startsWith("> ") &&
       !lines[i].match(/^[-*_]{3,}$/) &&
-      !lines[i].startsWith("⚠️")
+      !lines[i].startsWith("⚠️") &&
+      !(lines[i].includes("|") && i + 1 < lines.length && isTableSeparator(lines[i + 1]))
     ) {
       paraLines.push(lines[i]); i++;
     }
@@ -125,6 +162,21 @@ export function AiMarkdown({ text }: { text: string }) {
   }
 
   return <>{elements}</>;
+}
+
+// A markdown table separator row, e.g. "|---|---|" or "--- | :--: | ---".
+function isTableSeparator(line: string): boolean {
+  const t = line.trim();
+  return t.includes("|") && t.includes("-") && /^[\s|:-]+$/.test(t);
+}
+
+// Split a table row into trimmed cells, dropping the empty edges produced by
+// leading/trailing pipes.
+function splitTableRow(line: string): string[] {
+  let t = line.trim();
+  if (t.startsWith("|")) t = t.slice(1);
+  if (t.endsWith("|")) t = t.slice(0, -1);
+  return t.split("|").map((c) => c.trim());
 }
 
 function inlineFormat(text: string, nextKey: () => number): React.ReactNode {
